@@ -17,7 +17,7 @@ class SpawningSystem(SystemInterface):
     def update(self, dt: float):
         enemy_x = random.randint(0, GAME_WIDTH)
         enemy_y = random.randint(0, GAME_HEIGHT)
-        if len(world.entities) < 2:
+        if len(world.entities) < 10:
             enemy_factory = DefaultEnemyFactory()
             enemy = enemy_factory.create_entity(Vector2(enemy_x, enemy_y))
             world.add_entity(enemy)
