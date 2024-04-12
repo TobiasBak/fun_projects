@@ -1,6 +1,9 @@
+from Events.EventManager import EventManager
+
+
 class SystemInterface:
     def __init__(self):
-        pass
+        self.event_mananger = EventManager.get_instance()
 
     def update(self, dt: float):
         pass

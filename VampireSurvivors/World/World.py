@@ -56,10 +56,8 @@ class World(object):
     def __repr__(self):
         return self.__str__()
 
-
     @classmethod
     def get_world(cls):
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
-

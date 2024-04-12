@@ -1,4 +1,6 @@
-from Systems.InitialSystems import SpawningSystem, CleanEntitiesSystem, CollisionSystem
+from Systems.CollisionDetectionSystem import CollisionDetectionSystem
+from Systems.CollisionHandlerSystem import CollisionHandlerSystem
+from Systems.InitialSystems import SpawningSystem, CleanEntitiesSystem
 from Systems.SystemInterface import SystemInterface
 
 from World.World import World
@@ -25,4 +27,5 @@ class InitialSystems(SystemFactory):
     def _populate_systems(self) -> None:
         self.systems.append(SpawningSystem())
         self.systems.append(CleanEntitiesSystem())
-        self.systems.append(CollisionSystem())
+        self.systems.append(CollisionDetectionSystem())
+        self.systems.append(CollisionHandlerSystem())
