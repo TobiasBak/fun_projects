@@ -47,12 +47,6 @@ class World(object):
         for entity in self.entities:
             entity.render(screen)
 
-    def get_entity_from_ref(self, entity_ref: AbstractEntity, world):
-        for entity in world.entities:
-            if entity == entity_ref:
-                return entity
-        return None
-
     def __str__(self):
         return (f"---------- : World : ----------\n"
                 f"Entities: {str(self.entities)}\n"
