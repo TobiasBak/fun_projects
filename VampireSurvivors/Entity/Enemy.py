@@ -9,13 +9,15 @@ from World.World import World
 
 
 class Enemy(EntityInterface):
-    def __init__(self, health: float, color: str, position: Vector2, radius: float, speed: float):
-        super().__init__(health, color, position, radius, speed)
+    def __init__(self, color: str, position: Vector2, radius: float, speed: float):
+        super().__init__(color, position, radius, speed)
 
     def update(self, dt: float):
+        super().update(dt)
         self._move_towards_player(dt)
 
-    def draw(self, screen):
+    def render(self, screen):
+        super().render(screen)
         pygame.draw.circle(screen, self.color, self.position, self.radius)
 
     def _move_towards_player(self, dt: float):

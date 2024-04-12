@@ -1,12 +1,13 @@
 from pygame import Vector2
 
+from Components.ComponentInterface import ComponentInterface
 from Utils.RandomUtils import get_new_id
 
 
 class EntityInterface:
-    def __init__(self, health: float, color: str, position: Vector2, radius: float, speed: float, weight: float = 1.0):
+    def __init__(self, color: str, position: Vector2, radius: float, speed: float, weight: float = 1.0):
         self.id: int = get_new_id()
-        self.health: float = health
+        self.components = {}
         self.color: str = color
         self.position: Vector2 = position
         self.radius: float = radius
@@ -15,32 +16,37 @@ class EntityInterface:
 
     def __eq__(self, other):
         position_threshold = 0.01  # Adjust this threshold as needed
-        return self.id == other.id and self.health == other.health and \
+        return self.id == other.id and  \
             self.color == other.color and \
             abs(self.position.x - other.position.x) < position_threshold and \
             abs(self.position.y - other.position.y) < position_threshold and \
             self.radius == other.radius and self.speed == other.speed
 
     def __hash__(self):
-        return hash((self.id, self.health, self.color, self.position.x, self.position.y, self.radius, self.speed))
+        return hash((self.id, self.color, self.position.x, self.position.y, self.radius, self.speed))
 
     def update(self, dt: float) -> None:
-        pass
+        for component in self.components.values():
+            component.update(dt)
 
-    def draw(self, screen) -> None:
-        pass
+    def render(self, screen) -> None:
+        for component in self.components.values():
+            component.render(screen)
+
+    def get_component(self, component_name: ComponentInterface.__class__) -> ComponentInterface:
+        return self.components.get(component_name, None)
+
+    def add_component(self, component: ComponentInterface) -> None:
+        self.components[component.__class__] = component
+
+    def remove_component(self, component_name: ComponentInterface.__class__) -> None:
+        self.components.pop(component_name, None)
 
     def get_position(self) -> Vector2:
         return self.position
 
     def set_position(self, position: Vector2) -> None:
         self.position = position
-
-    def get_health(self) -> float:
-        return self.health
-
-    def set_health(self, health: float) -> None:
-        self.health = health
 
     def get_radius(self) -> float:
         return self.radius
@@ -58,7 +64,14 @@ class EntityInterface:
         self.position += distance
 
     def __str__(self):
-        return f"Entity at {self.position} with {self.health} health"
+        return f"Entity with id {self.id} at {self.position}"
 
     def __repr__(self):
         return self.__str__()
+
+
+def get_entity_from_ref(entity_ref: EntityInterface, world):
+    for entity in world.entities:
+        if entity == entity_ref:
+            return entity
+    return None

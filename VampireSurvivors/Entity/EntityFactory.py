@@ -2,15 +2,16 @@ from enum import Enum, auto
 
 from pygame import Vector2
 
+from Components.ComponentFactory import DefaultLivingEntityComponentFactory
+from Components.HealthBarComponent import HealthBarComponent
+from Components.HealthComponent import HealthComponent
 from Entity.Enemy import Enemy
 from Entity.EnemyTypes import DefaultEnemyType
 from Entity.EntityInterface import EntityInterface
 from Entity.Player import Player
 from consts import GAME_WIDTH, GAME_HEIGHT
 
-
-class Enemies(Enum):
-    ENEMY = auto()
+_default_entity_factory = DefaultLivingEntityComponentFactory()
 
 
 class EntityFactory:
@@ -31,7 +32,8 @@ class DefaultPlayerFactory(EntityFactory):
     speed: float = 300
 
     def create_entity(self, pos: Vector2 = Vector2(GAME_WIDTH / 2, GAME_HEIGHT / 2)) -> EntityInterface:
-        player = Player(self.health, self.color, pos, self.size, self.speed)
+        player = Player(self.color, pos, self.size, self.speed)
+        _default_entity_factory.create_components(player)
         return player
 
 
@@ -41,5 +43,6 @@ class DefaultEnemyFactory(EntityFactory):
 
     def create_entity(self, pos: Vector2) -> EntityInterface | None:
         enemy_type = DefaultEnemyType
-        return Enemy(enemy_type.health, enemy_type.color, pos, enemy_type.size, enemy_type.speed)
-
+        enemy = Enemy(enemy_type.color, pos, enemy_type.size, enemy_type.speed)
+        _default_entity_factory.create_components(enemy)
+        return enemy

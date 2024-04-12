@@ -1,6 +1,6 @@
 from Systems.CollisionDetectionSystem import CollisionDetectionSystem
 from Systems.CollisionHandlerSystem import CollisionHandlerSystem
-from Systems.InitialSystems import SpawningSystem, CleanEntitiesSystem
+from Systems.InitialSystems import SpawningSystem
 from Systems.SystemInterface import SystemInterface
 
 from World.World import World
@@ -10,7 +10,7 @@ class SystemFactory:
     def __init__(self):
         self.systems: list[SystemInterface] = []
 
-    def create_and_add_system(self) -> None:
+    def create_and_add_systems(self) -> None:
         self._populate_systems()
         world = World.get_world()
         for system in self.systems:
@@ -26,6 +26,5 @@ class InitialSystems(SystemFactory):
 
     def _populate_systems(self) -> None:
         self.systems.append(SpawningSystem())
-        self.systems.append(CleanEntitiesSystem())
         self.systems.append(CollisionDetectionSystem())
         self.systems.append(CollisionHandlerSystem())

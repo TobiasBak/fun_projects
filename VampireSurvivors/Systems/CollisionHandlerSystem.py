@@ -46,6 +46,3 @@ class CollisionHandlerSystem(SystemInterface):
 
         e1.move(Vector2(displacement_x * weight_ratio1, displacement_y * weight_ratio1))
         e2.move(Vector2(-displacement_x * weight_ratio2, -displacement_y * weight_ratio2))
-
-    def __str__(self):
-        return "CollisionHandlerSystem"

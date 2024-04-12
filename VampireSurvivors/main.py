@@ -20,7 +20,7 @@ def main():
     running = True
     print(f"screen width: {screen.get_width()} height: {screen.get_height()}")
 
-    InitialSystems().create_and_add_system()
+    InitialSystems().create_and_add_systems()
 
     world: World = World.get_world()
     player: EntityInterface = DefaultPlayerFactory().create_entity()
@@ -41,7 +41,7 @@ def main():
         screen.fill("white")
 
         # RENDER YOUR GAME HERE
-        world.draw(screen)
+        world.render(screen)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
@@ -49,13 +49,14 @@ def main():
         # limits FPS to 60
         # dt is delta time in seconds since last frame, used for framerate-
         # independent physics.
-        dt = clock.tick(60) / 1000
+        dt = clock.tick(240) / 1000
         world.update(dt)
 
         print_count += 1
 
         if print_count % 60 == 0:
             print(world)
+            print(f"FPS: {clock.get_fps()}")
 
     pygame.quit()
 

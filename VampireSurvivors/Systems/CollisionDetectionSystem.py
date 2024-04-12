@@ -16,5 +16,3 @@ class CollisionDetectionSystem(SystemInterface):
         for collision_object in collisions:
             self.event_manager.dispatch_event(CollisionEvent(collision_object.e1, collision_object.e2))
 
-    def __str__(self):
-        return "CollisionDetectionSystem"

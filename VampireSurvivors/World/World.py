@@ -43,9 +43,9 @@ class World(object):
         self.update_entities(dt)
         self.update_systems(dt)
 
-    def draw(self, screen: Surface | SurfaceType):
+    def render(self, screen: Surface | SurfaceType):
         for entity in self.entities:
-            entity.draw(screen)
+            entity.render(screen)
 
     def __str__(self):
         return (f"---------- : World : ----------\n"
