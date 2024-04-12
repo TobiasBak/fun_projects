@@ -1,8 +1,8 @@
 from Components.AbstractWeaponComponent import AbstractWeaponComponent
-from Components.HealthComponent import HealthComponent
 from Entity.AbstractEntity import AbstractEntity
 from Utils.CollisionUtils import entities_collide
 from World.World import World
+from Events.Events import AttackEvent
 
 
 class CollisionWeaponComponent(AbstractWeaponComponent):
@@ -19,9 +19,7 @@ class CollisionWeaponComponent(AbstractWeaponComponent):
         world: World = World.get_world()
         player: AbstractEntity = world.get_player()
         if entities_collide(self.owner, player):
-            player.get_component(HealthComponent).set_health(
-                player.get_component(HealthComponent).get_health() - self.damage
-            )
+            self.event_manager.dispatch_event(AttackEvent(self.owner, player, self.damage))
             return True
 
         return False

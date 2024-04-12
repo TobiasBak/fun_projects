@@ -1,5 +1,4 @@
 class ComponentInterface:
-
     def update(self, dt):
         pass
 

@@ -4,34 +4,41 @@ from typing import Self
 from pygame import Vector2
 
 from Components.AbstractComponent import AbstractComponent
-
-
-def default_collision_handler(self, other) -> None:
-    self._move_on_collision(other)
+from World.CollisionObject import CollisionObject
+from World.World import World
 
 
 class CollisionComponent(AbstractComponent):
-    def __init__(self, owner, pos, radius, weight, offset=Vector2(0, 0), move_able: bool = True,
-                 entities_should_move: bool = True,
-                 collision_handler=default_collision_handler):
+    def __init__(self, owner, pos, radius, weight, offset=Vector2(0, 0)):
         super().__init__(owner)
+
+        # Properties
         self.id = owner.id
         self.pos: Vector2 = pos
         self.offset: Vector2 = offset
         self.radius = radius
         self.weight = weight
-        self.move_able = move_able
-        self.entities_should_move = entities_should_move
-        self.collision_handler = collision_handler
+
+        # Collision Objects
+        self.collision_objects: list[CollisionObject] = []
+        self._create_collision_objects()
+        self._add_collision_objects_to_world()
+
 
     def update(self, dt: float):
-        self.pos = self.owner.get_position() + self.offset
+        for collision_object in self.collision_objects:
+            self.pos = self.owner.get_position()
+            collision_object.update(self.pos)
 
     def render(self, screen):
         pass
 
-    def handle_collision(self, other: Self) -> None:
-        self.collision_handler(self, other)
+    def _create_collision_objects(self):
+        self.collision_objects.append(CollisionObject(self.owner.id, self.pos, self.offset, self.radius, self.weight))
+
+    def _add_collision_objects_to_world(self):
+        for collision_object in self.collision_objects:
+            World.get_world().add_collision_object(collision_object)
 
     def _move_on_collision(self, other: Self) -> None:
         if not self.move_able:

@@ -2,7 +2,6 @@ from pygame import Vector2
 
 from Components.AbstractComponent import AbstractComponent
 from Entity.EntityInterface import EntityInterface
-from Utils.RandomUtils import get_new_id
 
 
 class AbstractEntity(EntityInterface):

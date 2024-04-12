@@ -4,7 +4,7 @@ from pygame import Surface, SurfaceType
 
 from Entity.AbstractEntity import AbstractEntity
 from Systems.SystemInterface import SystemInterface
-from Utils.CollisionUtils import CollisionObject
+from World.CollisionObject import CollisionObject
 
 
 class World(object):
@@ -12,7 +12,7 @@ class World(object):
 
     def __init__(self):
         self.entities: list[AbstractEntity] = []
-        self.collision_objects: list[CollisionObject] = []
+        self.collision_objects: dict[int, set[CollisionObject]] = {}
         self.systems: list[SystemInterface] = []
         self.player = None
 
@@ -24,13 +24,22 @@ class World(object):
         self.entities.remove(entity)
 
     def get_collision_objects(self) -> list[CollisionObject]:
-        return self.collision_objects
+        collision_objects: list[CollisionObject] = []
+        for collision_object_set in self.collision_objects.values():
+            collision_objects.extend(collision_object_set)
+        return collision_objects
+
+    def get_collision_objects_by_owner_id(self, owner_id: int) -> set[CollisionObject]:
+        return self.collision_objects[owner_id]
 
     def add_collision_object(self, collision_object: CollisionObject) -> None:
-        self.collision_objects.append(collision_object)
+        if collision_object.owner_id not in self.collision_objects:
+            self.collision_objects[collision_object.owner_id] = set()
+
+        self.collision_objects[collision_object.owner_id].add(collision_object)
 
     def remove_collision_object(self, collision_object: CollisionObject) -> None:
-        self.collision_objects.remove(collision_object)
+        self.collision_objects[collision_object.owner_id].remove(collision_object)
 
     def add_player(self, player: AbstractEntity) -> None:
         self.player = player
@@ -60,7 +69,9 @@ class World(object):
 
     def __str__(self):
         return (f"---------- : World : ----------\n"
+                f"Player: {str(self.player)}\n"
                 f"Entities: {str(self.entities)}\n"
+                f"Collision Objects: {str(self.collision_objects)}\n"
                 f"Systems: {str(self.systems)}\n"
                 f"-------------------------------")
 

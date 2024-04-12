@@ -1,8 +1,8 @@
-from Components.CollisionComponent import CollisionComponent
 from Events.Events import CollisionEvent
 from Systems.InitialSystems import world
 from Systems.SystemInterface import SystemInterface
-from Utils.CollisionUtils import CollisionObject, get_collisions
+from Utils.CollisionUtils import get_collisions
+from World.CollisionObject import CollisionPair
 
 
 class CollisionDetectionSystem(SystemInterface):
@@ -10,10 +10,9 @@ class CollisionDetectionSystem(SystemInterface):
         super().__init__()
 
     def update(self, dt: float):
-        collision_objects = world.collision_
+        collision_objects = world.get_collision_objects()
 
-        collisions: set[CollisionObject] = get_collisions(entities)
+        collisions: set[CollisionPair] = get_collisions(collision_objects)
 
-        for collision_object in collisions:
-            self.event_manager.dispatch_event(CollisionEvent(collision_object))
-
+        for pair in collisions:
+            self.event_manager.dispatch_event(CollisionEvent(pair))

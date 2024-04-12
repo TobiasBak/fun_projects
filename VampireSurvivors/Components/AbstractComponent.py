@@ -3,10 +3,12 @@ from pygame import Surface, SurfaceType
 
 from Components.ComponentInterface import ComponentInterface
 from Entity.EntityInterface import EntityInterface
+from Events.EventManager import EventManager
 
 
 class AbstractComponent(ComponentInterface):
     def __init__(self, owner):
+        self.event_manager: EventManager = EventManager().get_instance()
         self.owner: EntityInterface = owner
         self.owner.add_component(self)
 
