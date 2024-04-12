@@ -1,77 +1,47 @@
 from pygame import Vector2
 
 from Components.ComponentInterface import ComponentInterface
-from Utils.RandomUtils import get_new_id
 
 
 class EntityInterface:
-    def __init__(self, color: str, position: Vector2, radius: float, speed: float, weight: float = 1.0):
-        self.id: int = get_new_id()
-        self.components = {}
-        self.color: str = color
-        self.position: Vector2 = position
-        self.radius: float = radius
-        self.speed: float = speed
-        self.weight: float = weight
-
-    def __eq__(self, other):
-        position_threshold = 0.01  # Adjust this threshold as needed
-        return self.id == other.id and  \
-            self.color == other.color and \
-            abs(self.position.x - other.position.x) < position_threshold and \
-            abs(self.position.y - other.position.y) < position_threshold and \
-            self.radius == other.radius and self.speed == other.speed
-
-    def __hash__(self):
-        return hash((self.id, self.color, self.position.x, self.position.y, self.radius, self.speed))
-
     def update(self, dt: float) -> None:
-        for component in self.components.values():
-            component.update(dt)
+        pass
 
     def render(self, screen) -> None:
-        for component in self.components.values():
-            component.render(screen)
+        pass
 
     def get_component(self, component_name: ComponentInterface.__class__) -> ComponentInterface:
-        return self.components.get(component_name, None)
+        pass
 
     def add_component(self, component: ComponentInterface) -> None:
-        self.components[component.__class__] = component
+        pass
 
     def remove_component(self, component_name: ComponentInterface.__class__) -> None:
-        self.components.pop(component_name, None)
+        pass
 
     def get_position(self) -> Vector2:
-        return self.position
+        pass
 
     def set_position(self, position: Vector2) -> None:
-        self.position = position
+        pass
 
     def get_radius(self) -> float:
-        return self.radius
+        pass
 
     def set_radius(self, size: float) -> None:
-        self.radius = size
+        pass
 
     def get_speed(self) -> float:
-        return self.speed
+        pass
 
     def set_speed(self, speed: float) -> None:
-        self.speed = speed
+        pass
 
     def move(self, distance: Vector2):
-        self.position += distance
+        pass
 
     def __str__(self):
-        return f"Entity with id {self.id} at {self.position}"
+        pass
 
     def __repr__(self):
-        return self.__str__()
-
-
-def get_entity_from_ref(entity_ref: EntityInterface, world):
-    for entity in world.entities:
-        if entity == entity_ref:
-            return entity
-    return None
+        pass

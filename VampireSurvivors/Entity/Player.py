@@ -1,12 +1,12 @@
 import pygame
 from pygame import Vector2
 
-from Entity.EntityInterface import EntityInterface
+from Entity.AbstractEntity import AbstractEntity
 from World.World import World
 from consts import GAME_HEIGHT, GAME_WIDTH
 
 
-class Player(EntityInterface):
+class Player(AbstractEntity):
     def __init__(self, color: str, pos: Vector2, radius: float, speed: float, weight: float = 2.0):
         super().__init__(color, pos, radius, speed, weight)
         self.gold: int = 0

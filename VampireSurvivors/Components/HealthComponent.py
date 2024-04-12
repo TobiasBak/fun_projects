@@ -1,9 +1,9 @@
-from Components.ComponentInterface import ComponentInterface
-from Entity.EntityInterface import EntityInterface
+from Components.AbstractComponent import AbstractComponent
+from Entity.AbstractEntity import AbstractEntity
 
 
-class HealthComponent(ComponentInterface):
-    def __init__(self, entity: EntityInterface, health):
+class HealthComponent(AbstractComponent):
+    def __init__(self, entity: AbstractEntity, health):
         super().__init__(entity)
         self.health = health
 

@@ -1,7 +1,7 @@
 import pygame
 
 from Entity.EntityFactory import DefaultPlayerFactory
-from Entity.EntityInterface import EntityInterface
+from Entity.AbstractEntity import AbstractEntity
 from Systems.SystemFactory import InitialSystems
 from World.World import World
 from screen import get_screen
@@ -23,7 +23,7 @@ def main():
     InitialSystems().create_and_add_systems()
 
     world: World = World.get_world()
-    player: EntityInterface = DefaultPlayerFactory().create_entity()
+    player: AbstractEntity = DefaultPlayerFactory().create_entity()
     world.add_player(player)
 
     dt = 0

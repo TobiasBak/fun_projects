@@ -2,7 +2,7 @@ from typing import Self
 
 from pygame import Surface, SurfaceType
 
-from Entity.EntityInterface import EntityInterface
+from Entity.AbstractEntity import AbstractEntity
 from Systems.SystemInterface import SystemInterface
 
 
@@ -10,19 +10,19 @@ class World(object):
     _instance: Self | None = None
 
     def __init__(self):
-        self.entities: list[EntityInterface] = []
+        self.entities: list[AbstractEntity] = []
         self.systems: list[SystemInterface] = []
         self.player = None
 
-    def add_entity(self, entity: EntityInterface):
+    def add_entity(self, entity: AbstractEntity):
         if entity is not None:
             self.entities.append(entity)
 
-    def add_player(self, player: EntityInterface):
+    def add_player(self, player: AbstractEntity):
         self.player = player
         self.entities.append(player)
 
-    def remove_entity(self, entity: EntityInterface):
+    def remove_entity(self, entity: AbstractEntity):
         self.entities.remove(entity)
 
     def get_player(self):
@@ -46,6 +46,12 @@ class World(object):
     def render(self, screen: Surface | SurfaceType):
         for entity in self.entities:
             entity.render(screen)
+
+    def get_entity_from_ref(self, entity_ref: AbstractEntity, world):
+        for entity in world.entities:
+            if entity == entity_ref:
+                return entity
+        return None
 
     def __str__(self):
         return (f"---------- : World : ----------\n"

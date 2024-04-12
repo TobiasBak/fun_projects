@@ -3,12 +3,12 @@ import math
 import pygame
 from pygame import Vector2
 
-from Entity.EntityInterface import EntityInterface
+from Entity.AbstractEntity import AbstractEntity
 from Utils.PositionUtils import get_angle_to_pos, get_pos_to_move_towards_angle, get_distance_to_move
 from World.World import World
 
 
-class Enemy(EntityInterface):
+class Enemy(AbstractEntity):
     def __init__(self, color: str, position: Vector2, radius: float, speed: float):
         super().__init__(color, position, radius, speed)
 

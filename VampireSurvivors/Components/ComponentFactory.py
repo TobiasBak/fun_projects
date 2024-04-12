@@ -1,13 +1,13 @@
 from Components.HealthBarComponent import HealthBarComponent
 from Components.HealthComponent import HealthComponent
-from Entity.EntityInterface import EntityInterface
+from Entity.AbstractEntity import AbstractEntity
 
 
 class ComponentFactory:
     def __init__(self):
         pass
 
-    def create_components(self, owner: EntityInterface) -> None:
+    def create_components(self, owner: AbstractEntity) -> None:
         pass
 
 
@@ -16,6 +16,6 @@ class DefaultLivingEntityComponentFactory(ComponentFactory):
         super().__init__()
         self.health = health
 
-    def create_components(self, owner: EntityInterface) -> None:
+    def create_components(self, owner: AbstractEntity) -> None:
         HealthComponent(owner, self.health)
         HealthBarComponent(owner)

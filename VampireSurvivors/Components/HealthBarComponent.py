@@ -1,7 +1,7 @@
 import pygame
 from pygame import Surface, SurfaceType
 
-from Components.ComponentInterface import ComponentInterface
+from Components.AbstractComponent import AbstractComponent
 from Components.HealthComponent import HealthComponent
 
 BLACK = (0, 0, 0)
@@ -11,7 +11,7 @@ BLUE = (0, 0, 255)
 GRAY = (200, 200, 200)
 
 
-class HealthBarComponent(ComponentInterface):
+class HealthBarComponent(AbstractComponent):
     def __init__(self, entity):
         super().__init__(entity)
         self.rendered_health: int | None = None
