@@ -12,4 +12,3 @@ class HealthComponent(AbstractComponent):
 
     def set_health(self, health: float) -> None:
         self.health = health
-

@@ -7,7 +7,7 @@ from Utils.RandomUtils import get_new_id
 
 class AbstractEntity(EntityInterface):
     def __init__(self, color: str, position: Vector2, radius: float, speed: float, weight: float = 1.0):
-        self.id: int = get_new_id()
+        super().__init__()
         self.components = {}
         self.color: str = color
         self.position: Vector2 = position

@@ -1,8 +1,9 @@
-from Entity.AbstractEntity import AbstractEntity
+from Entity.EntityInterface import EntityInterface
 
 
 class CollisionObject:
-    def __init__(self, e1: AbstractEntity, e2: AbstractEntity):
+    def __init__(self, e1: EntityInterface, e2: EntityInterface):
+        sorted_entities = sorted([e1, e2], key=lambda x: x.id)
         if e1.id < e2.id:
             self.e1 = e1
             self.e2 = e2
@@ -28,7 +29,7 @@ class CollisionObject:
         return self.__str__()
 
 
-def entities_collide(e1: AbstractEntity, e2: AbstractEntity) -> bool:
+def entities_collide(e1: EntityInterface, e2: EntityInterface) -> bool:
     if e1 == e2:
         return False
     elif e1 is None or e2 is None:
@@ -39,7 +40,7 @@ def entities_collide(e1: AbstractEntity, e2: AbstractEntity) -> bool:
     return False
 
 
-def get_collisions(entities: list[AbstractEntity]) -> set[CollisionObject]:
+def get_collisions(entities: list[EntityInterface]) -> set[CollisionObject]:
     """Returns a set of tuples containing colliding entities. (Currently n^2 runtime)"""
     collisions: set[CollisionObject] = set()
     for entity in entities:
@@ -54,7 +55,7 @@ def get_collisions(entities: list[AbstractEntity]) -> set[CollisionObject]:
     return collisions
 
 
-def get_colliding_distance(e1: AbstractEntity, e2: AbstractEntity) -> float:
+def get_colliding_distance(e1: EntityInterface, e2: EntityInterface) -> float:
     e1_pos = e1.get_position()
     e2_pos = e2.get_position()
     combined_radius = e1.get_radius() + e2.get_radius()

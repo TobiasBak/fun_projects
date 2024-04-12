@@ -1,10 +1,11 @@
 
 from pygame import Surface, SurfaceType
 
+from Components.ComponentInterface import ComponentInterface
 from Entity.EntityInterface import EntityInterface
 
 
-class AbstractComponent:
+class AbstractComponent(ComponentInterface):
     def __init__(self, owner):
         self.owner: EntityInterface = owner
         self.owner.add_component(self)
