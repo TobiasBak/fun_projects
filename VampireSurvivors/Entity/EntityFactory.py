@@ -43,6 +43,6 @@ class DefaultEnemyFactory(EntityFactory):
 
     def create_entity(self, pos: Vector2) -> AbstractEntity | None:
         enemy_type = DefaultEnemyType
-        enemy = Enemy(enemy_type.color, pos, enemy_type.size, enemy_type.speed)
+        enemy = Enemy(enemy_type.color, pos, enemy_type.radius, enemy_type.speed)
         DefaultLivingEntityComponentFactory(20).create_components(enemy)
         return enemy

@@ -4,6 +4,7 @@ from Entity.EntityFactory import DefaultPlayerFactory
 from Entity.AbstractEntity import AbstractEntity
 from Systems.SystemFactory import InitialSystems
 from World.World import World
+from consts import FPS_LIMIT
 from screen import get_screen
 
 # pygame setup
@@ -49,7 +50,7 @@ def main():
         # limits FPS to 60
         # dt is delta time in seconds since last frame, used for framerate-
         # independent physics.
-        dt = clock.tick(240) / 1000
+        dt = clock.tick(FPS_LIMIT) / 1000
         world.update(dt)
 
         print_count += 1
