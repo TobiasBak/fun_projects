@@ -1,7 +1,5 @@
 from typing import Callable
 
-from Events.Events import Event
-
 
 class EventManager:
     """Singleton class that manages events and listeners."""

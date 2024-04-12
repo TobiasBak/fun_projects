@@ -1,3 +1,4 @@
+from Components.CollisionComponent import CollisionComponent
 from Components.HealthBarComponent import HealthBarComponent
 from Components.HealthComponent import HealthComponent
 from Components.WeaponCollisionComponent import CollisionWeaponComponent
@@ -22,3 +23,4 @@ class DefaultLivingEntityComponentFactory(ComponentFactory):
         HealthComponent(owner, self.health)
         HealthBarComponent(owner)
         CollisionWeaponComponent(owner, self.damage)
+        CollisionComponent(owner, owner.get_position(), owner.get_radius(), owner.weight)

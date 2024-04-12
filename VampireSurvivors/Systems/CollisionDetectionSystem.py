@@ -1,3 +1,4 @@
+from Components.CollisionComponent import CollisionComponent
 from Events.Events import CollisionEvent
 from Systems.InitialSystems import world
 from Systems.SystemInterface import SystemInterface
@@ -14,5 +15,5 @@ class CollisionDetectionSystem(SystemInterface):
         collisions: set[CollisionObject] = get_collisions(entities)
 
         for collision_object in collisions:
-            self.event_manager.dispatch_event(CollisionEvent(collision_object.e1, collision_object.e2))
+            self.event_manager.dispatch_event(CollisionEvent(collision_object))
 
