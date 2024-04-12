@@ -3,7 +3,7 @@
 ## Todo
 1. ~~Extract methods for getting angle and moving towards angle~~
 2. ~~Extract method for two entities colliding~~
-3. Add Collision Detection (Move towards -angle for both entities if collision) 
+3. ~~Add Collision Detection (Move towards -angle for both entities if collision)~~ 
 4. Weapon System - DefaultWeapon = Sword
 5. Pistol Weapon
 6. Show Health Bar
