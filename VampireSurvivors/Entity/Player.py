@@ -7,8 +7,8 @@ from consts import GAME_HEIGHT, GAME_WIDTH
 
 
 class Player(EntityInterface):
-    def __init__(self, health: float, color: str, pos: Vector2, size: float, speed: float):
-        super().__init__(health, color, pos, size, speed)
+    def __init__(self, health: float, color: str, pos: Vector2, radius: float, speed: float, weight: float = 2.0):
+        super().__init__(health, color, pos, radius, speed, weight)
         self.gold: int = 0
         self.attack_range: float = 400
         self.attack_damage: float = 10
@@ -19,7 +19,7 @@ class Player(EntityInterface):
         self._teleport_player_if_out_of_bounds()
 
     def draw(self, screen) -> None:
-        pygame.draw.circle(screen, self.color, self.position, self.size)
+        pygame.draw.circle(screen, self.color, self.position, self.radius)
 
     def _teleport_player_if_out_of_bounds(self) -> None:
         if self.position.x < 0:

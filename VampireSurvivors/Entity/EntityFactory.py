@@ -28,7 +28,7 @@ class DefaultPlayerFactory(EntityFactory):
     health: float = 100
     color: str = "black"
     size: float = 30
-    speed: float = 200
+    speed: float = 300
 
     def create_entity(self, pos: Vector2 = Vector2(GAME_WIDTH / 2, GAME_HEIGHT / 2)) -> EntityInterface:
         player = Player(self.health, self.color, pos, self.size, self.speed)
