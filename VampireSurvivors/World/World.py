@@ -48,8 +48,10 @@ class World(object):
             entity.draw(screen)
 
     def __str__(self):
-        return (f"Entities: {str(self.entities)}\n"
-                f"Systems: {str(self.systems)}")
+        return (f"---------- : World : ----------\n"
+                f"Entities: {str(self.entities)}\n"
+                f"Systems: {str(self.systems)}\n"
+                f"-------------------------------")
 
     def __repr__(self):
         return self.__str__()
