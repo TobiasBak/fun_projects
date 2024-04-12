@@ -10,7 +10,7 @@ class CollisionDetectionSystem(SystemInterface):
         super().__init__()
 
     def update(self, dt: float):
-        entities = world.entities
+        collision_objects = world.collision_
 
         collisions: set[CollisionObject] = get_collisions(entities)
 

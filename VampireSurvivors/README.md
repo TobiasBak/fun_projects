@@ -12,6 +12,7 @@
 9. Cooldown for enemy attacks
 10. ~~Components structure for reuse of code~~
 11. Fps options
+12. Fix amount of parameters on classes
 
 
 

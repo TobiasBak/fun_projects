@@ -6,24 +6,32 @@ from pygame import Vector2
 from Components.AbstractComponent import AbstractComponent
 
 
+def default_collision_handler(self, other) -> None:
+    self._move_on_collision(other)
+
+
 class CollisionComponent(AbstractComponent):
-    def __init__(self, owner, pos, radius, weight, move_able: bool = True, entities_should_move: bool = True):
+    def __init__(self, owner, pos, radius, weight, offset=Vector2(0, 0), move_able: bool = True,
+                 entities_should_move: bool = True,
+                 collision_handler=default_collision_handler):
         super().__init__(owner)
         self.id = owner.id
         self.pos: Vector2 = pos
+        self.offset: Vector2 = offset
         self.radius = radius
         self.weight = weight
         self.move_able = move_able
         self.entities_should_move = entities_should_move
+        self.collision_handler = collision_handler
 
     def update(self, dt: float):
-        self.pos = self.owner.get_position()
+        self.pos = self.owner.get_position() + self.offset
 
     def render(self, screen):
         pass
 
     def handle_collision(self, other: Self) -> None:
-        self._move_on_collision(other)
+        self.collision_handler(self, other)
 
     def _move_on_collision(self, other: Self) -> None:
         if not self.move_able:
@@ -63,6 +71,7 @@ class CollisionComponent(AbstractComponent):
             return False
         elif self is None or other is None:
             return False
-        elif (self.owner.get_position().distance_to(other.owner.get_position())) < (self.owner.get_radius() + other.owner.get_radius()):
+        elif (self.owner.get_position().distance_to(other.owner.get_position())) < (
+                self.owner.get_radius() + other.owner.get_radius()):
             return True
         return False

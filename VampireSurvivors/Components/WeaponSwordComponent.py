@@ -1,6 +1,7 @@
 from pygame import Surface, SurfaceType
 
 from Components.AbstractWeaponComponent import AbstractWeaponComponent
+from Components.CollisionComponent import CollisionComponent
 
 
 class SwordWeaponComponent(AbstractWeaponComponent):
@@ -15,6 +16,9 @@ class SwordWeaponComponent(AbstractWeaponComponent):
 
     def update_logic(self, dt: float) -> bool:
         return False
+
+    def create_sword_collision_components(self):
+        CollisionComponent(self, self.get_position(), self.get_radius(), self.weight)
 
     def render(self, screen: Surface | SurfaceType):
         pass
