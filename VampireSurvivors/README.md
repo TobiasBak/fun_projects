@@ -18,9 +18,11 @@
 
 
 
-
+## Refactors
+1. CollisionObjects have component_id instead of owner_id and a description that says CollisionObjects only get created by collision components.
 
 
 
 ## Possible modifications
 1. Optimized Collision Detection (preferably something not done before)
+2. How to actually do events in a game

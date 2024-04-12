@@ -4,6 +4,7 @@ from pygame import Vector2
 
 from Components.CollisionComponent import CollisionComponent
 from Entity.AbstractEntity import AbstractEntity
+from Entity.EntityInterface import EntityInterface
 from World.CollisionObject import CollisionPair, CollisionObject
 from World.World import World
 
@@ -16,7 +17,7 @@ def get_collision_component(collision_object: CollisionObject) -> CollisionCompo
     return None
 
 
-def entities_collide(e1: AbstractEntity, e2: AbstractEntity) -> bool:
+def entities_collide(e1: EntityInterface, e2: EntityInterface) -> bool:
     if e1 is None or e2 is None:
         return False
 
