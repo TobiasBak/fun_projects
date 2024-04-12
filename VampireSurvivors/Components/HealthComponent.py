@@ -3,7 +3,7 @@ from Entity.EntityInterface import EntityInterface
 
 
 class HealthComponent(ComponentInterface):
-    def __init__(self, entity: EntityInterface, health: float = 100):
+    def __init__(self, entity: EntityInterface, health):
         super().__init__(entity)
         self.health = health
 

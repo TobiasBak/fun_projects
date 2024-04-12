@@ -12,10 +12,10 @@ class ComponentFactory:
 
 
 class DefaultLivingEntityComponentFactory(ComponentFactory):
-    def __init__(self):
+    def __init__(self, health: float = 100):
         super().__init__()
+        self.health = health
 
     def create_components(self, owner: EntityInterface) -> None:
-        print("Creating default living entity components for entity", owner)
-        HealthComponent(owner)
+        HealthComponent(owner, self.health)
         HealthBarComponent(owner)

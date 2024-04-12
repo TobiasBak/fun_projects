@@ -6,12 +6,12 @@
 3. ~~Add Collision Detection (Move towards -angle for both entities if collision)~~ 
 4. Weapon System - DefaultWeapon = Sword
 5. Pistol Weapon
-6. Show Health Bar
-7. EXP system - Level up
+6. ~~Show Health Bar~~
+7. EXP system - Level up (RPG & EXP COMPONENTS)
 8. Load pictures for entities
 9. Cooldown for enemy attacks
-10. Components structure for reuse of code
-11. More fps?
+10. ~~Components structure for reuse of code~~
+11. Fps options
 
 
 
