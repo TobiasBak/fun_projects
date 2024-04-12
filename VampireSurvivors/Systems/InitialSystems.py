@@ -3,11 +3,9 @@ import random
 
 from pygame import Vector2
 
-from Entity.EntityFactory import DefaultEnemyFactory, Enemies
-from Entity.EntityInterface import EntityInterface
+from Entity.EntityFactory import DefaultEnemyFactory
 from Systems.SystemInterface import SystemInterface
-from Utils.CollisionUtils import entities_collide, get_collisions, get_colliding_distance, CollisionObject
-from Utils.PositionUtils import get_angle_to_pos, get_pos_to_move_towards_angle
+from Utils.CollisionUtils import get_collisions, get_colliding_distance, CollisionObject
 from World.World import World
 from consts import GAME_WIDTH, GAME_HEIGHT, ENEMIES_TO_SPAWN
 
@@ -85,8 +83,5 @@ class CollisionSystem(SystemInterface):
             e1.move(Vector2(displacement_x * weight_ratio1, displacement_y * weight_ratio1))
             e2.move(Vector2(-displacement_x * weight_ratio2, -displacement_y * weight_ratio2))
 
-
-
     def __str__(self):
         return "CollisionSystem"
-
