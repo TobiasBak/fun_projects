@@ -10,7 +10,7 @@ from Utils.CollisionUtils import get_colliding_distance
 class CollisionHandlerSystem(SystemInterface):
     def __init__(self):
         super().__init__()
-        self.event_mananger.add_listener(CollisionEvent, self._handle_collision)
+        self.event_manager.add_listener(CollisionEvent, self._handle_collision)
 
     def update(self, dt: float):
         pass
