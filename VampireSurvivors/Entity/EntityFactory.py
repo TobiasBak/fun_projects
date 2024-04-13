@@ -55,6 +55,5 @@ class BulletFactory(EntityFactory):
     def create_entity(self, position: Vector2) -> AbstractEntity:
         bullet = Bullet(self.bullet_config.color, position, self.bullet_config.damage, self.bullet_config.speed,
                         self.bullet_config.radius, self.bullet_config.lifetime)
-        print(f"Created bullet with id: {bullet.id}")
         DefaultBulletEntityComponentFactory().create_components(bullet)
         return bullet

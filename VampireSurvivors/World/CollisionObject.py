@@ -12,7 +12,6 @@ class CollisionObject:
         self.pos_offset: Vector2 = pos_offset
         self.radius: float = radius
         self.weight: float = weight
-        print(f"CollisionObject: {self.owner_id} created at {self.pos} and offset {self.pos_offset}")
 
     def set_pos(self, pos):
         self.pos = pos

@@ -14,7 +14,7 @@
 11. ~~Components structure for reuse of code~~
 12. Fps options
 13. Fix amount of parameters on classes
-
+14. Component for images that take radius
 
 
 

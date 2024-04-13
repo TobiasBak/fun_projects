@@ -27,8 +27,6 @@ class CollisionComponent(AbstractComponent):
         self._create_collision_objects()
         self._add_collision_objects_to_world()
 
-        print(
-            f"CollisionComponent: {self.id} created with {self.amount_of_collision_objects} collision objects at {self.offset}")
 
     def update(self, dt: float):
         for collision_object in self.collision_objects:

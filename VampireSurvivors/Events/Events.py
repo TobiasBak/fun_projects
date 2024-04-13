@@ -21,6 +21,5 @@ class AttackEvent(Event):
 
 class BulletEvent(Event):
     def __init__(self, source: ComponentInterface, bullet_config: DefaultBulletConfig):
-        print("BulletEvent")
         self.source = source
         self.bullet_config = bullet_config

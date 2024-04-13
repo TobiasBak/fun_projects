@@ -35,6 +35,7 @@ class Bullet(AbstractEntity):
         img = pygame.image.load("assets/default_bullet.png")
         img2 = transform.scale(img, (int(self.radius), int(self.radius)))
         screen.blit(img2, self.position - Vector2(self.radius/2, self.radius/2))
+        # pygame.draw.circle(screen, self.color, self.position, self.radius)
 
     def _create_and_add_to_world(self):
         World.get_world().add_entity(self)

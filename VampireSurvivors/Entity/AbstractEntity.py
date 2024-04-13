@@ -40,6 +40,9 @@ class AbstractEntity(EntityInterface):
     def add_component(self, component: AbstractComponent) -> None:
         self.components[component.__class__] = component
 
+    def get_copy_of_components(self):
+        return self.components.copy()
+
     def remove_component(self, component_name: AbstractComponent.__class__) -> None:
         self.components.pop(component_name, None)
 
@@ -65,7 +68,8 @@ class AbstractEntity(EntityInterface):
         self.position += distance
 
     def clean_up(self):
-        for component in self.components.values():
+        list_of_components = self.get_copy_of_components().values()
+        for component in list_of_components:
             component.clean_up()
         World.get_world().remove_entity(self)
 

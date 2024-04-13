@@ -49,4 +49,3 @@ class DefaultBulletEntityComponentFactory(ComponentFactory):
 
     def create_components(self, owner: AbstractEntity) -> None:
         CollisionComponent(owner, owner.radius, owner.weight)
-        print(f"Created Collision component for bullet with id: {owner.id}")

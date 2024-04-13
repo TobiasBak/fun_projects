@@ -21,7 +21,8 @@ class World(object):
             self.entities.append(entity)
 
     def remove_entity(self, entity: EntityInterface) -> None:
-        self.entities.remove(entity)
+        if entity in self.entities:
+            self.entities.remove(entity)
 
     def get_collision_objects(self) -> list[CollisionObject]:
         collision_objects: list[CollisionObject] = []

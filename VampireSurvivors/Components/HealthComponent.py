@@ -18,3 +18,6 @@ class HealthComponent(AbstractComponent):
     def handle_attack_event(self, event: AttackEvent) -> None:
         if event.target == self.owner:
             self.health -= event.damage
+
+        if self.health <= 0:
+            self.owner.clean_up()
