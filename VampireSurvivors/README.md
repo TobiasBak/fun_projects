@@ -5,7 +5,7 @@
 2. ~~Extract method for two entities colliding~~
 3. ~~Add Collision Detection (Move towards -angle for both entities if collision)~~ 
 4. ~~Weapon System~~
-5. Sword Weapon
+5. ~~Sword Weapon~~
 6. Pistol Weapon
 7. ~~Show Health Bar~~
 8. EXP system - Level up (RPG & EXP COMPONENTS)
