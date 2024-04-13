@@ -14,6 +14,9 @@ class EntityInterface:
     def render(self, screen) -> None:
         pass
 
+    def clean_up(self) -> None:
+        pass
+
     def get_component(self, component_name: ComponentInterface.__class__):
         pass
 
@@ -42,6 +45,9 @@ class EntityInterface:
         pass
 
     def move(self, distance: Vector2):
+        pass
+
+    def _create_and_add_to_world(self):
         pass
 
     def __str__(self):

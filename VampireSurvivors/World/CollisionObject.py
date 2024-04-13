@@ -1,16 +1,18 @@
 from typing import Self, Callable
 
+from pygame import Vector2
+
 
 class CollisionObject:
     """ All entities and components can create CollisionObjects to check for collisions."""
 
-    def __init__(self, owner_id, pos, pos_offset, radius, weight=1, collision_handler: Callable = None):
-        self.owner_id = owner_id
-        self.pos = pos
-        self.pos_offset = pos_offset
-        self.radius = radius
-        self.weight = weight
-        self.collision_handler = collision_handler
+    def __init__(self, owner_id: int, pos: Vector2, pos_offset: Vector2, radius: float, weight: float = 1):
+        self.owner_id: int = owner_id
+        self.pos: Vector2 = pos
+        self.pos_offset: Vector2 = pos_offset
+        self.radius: float = radius
+        self.weight: float = weight
+        print(f"CollisionObject: {self.owner_id} created at {self.pos} and offset {self.pos_offset}")
 
     def set_pos(self, pos):
         self.pos = pos
@@ -27,9 +29,6 @@ class CollisionObject:
         if self.pos.distance_to(other.pos) < self.radius + other.radius:
             return True
         return False
-
-    def handle_collision(self, other):
-        self.collision_handler(self, other)
 
     def get_colliding_distance(self, other_pos, combined_radius):
         return self.pos.distance_to(other_pos) - combined_radius

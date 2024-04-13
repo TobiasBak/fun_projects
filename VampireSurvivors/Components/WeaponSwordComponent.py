@@ -1,12 +1,13 @@
 from pygame import Surface, SurfaceType
 
 from Components.AbstractWeaponComponent import AbstractWeaponComponent
-from Components.CollisionComponent import CollisionComponent
+from Events.Events import BulletEvent
+from Utils.BulletUtils import BulletConfigSword
 
 
 class SwordWeaponComponent(AbstractWeaponComponent):
-    def __init__(self, owner, damage: float):
-        super().__init__(owner, damage)
+    def __init__(self, owner, damage: float, attack_cooldown: float):
+        super().__init__(owner, damage, attack_cooldown)
 
     def get_damage(self) -> float:
         return self.damage
@@ -14,11 +15,9 @@ class SwordWeaponComponent(AbstractWeaponComponent):
     def set_damage(self, damage: float) -> None:
         self.damage = damage
 
-    def update_logic(self, dt: float) -> bool:
-        return False
-
-    def create_sword_collision_components(self):
-        CollisionComponent(self, self.get_position(), self.get_radius(), self.weight)
+    def update_logic_to_run_after_cooldown(self, dt: float) -> bool:
+        self.event_manager.dispatch_event(BulletEvent(self, BulletConfigSword()))
+        return True
 
     def render(self, screen: Surface | SurfaceType):
         pass

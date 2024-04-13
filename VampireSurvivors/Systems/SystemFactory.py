@@ -1,3 +1,4 @@
+from Systems.BulletCreationSystem import BulletCreationSystem
 from Systems.CollisionDetectionSystem import CollisionDetectionSystem
 from Systems.CollisionHandlerSystem import CollisionHandlerSystem
 from Systems.InitialSystems import SpawningSystem
@@ -28,3 +29,4 @@ class InitialSystems(SystemFactory):
         self.systems.append(SpawningSystem())
         self.systems.append(CollisionDetectionSystem())
         self.systems.append(CollisionHandlerSystem())
+        self.systems.append(BulletCreationSystem())

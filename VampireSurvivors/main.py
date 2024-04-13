@@ -27,6 +27,7 @@ def main():
     player: AbstractEntity = DefaultPlayerFactory().create_entity()
     world.add_player(player)
 
+
     dt = 0
 
     print_count = 0

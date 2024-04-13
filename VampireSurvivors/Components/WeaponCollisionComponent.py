@@ -1,13 +1,13 @@
 from Components.AbstractWeaponComponent import AbstractWeaponComponent
-from Entity.AbstractEntity import AbstractEntity
+from Entity.EntityInterface import EntityInterface
 from Utils.CollisionUtils import entities_collide
 from World.World import World
 from Events.Events import AttackEvent
 
 
 class CollisionWeaponComponent(AbstractWeaponComponent):
-    def __init__(self, owner, damage: float):
-        super().__init__(owner, damage)
+    def __init__(self, owner, damage: float, attack_cooldown: float = 0.5):
+        super().__init__(owner, damage, attack_cooldown)
 
     def get_damage(self) -> float:
         return self.damage
@@ -15,11 +15,11 @@ class CollisionWeaponComponent(AbstractWeaponComponent):
     def set_damage(self, damage: float) -> None:
         self.damage = damage
 
-    def update_logic(self, dt: float):
+    def update_logic_to_run_after_cooldown(self, dt: float):
         world: World = World.get_world()
-        player: AbstractEntity = world.get_player()
+        player: EntityInterface = world.get_player()
         if entities_collide(self.owner, player):
-            self.event_manager.dispatch_event(AttackEvent(self.owner, player, self.damage))
+            self.event_manager.dispatch_event(AttackEvent(player, self.damage))
             return True
 
         return False

@@ -1,4 +1,6 @@
+from Components.ComponentInterface import ComponentInterface
 from Entity.EntityInterface import EntityInterface
+from Utils.BulletUtils import DefaultBulletConfig
 from World.CollisionObject import CollisionPair
 
 
@@ -12,7 +14,13 @@ class CollisionEvent(Event):
 
 
 class AttackEvent(Event):
-    def __init__(self, source: EntityInterface, target: EntityInterface, damage: float):
-        self.source = source
+    def __init__(self, target: EntityInterface, damage: float):
         self.target = target
         self.damage = damage
+
+
+class BulletEvent(Event):
+    def __init__(self, source: ComponentInterface, bullet_config: DefaultBulletConfig):
+        print("BulletEvent")
+        self.source = source
+        self.bullet_config = bullet_config

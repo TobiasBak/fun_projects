@@ -2,6 +2,7 @@ from pygame import Vector2
 
 from Components.AbstractComponent import AbstractComponent
 from Entity.EntityInterface import EntityInterface
+from World.World import World
 
 
 class AbstractEntity(EntityInterface):
@@ -63,8 +64,13 @@ class AbstractEntity(EntityInterface):
     def move(self, distance: Vector2):
         self.position += distance
 
+    def clean_up(self):
+        for component in self.components.values():
+            component.clean_up()
+        World.get_world().remove_entity(self)
+
     def __str__(self):
-        return f"Entity with id {self.id} at {self.position}"
+        return f"Entity with id {self.id} at {self.position} | type {type(self).__name__}"
 
     def __repr__(self):
         return self.__str__()

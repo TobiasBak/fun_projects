@@ -2,7 +2,7 @@ from typing import Self
 
 from pygame import Surface, SurfaceType
 
-from Entity.AbstractEntity import AbstractEntity
+from Entity.EntityInterface import EntityInterface
 from Systems.SystemInterface import SystemInterface
 from World.CollisionObject import CollisionObject
 
@@ -11,16 +11,16 @@ class World(object):
     _instance: Self | None = None
 
     def __init__(self):
-        self.entities: list[AbstractEntity] = []
+        self.entities: list[EntityInterface] = []
         self.collision_objects: dict[int, set[CollisionObject]] = {}
         self.systems: list[SystemInterface] = []
         self.player = None
 
-    def add_entity(self, entity: AbstractEntity) -> None:
+    def add_entity(self, entity: EntityInterface) -> None:
         if entity is not None:
             self.entities.append(entity)
 
-    def remove_entity(self, entity: AbstractEntity) -> None:
+    def remove_entity(self, entity: EntityInterface) -> None:
         self.entities.remove(entity)
 
     def get_collision_objects(self) -> list[CollisionObject]:
@@ -38,14 +38,14 @@ class World(object):
 
         self.collision_objects[collision_object.owner_id].add(collision_object)
 
-    def remove_collision_object(self, collision_object: CollisionObject) -> None:
-        self.collision_objects[collision_object.owner_id].remove(collision_object)
+    def remove_all_collision_objects_for_entity(self, id: int) -> None:
+        self.collision_objects.pop(id)
 
-    def add_player(self, player: AbstractEntity) -> None:
+    def add_player(self, player: EntityInterface) -> None:
         self.player = player
         self.entities.append(player)
 
-    def get_player(self) -> AbstractEntity | None:
+    def get_player(self) -> EntityInterface | None:
         return self.player
 
     def add_system(self, system) -> None:

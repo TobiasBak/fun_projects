@@ -18,9 +18,15 @@ class AbstractComponent(ComponentInterface):
     def render(self, screen: Surface | SurfaceType):
         pass
 
-    def remove(self):
+    def clean_up(self):
         if self.owner is not None:
             self.owner.remove_component(self.__class__)
+
+    def get_owner_id(self) -> id:
+        return self.owner.id
+
+    def get_pos(self):
+        return self.owner.get_position()
 
     def __str__(self):
         return self.__class__.__name__
