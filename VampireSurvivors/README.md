@@ -26,3 +26,4 @@
 ## Possible modifications
 1. Optimized Collision Detection (preferably something not done before)
 2. How to actually do events in a game
+3. Move handler in components to a system
