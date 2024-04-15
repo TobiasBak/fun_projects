@@ -6,15 +6,18 @@
 3. ~~Add Collision Detection (Move towards -angle for both entities if collision)~~ 
 4. ~~Weapon System~~
 5. ~~Sword Weapon~~
-6. Pistol Weapon
-7. ~~Show Health Bar~~
-8. EXP system - Level up (RPG & EXP COMPONENTS)
-9. Load pictures for entities
-10. Cooldown for enemy attacks
-11. ~~Components structure for reuse of code~~
-12. Fps options
-13. Fix amount of parameters on classes
-14. Component for images that take radius
+6. Ensure that when fetching lists or modifying them that we only modify and return copies. 
+7. Pistol Weapon
+8. ~~Show Health Bar~~
+9. EXP system - Level up (RPG & EXP COMPONENTS)
+10. Load pictures for entities
+11. Cooldown for enemy attacks
+12. ~~Components structure for reuse of code~~
+13. Fps options
+14. Fix amount of parameters on classes
+15. Component for images that take radius
+16. Move diagioally is not 2x speed/1.5x
+17. Correctly cleanup entities 
 
 
 
