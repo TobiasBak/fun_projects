@@ -7,9 +7,9 @@ FPS_LIMIT = 0
 ENEMIES_TO_SPAWN = 200
 
 
-FORWARD_KEYS = [pygame.K_w]
-BACKWARDS_KEYS = [pygame.K_s]
-LEFT_KEYS = [pygame.K_a]
-RIGHT_KEYS = [pygame.K_d]
+FORWARD_KEYS = [pygame.K_w, pygame.K_UP]
+BACKWARDS_KEYS = [pygame.K_s, pygame.K_DOWN]
+LEFT_KEYS = [pygame.K_a, pygame.K_LEFT]
+RIGHT_KEYS = [pygame.K_d, pygame.K_RIGHT]
 
 RENDER_HITBOXES = True
