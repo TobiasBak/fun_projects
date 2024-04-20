@@ -1,3 +1,5 @@
+from pygame import key
+
 import settings
 from Components.ComponentInterface import ComponentInterface
 from Components.PosComponent import PosComponent
@@ -14,12 +16,18 @@ class WASDComponent(ComponentInterface):
         self._move_pos(dt)
 
     def _move_pos(self, dt: float) -> None:
-        keys = pygame.key.get_pressed() #Todo: This might not work
-        if settings.FORWARD_KEYS in keys:
-            self._pos_component.y -= self._move_speed * dt
-        if settings.BACKWARDS_KEYS in keys:
-            self._pos_component.y += self._move_speed * dt
-        if settings.LEFT_KEYS in keys:
-            self._pos_component.x -= self._move_speed * dt
-        if settings.RIGHT_KEYS in keys:
-            self._pos_component.x += self._move_speed * dt
+        keys_pressed = key.get_pressed()  # Todo: This might not work
+        if self._one_of_keys_pressed(settings.FORWARD_KEYS, keys_pressed):
+            self._pos_component.get_pos().y -= self._move_speed * dt
+        if self._one_of_keys_pressed(settings.BACKWARDS_KEYS, keys_pressed):
+            self._pos_component.get_pos().y += self._move_speed * dt
+        if self._one_of_keys_pressed(settings.LEFT_KEYS, keys_pressed):
+            self._pos_component.get_pos().x -= self._move_speed * dt
+        if self._one_of_keys_pressed(settings.RIGHT_KEYS, keys_pressed):
+            self._pos_component.get_pos().x += self._move_speed * dt
+
+    def _one_of_keys_pressed(self, keys: list[int], keys_pressed) -> bool:
+        for _key in keys:
+            if keys_pressed[_key]:
+                return True
+        return False

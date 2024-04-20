@@ -1,3 +1,6 @@
+from pygame import draw
+
+import Screen
 import settings
 from Components.ComponentInterface import ComponentInterface
 from Components.ComponentUtils import GeometryType, RGBColor
@@ -16,6 +19,6 @@ class GeometrySpriteComponent(ComponentInterface):
 
         match self._geometry_type:
             case GeometryType.Circle:
-                pygame.draw.circle(screen, self._color, self._pos_component.get_pos(), self._pos_component.get_size())
+                draw.circle(Screen.get_screen(), self._color.value, self._pos_component.get_pos(), self._pos_component.get_size())
             case _:
                 return

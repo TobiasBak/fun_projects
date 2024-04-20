@@ -26,7 +26,8 @@ class InitialSystems(SystemFactory):
         super().__init__()
 
     def _populate_systems(self) -> None:
-        self.systems.append(SpawningSystem())
-        self.systems.append(CollisionDetectionSystem())
-        self.systems.append(CollisionHandlerSystem())
-        self.systems.append(BulletCreationSystem())
+        pass
+        # self.systems.append(SpawningSystem())
+        # self.systems.append(CollisionDetectionSystem())
+        # self.systems.append(CollisionHandlerSystem())
+        # self.systems.append(BulletCreationSystem())

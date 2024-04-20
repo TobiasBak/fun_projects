@@ -37,7 +37,7 @@ class HealthBarComponent(ComponentInterface):
 
     def _render_health_bar(self):
         if self._should_update_health_img() or self._font_component is None:
-            self._font_component = FontComponent(f"{self._health_component.get_health()}", True, self._text_color,
+            self._font_component = FontComponent(f"{self._health_component.get_health()}", self._text_color,
                                                  self._text_background)
 
         entity_pos = self._pos_component.get_pos()

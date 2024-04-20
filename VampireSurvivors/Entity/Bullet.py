@@ -1,12 +1,11 @@
 import pygame
 from pygame import Vector2, Surface, transform
 
-from Entity.AbstractEntity import AbstractEntity
 from Entity.EntityInterface import EntityInterface
 from World.World import World
 
 
-class Bullet(AbstractEntity):
+class Bullet(EntityInterface):
     def __init__(self, color: str, pos: Vector2, damage: float, speed: float, radius: float, lifetime: float):
         super().__init__(color, pos, radius, speed)
         self.damage = damage

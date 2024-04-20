@@ -1,17 +1,8 @@
-from pygame import Vector2
-
 from Components.ComponentInterface import ComponentInterface
-from Utils.RandomUtils import get_new_id
 
 
 class EntityInterface:
-    def __init__(self):
-        self.id: int = get_new_id()
-
     def update(self, dt: float) -> None:
-        pass
-
-    def render(self, screen) -> None:
         pass
 
     def clean_up(self) -> None:
@@ -23,35 +14,23 @@ class EntityInterface:
     def add_component(self, component: ComponentInterface) -> None:
         pass
 
+    def add_list_of_components(self, components: list[ComponentInterface]) -> None:
+        pass
+
     def remove_component(self, component_name: ComponentInterface.__class__) -> None:
         pass
 
-    def get_position(self) -> Vector2:
+    def get_id(self):
         pass
 
-    def set_position(self, position: Vector2) -> None:
-        pass
-
-    def get_radius(self) -> float:
-        pass
-
-    def set_radius(self, size: float) -> None:
-        pass
-
-    def get_speed(self) -> float:
-        pass
-
-    def set_speed(self, speed: float) -> None:
-        pass
-
-    def move(self, distance: Vector2):
+    def set_id(self, new_id: int):
         pass
 
     def _create_and_add_to_world(self):
         pass
 
     def __str__(self):
-        pass
+        return f"{self.__class__.__name__}"
 
     def __repr__(self):
-        pass
+        return self.__str__()

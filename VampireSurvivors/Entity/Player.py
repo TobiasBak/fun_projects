@@ -1,14 +1,13 @@
 import pygame
 from pygame import Vector2
 
-from Entity.AbstractEntity import AbstractEntity
-from World.World import World
+from Entity.EntityInterface import EntityInterface
 from settings import GAME_HEIGHT, GAME_WIDTH
 
 
-class Player(AbstractEntity):
-    def __init__(self, color: str, pos: Vector2, radius: float, speed: float, weight: float = 2.0):
-        super().__init__(color, pos, radius, speed, weight)
+class Player(EntityInterface):
+    def __init__(self, radius: float, speed: float, weight: float = 2.0):
+        super().__init__()
         self.gold: int = 0
         self.attack_range: float = 400
         self.attack_damage: float = 10
@@ -33,25 +32,3 @@ class Player(AbstractEntity):
         if self.position.y > GAME_HEIGHT:
             self.position.y = 0
 
-    def _move_player(self, dt) -> None:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.position.y -= self.speed * dt
-        if keys[pygame.K_s]:
-            self.position.y += self.speed * dt
-        if keys[pygame.K_a]:
-            self.position.x -= self.speed * dt
-        if keys[pygame.K_d]:
-            self.position.x += self.speed * dt
-
-    def _attack_nearest_enemy(self, dt) -> None:
-        if self.cooldown_before_attack > 0:
-            self.cooldown_before_attack -= dt
-            return
-        world = World.get_world()
-        for entity in world.entities:
-            if entity == self:
-                continue
-            if self.position.distance_to(entity.get_position()) < self.attack_range:
-                entity._health -= self.attack_damage
-                return

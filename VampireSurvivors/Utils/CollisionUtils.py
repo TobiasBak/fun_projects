@@ -3,7 +3,6 @@ import math
 from pygame import Vector2
 
 from Components.CollisionComponent import CollisionComponent
-from Entity.AbstractEntity import AbstractEntity
 from Entity.EntityInterface import EntityInterface
 from World.CollisionObject import CollisionPair, CollisionObject
 from World.World import World
@@ -12,7 +11,7 @@ from World.World import World
 def get_collision_component(collision_object: CollisionObject) -> CollisionComponent:
     world = World.get_world()
     for entity in world.entities:
-        if entity.id == collision_object.owner_id:
+        if entity._id == collision_object.owner_id:
             return entity.get_component(CollisionComponent)
     return None
 

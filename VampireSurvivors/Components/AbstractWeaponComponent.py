@@ -1,7 +1,7 @@
-from Components.AbstractComponent import AbstractComponent
+from Components.ComponentInterface import ComponentInterface
 
 
-class AbstractWeaponComponent(AbstractComponent):
+class AbstractWeaponComponent(ComponentInterface):
     def __init__(self, owner, damage: float, attack_cooldown: float = 0.5):
         super().__init__(owner)
         self.damage = damage

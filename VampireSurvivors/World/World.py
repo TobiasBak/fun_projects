@@ -1,6 +1,6 @@
 from typing import Self
 
-from pygame import Surface, SurfaceType
+from pygame import SurfaceType, Surface
 
 from Entity.EntityInterface import EntityInterface
 from Systems.SystemInterface import SystemInterface
@@ -63,10 +63,6 @@ class World(object):
     def update(self, dt: float) -> None:
         self.update_entities(dt)
         self.update_systems(dt)
-
-    def render(self, screen: Surface | SurfaceType) -> None:
-        for entity in self.entities:
-            entity.render(screen)
 
     def __str__(self):
         return (f"---------- : World : ----------\n"
