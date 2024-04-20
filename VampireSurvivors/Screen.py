@@ -1,6 +1,6 @@
 import pygame
 
-from consts import GAME_WIDTH, GAME_HEIGHT
+from settings import GAME_WIDTH, GAME_HEIGHT
 
 _screen = None
 

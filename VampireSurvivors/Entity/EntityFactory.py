@@ -10,7 +10,7 @@ from Entity.EnemyTypes import DefaultEnemyType
 from Entity.AbstractEntity import AbstractEntity
 from Entity.Player import Player
 from Utils.BulletUtils import DefaultBulletConfig
-from consts import GAME_WIDTH, GAME_HEIGHT
+from settings import GAME_WIDTH, GAME_HEIGHT
 
 
 class EntityFactory:

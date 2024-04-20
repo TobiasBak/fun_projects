@@ -4,8 +4,8 @@ from Entity.EntityFactory import DefaultPlayerFactory
 from Entity.AbstractEntity import AbstractEntity
 from Systems.SystemFactory import InitialSystems
 from World.World import World
-from consts import FPS_LIMIT
-from screen import get_screen
+from settings import FPS_LIMIT
+from Screen import get_screen
 
 # pygame setup
 pygame.init()

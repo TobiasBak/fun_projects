@@ -5,7 +5,7 @@ from pygame import Vector2
 from Entity.EntityFactory import DefaultEnemyFactory
 from Systems.SystemInterface import SystemInterface
 from World.World import World
-from consts import GAME_WIDTH, GAME_HEIGHT, ENEMIES_TO_SPAWN
+from settings import GAME_WIDTH, GAME_HEIGHT, ENEMIES_TO_SPAWN
 
 world = World.get_world()
 

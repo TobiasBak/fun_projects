@@ -13,7 +13,6 @@ EntityType: Enum[EntityType]
 Components: list[Components]
 +update(dt: float)
 +clean_up()
-
 ```
 
 ## Entity types
@@ -26,7 +25,6 @@ CircleEnemy
 ```
 
 ## Components
-
 All of the entities logic will be in components. This should make it such that we can swap out the logic we need.
 Some components needs sub-components aswell. An example is HealthBarComponent need spritecomponent and positioncomponent
 ComponentInterface

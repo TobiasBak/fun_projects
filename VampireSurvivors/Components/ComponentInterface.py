@@ -1,18 +1,17 @@
-from pygame import Vector2
-
 
 class ComponentInterface:
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         pass
 
-    def render(self, screen):
+    def get_owner_id(self) -> int:
         pass
 
-    def clean_up(self):
+    def set_owner_id(self, owner_id: int) -> None:
         pass
 
-    def get_owner_id(self) -> id:
-        pass
+    def __str__(self):
+        return f"{self.__class__.__name__}"
 
-    def get_pos(self) -> Vector2:
-        pass
+    def __repr__(self):
+        return self.__str__()
+

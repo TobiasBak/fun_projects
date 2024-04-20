@@ -17,12 +17,15 @@
 14. Fix amount of parameters on classes
 15. Component for images that take radius
 16. Move diagioally is not 2x speed/1.5x
-17. Correctly cleanup entities 
+17. Correctly cleanup entities
+18. Make keyinputs arrays, so multiple keys can do same input
+19. Collision handler should ensure entities and collision objects are cleaned
 
 
 
 ## Refactors
 1. CollisionObjects have component_id instead of owner_id and a description that says CollisionObjects only get created by collision components.
+2. Components have method called get_owner_id(), which will be used for optimizing events, such that events have EventType, EntityId, callable
 
 
 

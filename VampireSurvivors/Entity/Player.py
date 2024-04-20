@@ -3,7 +3,7 @@ from pygame import Vector2
 
 from Entity.AbstractEntity import AbstractEntity
 from World.World import World
-from consts import GAME_HEIGHT, GAME_WIDTH
+from settings import GAME_HEIGHT, GAME_WIDTH
 
 
 class Player(AbstractEntity):
@@ -53,5 +53,5 @@ class Player(AbstractEntity):
             if entity == self:
                 continue
             if self.position.distance_to(entity.get_position()) < self.attack_range:
-                entity.health -= self.attack_damage
+                entity._health -= self.attack_damage
                 return
