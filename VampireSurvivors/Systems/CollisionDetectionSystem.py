@@ -1,7 +1,7 @@
 from Events.EventManager import EventManager
 from Events.Events import CollisionEvent, FindCollisionEvent
 from Systems.SystemInterface import SystemInterface
-from World.CollisionObject import CollisionPair
+from World.CollisionObject import CollisionPair, CollisionObject
 from World.World import World
 
 
@@ -13,6 +13,7 @@ class CollisionDetectionSystem(SystemInterface):
         EventManager.get_instance().dispatch_event(FindCollisionEvent(World.get_world().get_collision_objects()))
 
     def _find_collisions(self, event: FindCollisionEvent):
+
         collisions: set[CollisionPair] = set()
         collision_objects = event.collision_objects
 
@@ -24,3 +25,5 @@ class CollisionDetectionSystem(SystemInterface):
         if collisions:
             print(f"Collisions: {collisions}")
             EventManager.get_instance().dispatch_event(CollisionEvent(collisions))
+
+

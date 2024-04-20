@@ -20,7 +20,7 @@
 17. ~~Correctly cleanup entities~~
 18. ~~Make keyinputs arrays, so multiple keys can do same input~~
 19. Run collision detection after collision handler to ensure that entities are not stuck
-20. If we can create a system for sorting collision objects based on who their nearest neighbor is. 
+20. If we can create a system for sorting collision objects based on who their nearest neighbor is.
 
 
 ## Refactors
@@ -30,6 +30,6 @@
 
 
 ## Possible modifications
-1. Optimized Collision Detection (preferably something not done before)
+1. Optimized Collision Detection (preferably something not done before) QuadTree for collision detection. 
 2. How to actually do events in a game
 3. Move handler in components to a system
