@@ -13,6 +13,7 @@ class GameConfig:
         self.PLAYER_START_HEALTH = 100
         self.PLAYER_SPEED = 200
         self.PLAYER_SIZE = 30
+        self.PLAYER_WEIGHT = 1
 
 
     @classmethod

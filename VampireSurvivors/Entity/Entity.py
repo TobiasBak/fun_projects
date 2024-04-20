@@ -1,13 +1,14 @@
 from Components.ComponentInterface import ComponentInterface
-from Entity.EntityInterface import EntityInterface
+from Entity.EntityInterface import EntityInterface, EntityType
 from Utils.RandomUtils import get_new_id
 from World.World import World
 
 
 class Entity(EntityInterface):
-    def __init__(self):
+    def __init__(self, entity_type: EntityType):
         self._id: int = get_new_id()
         self._components: dict[ComponentInterface.__class__, ComponentInterface] = {}
+        self._entity_type: EntityType = entity_type
 
     def update(self, dt: float) -> None:
         for component in self._components.values():
@@ -35,4 +36,10 @@ class Entity(EntityInterface):
 
     def set_id(self, new_id: int):
         self._id = new_id
+
+    def get_type(self) -> EntityType:
+        return self._entity_type
+
+    def set_type(self, new_type: EntityType):
+        self._entity_type = new_type
 

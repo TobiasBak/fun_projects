@@ -11,18 +11,22 @@ class World(object):
     _instance: Self | None = None
 
     def __init__(self):
-        self.entities: list[EntityInterface] = []
+        self.entities: dict[int, EntityInterface] = {}
         self.collision_objects: dict[int, set[CollisionObject]] = {}
         self.systems: list[SystemInterface] = []
-        self.player = None
+        self.player: EntityInterface | None = None
 
     def add_entity(self, entity: EntityInterface) -> None:
         if entity is not None:
-            self.entities.append(entity)
+            self.entities[entity.get_id()] = entity
 
     def remove_entity(self, entity: EntityInterface) -> None:
-        if entity in self.entities:
-            self.entities.remove(entity)
+        self.entities.pop(entity.get_id())
+        # if entity in self.entities:
+        #     pass
+
+    def get_entity_by_id(self, id: int) -> EntityInterface | None:
+        return self.entities.get(id)
 
     def get_collision_objects(self) -> list[CollisionObject]:
         collision_objects: list[CollisionObject] = []
@@ -44,7 +48,7 @@ class World(object):
 
     def add_player(self, player: EntityInterface) -> None:
         self.player = player
-        self.entities.append(player)
+        self.entities[player.get_id()] = player
 
     def get_player(self) -> EntityInterface | None:
         return self.player
@@ -53,7 +57,7 @@ class World(object):
         self.systems.append(system)
 
     def update_entities(self, dt: float) -> None:
-        for entity in self.entities:
+        for entity in self.entities.values():
             entity.update(dt)
 
     def update_systems(self, dt: float) -> None:
@@ -67,8 +71,8 @@ class World(object):
     def __str__(self):
         return (f"---------- : World : ----------\n"
                 f"Player: {str(self.player)}\n"
-                f"Entities: {str(self.entities)}\n"
-                f"Collision Objects: {str(self.collision_objects)}\n"
+                f"Entities in world: {len(self.entities.values())}\n"
+                f"Collision Objects: {len(self.entities.values())}\n"
                 f"Systems: {str(self.systems)}\n"
                 f"-------------------------------")
 

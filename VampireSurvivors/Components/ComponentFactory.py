@@ -1,5 +1,6 @@
 from pygame import Vector2
 
+from Components.CollisionComponent import CollisionComponent
 from Components.ComponentInterface import ComponentInterface
 from Components.ComponentUtils import RGBColor, GeometryType
 from Components.GeometrySpriteComponent import GeometrySpriteComponent
@@ -15,12 +16,12 @@ from World.World import World
 
 
 class ComponentFactory:
-    def create_components(self) -> list[ComponentInterface]:
+    def create_components(self, owner_id: int, pos: Vector2) -> list[ComponentInterface]:
         pass
 
 
 class PlayerComponentFactory(ComponentFactory):
-    def create_components(self) -> list[ComponentInterface]:
+    def create_components(self, owner_id: int, pos: Vector2) -> list[ComponentInterface]:
         game_config = GameConfig.get_gameconfig()
         pos_component = PosComponent(game_config.PLAYER_START_POS, game_config.PLAYER_SIZE)
         health_component = HealthComponent(game_config.PLAYER_START_HEALTH)
@@ -29,17 +30,17 @@ class PlayerComponentFactory(ComponentFactory):
             WASDComponent(pos_component, game_config.PLAYER_SPEED),
             GeometrySpriteComponent(GeometryType.Circle, pos_component, RGBColor.BLACK),
             health_component,
-            HealthBarComponent(health_component, pos_component)
+            HealthBarComponent(health_component, pos_component),
+            CollisionComponent(owner_id, pos_component, game_config.PLAYER_WEIGHT),
         ]
 
 
 class EnemyComponentFactory(ComponentFactory):
-    def __init__(self, enemy_type: EnemyType, pos: Vector2):
+    def __init__(self, enemy_type: EnemyType):
         self.enemy_type = enemy_type
-        self.pos = pos
 
-    def create_components(self) -> list[ComponentInterface]:
-        pos_component = PosComponent(self.pos, self.enemy_type.radius)
+    def create_components(self, owner_id: int, pos: Vector2) -> list[ComponentInterface]:
+        pos_component = PosComponent(pos, self.enemy_type.radius)
         health_component = HealthComponent(self.enemy_type.health)
         player_pos_component = World.get_world().get_player().get_component(PosComponent)
         return [
@@ -47,7 +48,8 @@ class EnemyComponentFactory(ComponentFactory):
             health_component,
             MoveToTargetComponent(pos_component, player_pos_component, self.enemy_type.speed),
             GeometrySpriteComponent(GeometryType.Circle, pos_component, RGBColor.RED),
-            HealthBarComponent(health_component, pos_component)
+            HealthBarComponent(health_component, pos_component),
+            CollisionComponent(owner_id, pos_component, self.enemy_type.weight),
         ]
 
 

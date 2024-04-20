@@ -1,16 +1,21 @@
 from Components.ComponentInterface import ComponentInterface
 from Entity.EntityInterface import EntityInterface
 from Utils.BulletUtils import DefaultBulletConfig
-from World.CollisionObject import CollisionPair
+from World.CollisionObject import CollisionPair, CollisionObject
 
 
 class Event:
     pass
 
 
+class FindCollisionEvent(Event):
+    def __init__(self, collision_objects: list[CollisionObject]):
+        self.collision_objects = collision_objects
+
+
 class CollisionEvent(Event):
-    def __init__(self, collision_pair: CollisionPair):
-        self.collision_pair = collision_pair
+    def __init__(self, collision_pairs: set[CollisionPair]):
+        self.collision_pairs: set[CollisionPair] = collision_pairs
 
 
 class AttackEvent(Event):

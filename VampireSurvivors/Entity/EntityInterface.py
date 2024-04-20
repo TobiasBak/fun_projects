@@ -1,4 +1,12 @@
+from enum import Enum, auto
+
 from Components.ComponentInterface import ComponentInterface
+
+
+class EntityType(Enum):
+    PLAYER = auto()
+    ENEMY = auto()
+    BULLET = auto()
 
 
 class EntityInterface:
@@ -24,6 +32,12 @@ class EntityInterface:
         pass
 
     def set_id(self, new_id: int):
+        pass
+
+    def get_type(self) -> EntityType:
+        pass
+
+    def set_type(self, new_type: EntityType):
         pass
 
     def _create_and_add_to_world(self):

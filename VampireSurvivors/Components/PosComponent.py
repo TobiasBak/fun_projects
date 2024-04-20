@@ -14,6 +14,9 @@ class PosComponent(ComponentInterface):
     def update(self, dt):
         pass
 
+    def move(self, delta: Vector2) -> None:
+        self._pos += delta
+
     def move_towards_angle(self, angle: float, distance: float) -> None:
         self._pos.x += distance * math.cos(angle)
         self._pos.y += distance * math.sin(angle)

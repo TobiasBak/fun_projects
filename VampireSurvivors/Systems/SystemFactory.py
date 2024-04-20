@@ -28,6 +28,6 @@ class InitialSystems(SystemFactory):
     def _populate_systems(self) -> None:
         pass
         self.systems.append(SpawningSystem())
-        # self.systems.append(CollisionDetectionSystem())
-        # self.systems.append(CollisionHandlerSystem())
+        self.systems.append(CollisionDetectionSystem())
+        self.systems.append(CollisionHandlerSystem())
         # self.systems.append(BulletCreationSystem())

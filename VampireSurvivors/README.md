@@ -19,8 +19,8 @@
 16. ~~Move diagioally is not 2x speed/1.5x~~
 17. ~~Correctly cleanup entities~~
 18. ~~Make keyinputs arrays, so multiple keys can do same input~~
-19. Collision handler should ensure entities and collision objects are cleaned
-
+19. Run collision detection after collision handler to ensure that entities are not stuck
+20. If we can create a system for sorting collision objects based on who their nearest neighbor is. 
 
 
 ## Refactors

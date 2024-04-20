@@ -1,4 +1,3 @@
-
 from pygame import Vector2
 
 from Components.ComponentFactory import BulletEntityComponentFactory, EnemyComponentFactory, \
@@ -6,7 +5,7 @@ from Components.ComponentFactory import BulletEntityComponentFactory, EnemyCompo
 from Entity.Bullet import Bullet
 from Entity.EnemyTypes import EnemyType
 from Entity.Entity import Entity
-from Entity.EntityInterface import EntityInterface
+from Entity.EntityInterface import EntityInterface, EntityType
 from GameConfig import GameConfig
 from Utils.BulletUtils import DefaultBulletConfig
 from settings import GAME_WIDTH, GAME_HEIGHT
@@ -20,9 +19,9 @@ class EntityFactory:
 class PlayerFactory(EntityFactory):
     game_config = GameConfig.get_gameconfig()
 
-    def create_entity(self, pos: Vector2 = Vector2(GAME_WIDTH / 2, GAME_HEIGHT / 2)) -> EntityInterface:
-        player = Entity()
-        list_of_components = PlayerComponentFactory().create_components()
+    def create_entity(self, pos: Vector2 = game_config.PLAYER_START_POS) -> EntityInterface:
+        player = Entity(EntityType.PLAYER)
+        list_of_components = PlayerComponentFactory().create_components(player.get_id(), pos)
         player.add_list_of_components(list_of_components)
         return player
 
@@ -33,8 +32,8 @@ class EnemyFactory(EntityFactory):
         self.pos = pos
 
     def create_entity(self, pos: Vector2) -> EntityInterface:
-        enemy = Entity()
-        list_of_components = EnemyComponentFactory(self.enemy_config, pos).create_components()
+        enemy = Entity(EntityType.ENEMY)
+        list_of_components = EnemyComponentFactory(self.enemy_config).create_components(enemy.get_id(), pos)
         enemy.add_list_of_components(list_of_components)
         return enemy
 

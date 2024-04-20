@@ -10,7 +10,8 @@ from World.World import World
 class CollisionComponent(ComponentInterface):
     """ Weight: 1 is default"""
 
-    def __init__(self, owner_id: int, pos_component: PosComponent, weight, amount_of_collision_objects: int = 1, offset: list[Vector2] = [Vector2(0, 0)]):
+    def __init__(self, owner_id: int, pos_component: PosComponent, weight: float, amount_of_collision_objects: int = 1,
+                 offset: list[Vector2] = [Vector2(0, 0)]):
         # Properties
         self._owner_id: int = owner_id
         self._pos_component: PosComponent = pos_component
@@ -27,13 +28,11 @@ class CollisionComponent(ComponentInterface):
         for collision_object in self.collision_objects:
             collision_object.update(self._pos_component.get_pos())
 
-    def render(self, screen):
-        pass
-
     def _create_collision_objects(self):
         for i in range(self.amount_of_collision_objects):
             self.collision_objects.append(
-                CollisionObject(self._owner_id, self._pos_component.get_pos(), self.offset[i], self._pos_component.get_size(), self.weight))
+                CollisionObject(self._owner_id, self._pos_component.get_pos(), self.offset[i],
+                                self._pos_component.get_size(), self.weight))
 
     def _add_collision_objects_to_world(self):
         for collision_object in self.collision_objects:
