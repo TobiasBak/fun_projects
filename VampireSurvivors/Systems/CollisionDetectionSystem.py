@@ -1,5 +1,5 @@
 from Events.Events import CollisionEvent
-from Systems.InitialSystems import world
+from Systems.SpawningSystem import world
 from Systems.SystemInterface import SystemInterface
 from Utils.CollisionUtils import get_collisions
 from World.CollisionObject import CollisionPair

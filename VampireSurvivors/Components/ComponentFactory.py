@@ -1,17 +1,17 @@
 from pygame import Vector2
 
-from Components.CollisionComponent import CollisionComponent
 from Components.ComponentInterface import ComponentInterface
 from Components.ComponentUtils import RGBColor, GeometryType
 from Components.GeometrySpriteComponent import GeometrySpriteComponent
 from Components.HealthBarComponent import HealthBarComponent
 from Components.HealthComponent import HealthComponent
+from Components.MoveToTargetComponent import MoveToTargetComponent
 from Components.PosComponent import PosComponent
 from Components.WASDComponent import WASDComponent
-from Components.WeaponCollisionComponent import CollisionWeaponComponent
-from Components.WeaponSwordComponent import SwordWeaponComponent
+from Entity.EnemyTypes import EnemyType
 
 from GameConfig import GameConfig
+from World.World import World
 
 
 class ComponentFactory:
@@ -19,32 +19,39 @@ class ComponentFactory:
         pass
 
 
-class DefaultLivingEntityComponentFactory(ComponentFactory):
-    def __init__(self, health: float = 100):
-        self.health = health
-
-    def create_components(self) -> list[ComponentInterface]:
-        pass
-
-
-class DefaultPlayerComponentFactory(ComponentFactory):
+class PlayerComponentFactory(ComponentFactory):
     def create_components(self) -> list[ComponentInterface]:
         game_config = GameConfig.get_gameconfig()
         pos_component = PosComponent(game_config.PLAYER_START_POS, game_config.PLAYER_SIZE)
+        health_component = HealthComponent(game_config.PLAYER_START_HEALTH)
         return [
             pos_component,
             WASDComponent(pos_component, game_config.PLAYER_SPEED),
             GeometrySpriteComponent(GeometryType.Circle, pos_component, RGBColor.BLACK),
+            health_component,
+            HealthBarComponent(health_component, pos_component)
         ]
 
 
-class DefaultEnemyComponentFactory(DefaultLivingEntityComponentFactory):
-    # def __init__(self, health: float = 20, damage: float = 2):
-    #     super().__init__(health, damage)
-    pass
+class EnemyComponentFactory(ComponentFactory):
+    def __init__(self, enemy_type: EnemyType, pos: Vector2):
+        self.enemy_type = enemy_type
+        self.pos = pos
+
+    def create_components(self) -> list[ComponentInterface]:
+        pos_component = PosComponent(self.pos, self.enemy_type.radius)
+        health_component = HealthComponent(self.enemy_type.health)
+        player_pos_component = World.get_world().get_player().get_component(PosComponent)
+        return [
+            pos_component,
+            health_component,
+            MoveToTargetComponent(pos_component, player_pos_component, self.enemy_type.speed),
+            GeometrySpriteComponent(GeometryType.Circle, pos_component, RGBColor.RED),
+            HealthBarComponent(health_component, pos_component)
+        ]
 
 
-class DefaultBulletEntityComponentFactory(ComponentFactory):
+class BulletEntityComponentFactory(ComponentFactory):
     # def __init__(self):
     #     super().__init__()
     #

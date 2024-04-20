@@ -1,6 +1,6 @@
 import pygame
 
-from Entity.EntityFactory import DefaultPlayerFactory
+from Entity.EntityFactory import PlayerFactory
 from Systems.SystemFactory import InitialSystems
 from World.World import World
 from settings import FPS_LIMIT
@@ -22,7 +22,7 @@ def main():
     InitialSystems().create_and_add_systems()
 
     world: World = World.get_world()
-    player = DefaultPlayerFactory().create_entity()
+    player = PlayerFactory().create_entity()
     world.add_player(player)
 
     print_count = 0

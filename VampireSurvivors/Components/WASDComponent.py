@@ -46,10 +46,6 @@ class WASDComponent(ComponentInterface):
         LEFT = self.should_move_left()
         RIGHT = self.should_move_right()
 
-        amount_of_keys_pressed = sum([FORWARD, BACKWARDS, LEFT, RIGHT])
-        if amount_of_keys_pressed > 2 or amount_of_keys_pressed == 0:
-            return
-
         FORWARD_RIGHT = FORWARD and RIGHT
         if FORWARD_RIGHT:
             return 1.75 * math.pi

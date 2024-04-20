@@ -1,7 +1,7 @@
 from Systems.BulletCreationSystem import BulletCreationSystem
 from Systems.CollisionDetectionSystem import CollisionDetectionSystem
 from Systems.CollisionHandlerSystem import CollisionHandlerSystem
-from Systems.InitialSystems import SpawningSystem
+from Systems.SpawningSystem import SpawningSystem
 from Systems.SystemInterface import SystemInterface
 
 from World.World import World
@@ -27,7 +27,7 @@ class InitialSystems(SystemFactory):
 
     def _populate_systems(self) -> None:
         pass
-        # self.systems.append(SpawningSystem())
+        self.systems.append(SpawningSystem())
         # self.systems.append(CollisionDetectionSystem())
         # self.systems.append(CollisionHandlerSystem())
         # self.systems.append(BulletCreationSystem())
