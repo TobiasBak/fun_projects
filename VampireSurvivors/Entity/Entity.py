@@ -14,6 +14,7 @@ class Entity(EntityInterface):
             component.update(dt)
 
     def clean_up(self) -> None:
+        self._components.clear()
         World.get_world().remove_entity(self)
 
     def get_component(self, component_name: ComponentInterface.__class__):
