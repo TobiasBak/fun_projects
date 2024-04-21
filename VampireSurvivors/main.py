@@ -1,6 +1,6 @@
 import pygame
 
-from Entity.EntityFactory import PlayerFactory
+from Factories.EntityFactory import PlayerFactory
 from Systems.SystemFactory import InitialSystems
 from World.World import World
 from settings import FPS_LIMIT

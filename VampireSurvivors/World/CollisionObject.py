@@ -22,12 +22,12 @@ class CollisionObject:
     def draw(self, screen):
         pass
 
-    def collides_with(self, other):
+    def collides_with(self, other: Self):
         if self is None or other is None:
             return False
         if self.owner_id == other.owner_id:
             return False
-        if self.pos.distance_to(other.pos) < self.radius + other.radius:
+        if ((self.pos.x - other.pos.x) ** 2 + (self.pos.y - other.pos.y) ** 2) < (self.radius + other.radius) ** 2:
             return True
         return False
 

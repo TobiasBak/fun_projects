@@ -2,9 +2,9 @@ import pygame
 
 GAME_HEIGHT = 1080
 GAME_WIDTH = 1920
-FPS_LIMIT = 0
+FPS_LIMIT = 60
 
-ENEMIES_TO_SPAWN = 200
+ENEMIES_TO_SPAWN = 50
 
 
 FORWARD_KEYS = [pygame.K_w, pygame.K_UP]

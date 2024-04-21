@@ -3,7 +3,7 @@ import random
 from pygame import Vector2
 
 from Entity.EnemyTypes import DefaultEnemyType
-from Entity.EntityFactory import EnemyFactory
+from Factories.EntityFactory import EnemyFactory
 from Systems.SystemInterface import SystemInterface
 from World.World import World
 from settings import GAME_WIDTH, GAME_HEIGHT, ENEMIES_TO_SPAWN

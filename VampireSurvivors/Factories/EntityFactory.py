@@ -1,6 +1,6 @@
 from pygame import Vector2
 
-from Components.ComponentFactory import BulletEntityComponentFactory, EnemyComponentFactory, \
+from Factories.ComponentFactory import BulletEntityComponentFactory, EnemyComponentFactory, \
     PlayerComponentFactory
 from Entity.Bullet import Bullet
 from Entity.EnemyTypes import EnemyType
@@ -8,7 +8,6 @@ from Entity.Entity import Entity
 from Entity.EntityInterface import EntityInterface, EntityType
 from GameConfig import GameConfig
 from Utils.BulletUtils import DefaultBulletConfig
-from settings import GAME_WIDTH, GAME_HEIGHT
 
 
 class EntityFactory:

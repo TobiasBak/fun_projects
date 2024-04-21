@@ -1,4 +1,4 @@
-from Entity.EntityFactory import BulletFactory
+from Factories.EntityFactory import BulletFactory
 from Events.Events import BulletEvent
 from Systems.SystemInterface import SystemInterface
 

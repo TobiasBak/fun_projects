@@ -30,7 +30,7 @@ class PlayerComponentFactory(ComponentFactory):
             WASDComponent(pos_component, game_config.PLAYER_SPEED),
             GeometrySpriteComponent(GeometryType.Circle, pos_component, RGBColor.BLACK),
             health_component,
-            HealthBarComponent(health_component, pos_component),
+            # HealthBarComponent(health_component, pos_component),
             CollisionComponent(owner_id, pos_component, game_config.PLAYER_WEIGHT),
         ]
 
@@ -48,7 +48,7 @@ class EnemyComponentFactory(ComponentFactory):
             health_component,
             MoveToTargetComponent(pos_component, player_pos_component, self.enemy_type.speed),
             GeometrySpriteComponent(GeometryType.Circle, pos_component, RGBColor.RED),
-            HealthBarComponent(health_component, pos_component),
+            # HealthBarComponent(health_component, pos_component),
             CollisionComponent(owner_id, pos_component, self.enemy_type.weight),
         ]
 
