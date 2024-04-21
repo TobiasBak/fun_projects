@@ -11,7 +11,7 @@ class GameConfig:
         # Player settings
         self.PLAYER_START_POS = Vector2(GAME_WIDTH / 2, GAME_HEIGHT / 2)
         self.PLAYER_START_HEALTH = 100
-        self.PLAYER_SPEED = 200
+        self.PLAYER_SPEED = 800
         self.PLAYER_SIZE = 30
         self.PLAYER_WEIGHT = 100
 
