@@ -9,14 +9,12 @@ class Event:
 
 
 class FindCollisionEvent(Event):
-    def __init__(self, dt: float, collision_objects: list[CollisionObject]):
+    def __init__(self, dt: float):
         self.dt: float = dt
-        self.collision_objects = collision_objects
 
 
 class CollisionEvent(Event):
-    def __init__(self, dt:float, collision_pair: CollisionPair):
-        self.dt: float = dt
+    def __init__(self, collision_pair: CollisionPair):
         self.collision_pairs: CollisionPair = collision_pair
 
 
