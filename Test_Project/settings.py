@@ -1,0 +1,17 @@
+# settings.py
+
+# Player settings
+PLAYER_SPEED = 200
+PLAYER_SIZE = 30
+PLAYER_WEIGHT = 1
+
+# Enemy settings
+ENEMY_SPEED = 100
+ENEMY_SIZE = 30
+ENEMY_WEIGHT = 1
+ENEMY_AMOUNT = 100
+
+# Game settings
+FPS_LIMIT = 0
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
