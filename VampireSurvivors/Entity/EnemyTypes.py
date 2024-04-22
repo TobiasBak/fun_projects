@@ -12,7 +12,7 @@ class EnemyType:
 class DefaultEnemyType(EnemyType):
     radius: float = 30
     health: float = 20
-    speed: float = 400
+    speed: float = 100
     color: str = RGBColor.RED.value
     weight: float = 1
 

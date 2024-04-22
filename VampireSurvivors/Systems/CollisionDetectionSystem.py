@@ -1,7 +1,6 @@
 import settings
 from Events.EventManager import EventManager
 from Events.Events import FindCollisionEvent, CollisionEvent
-from GameConfig import GameConfig
 from Systems.CollisionGrid import CollisionCell, CollisionGrid
 from Systems.SystemInterface import SystemInterface
 from World.CollisionObject import CollisionPair, CollisionObject
