@@ -2,8 +2,7 @@ from fetchManhwa import download_images
 
 
 def main():
-    # Usage
-    download_images('https://toonily.com/webtoon/solo-leveling-005/chapter-0/')
+    download_images('https://toonily.com/webtoon/solo-leveling-005/chapter-1/')
 
 
 
