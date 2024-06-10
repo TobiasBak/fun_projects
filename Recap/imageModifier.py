@@ -23,7 +23,7 @@ def remove_redundant_image_parts(img_path) -> list[int]:
     # Convert the modified array back to an image
     new_img = Image.fromarray(img_np_array)
     # Save the modified image with a new filename
-    new_img.save(img_path.replace('.jpg', '_modified.jpg'))
+    new_img.save(img_path)
     return actual_indexes
 
 
@@ -88,16 +88,18 @@ def write_indexes_to_file(indexes, image_name):
     # Ensure a directory to save the images
     os.makedirs(dir_name, exist_ok=True)
 
-    with open(f'{dir_name}/{image_name}.txt', 'w') as file:
+    with open(f'{dir_name}/{image_name}.csv', 'w') as file:
         file.write(','.join(map(str, indexes)))
 
 
 def modify_image(image_path):
     actual_indexes = remove_redundant_image_parts(image_path)
+    image = Image.open(image_path)
+    end_index = image.height
+    actual_indexes.append(end_index)
+
     image_name = image_path.split('/')[-1].replace('.jpg', '')
     write_indexes_to_file(actual_indexes, image_name)
 
-# Usage
-modify_image('temp/images/image_0.jpg')
 
 
