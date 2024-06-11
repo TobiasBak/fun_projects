@@ -5,14 +5,12 @@
 
 
 ## Major steps
-1. Implement method for splitting the modified images into a max height of 1000 pixels.
-This implementation should use the split_indexes csv files for each image to determine where images can be split.
-This should also downscale images down to 1000 pixels if they cannot be split
-2. Use AI model for detecting the text in the images. (ScreenReader folder)
+1. Use AI model for detecting the text in the images. (ScreenReader folder)
 The text should be put into txt files, such that the text can be combined with pictures for the final video.
-3. AI VoiceOver for the text in the images
-4. Combine the images and the voiceover into a video. 
-5. Implement a method for combining the videos into a single video.
+2. AI VoiceOver for the text in the images
+3. Combine the images and the voiceover into a video. 
+4. Implement a method for combining the videos into a single video.
+5. Get AI to narrate what is on the picture / build a story
 
 ## Improvements
 1. Use a background for the video, such that adhd viewers stay
