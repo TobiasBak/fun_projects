@@ -18,6 +18,7 @@ def modify_all_images():
 
     images = os.listdir(IMAGES_DIR)
     print(f"Modifying {len(images)} images...")
+
     count = 0
     for image in images:
         _modify_image(f'{IMAGES_DIR}/{image}')
@@ -31,7 +32,6 @@ def modify_all_images():
 def modify_images_to_fit_screen():
     images = os.listdir(IMAGES_DIR)
     images.sort(key=lambda x: int(x.split('.')[1]))
-    print(images)
 
     split_indexes = _read_split_indexes()
     buffer = None  # Buffer will be at most 1 image, that is left over
@@ -41,12 +41,8 @@ def modify_images_to_fit_screen():
 
         count = 0
         for image_part in image_parts:
-            print(f"Processing {image} part {count}...")
-            print(f"Image part size: {image_part.size}")
-            print(f"Buffer size: {buffer.size if buffer is not None else None}")
             image_part_height = image_part.size[1]
             if image_part_height < IMAGE_MAX_HEIGHT / 2:
-                print(f"Image part {count} is too small, skipping...")
                 buffer = image_part
                 continue
 
