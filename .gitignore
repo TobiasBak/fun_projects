@@ -1,10 +1,11 @@
 .idea
 __pycache__
 */__pycache__/
+
+
+
 Recap/temp/
 Recap/out/
-Recap/settings.py
 Recap/chrome-win
 Recap/CLIP
-
-Recap/settings.py
+Recap/hidden/*
