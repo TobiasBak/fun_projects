@@ -19,6 +19,8 @@ The text should be put into txt files, such that the text can be combined with p
 This background could be a rainy forest etc.
 2. Somehow get ai to write a better script by rewritiing the text and getting information from the images.
 3. Some images are too large 1.8k+ pixels in height before they are resized. 
+Create a script that determines an optimal point somewhere in the middle, where the picture can be split.
+A determination could be the amount of white or black pixels in the image at that point in the middle
 
 ## Conquer the world
 1. Translate to different languages. (Indian, Spanish, Russian, Arabic, etc.)
