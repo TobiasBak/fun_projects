@@ -5,7 +5,7 @@ from fetchManhwa import download_images
 from imageModifier import modify_all_images, modify_images_to_fit_screen
 
 URL = 'https://toonily.com/webtoon/solo-leveling-005/'
-Chapters = [1, 1]
+Chapters = [1, 10]
 
 
 def _download_chapters():
