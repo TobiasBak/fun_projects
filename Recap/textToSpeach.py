@@ -8,9 +8,9 @@ import settings
 
 # Define constants for the script
 CHUNK_SIZE = 1024  # Size of chunks to read/write at a time
-XI_API_KEY = settings.ELEVEN_LABS_API_KEY  # Your API key for authentication
+XI_API_KEY = "to_be_filled"  # Your API key for authentication
 VOICE_ID = "29vD33N1CtxCmqQRPOHJ"  # ID of the voice model to use
-TEXT_TO_SPEAK = "Hello how are you?"  # Text you want to convert to speech
+TEXT_TO_SPEAK = "Sofie is a cunt, can you believe it?"  # Text you want to convert to speech
 OUTPUT_PATH = "out/audio/output.mp3"  # Path to save the output audio file
 
 os.makedirs('out/audio', exist_ok=True)
