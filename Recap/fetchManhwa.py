@@ -3,10 +3,12 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def download_images(url, img_tags='div.page-break.no-gaps img'):
+def download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
     """
     Download images from the specified URL and saves them locally in temp/images directory.
     """
+    print(f'Downloading images from chapter {chapter}...')
+
     # Create a session
     session = requests.Session()
 
@@ -36,7 +38,6 @@ def download_images(url, img_tags='div.page-break.no-gaps img'):
     for idx, img_url in enumerate(img_urls):
         img_response = session.get(img_url, headers=headers)
         img_response.raise_for_status()
-        img_path = os.path.join('temp', 'images', f'image_{idx}.jpg')
+        img_path = os.path.join('temp', 'images', f'{chapter}.{idx}.jpg')
         with open(img_path, 'wb') as file:
             file.write(img_response.content)
-        print(f'Downloaded {img_url} as {img_path}')
