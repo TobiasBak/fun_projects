@@ -5,11 +5,11 @@ from transformers import Blip2Processor, Blip2ForConditionalGeneration
 processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
 model = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b")
 
-img_url = 'https://storage.googleapis.com/sfr-vision-language-research/BLIP/demo.jpg'
-raw_image = Image.open(requests.get(img_url, stream=True).raw).convert('RGB')
+img_url = 'out/images/1.0.0.jpg'
+raw_image = Image.open(img_url)
 
-question = "how many dogs are in the picture?"
-inputs = processor(raw_image, question, return_tensors="pt")
+inputs = processor(images=raw_image, return_tensors="pt")
 
-out = model.generate(**inputs)
-print(processor.decode(out[0], skip_special_tokens=True).strip())
+generated_ids = model.generate(**inputs)
+generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+print(generated_text)
