@@ -22,3 +22,18 @@ A determination could be the amount of white or black pixels in the image at tha
 
 ## Conquer the world
 1. Translate to different languages. (Indian, Spanish, Russian, Arabic, etc.)
+
+
+
+
+
+
+possible image describers:
+1. https://github.com/GoogleCloudPlatform/generative-ai/blob/main/vision/getting-started/visual_captioning.ipynb
+2. https://huggingface.co/Salesforce/blip2-opt-2.7b (local model)
+
+
+
+
+pip install requests requests-toolbelt
+
