@@ -49,14 +49,14 @@ def threaded_upload_image(thread_name, image_path, url):
 
 def _get_image_absolute_paths():
     image_paths = []
-    for file in os.listdir("out/images"):
+    for file in os.listdir("../out/images"):
         if file.endswith(".jpg"):
-            abs_path = os.path.abspath(os.path.join("out/images", file))
+            abs_path = os.path.abspath(os.path.join("../out/images", file))
             image_paths.append(abs_path)
     return image_paths
 
 url = 'https://boredhumans.com/photo_story.php'  # Replace with the actual URL of the webpage
-image_path = "C:/0-uni/fun_projects/Recap/out/images/1.0.0.jpg"
+image_path = "/out/images/1.0.0.jpg"
 
 # upload_image_and_get_response(image_path, url)
 
