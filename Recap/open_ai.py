@@ -2,8 +2,9 @@ import os
 
 from openai import OpenAI
 
+from Recap import consts
 from consts import OUT_TEXT_DIR, OUT_IMAGE_DIR
-from utils import append_to_file
+from utils import append_to_file, get_all_images, get_dict_from_file
 
 prompt_beginning = """
 You are narrating over pictures in a picture book. Each picture will have specific elements provided: A: the filename, B: "Text on picture" (the text written on the picture), C: "Descriptive Text" (a description of what is happening in the picture). Your task is to generate two short, simple sentences per picture that are easy for children to understand.
@@ -82,29 +83,20 @@ def openai_generate_text(name: str, prompt_overall_story: str = None):
     for x in replies:
         if x != '':
             print(x)
-            append_to_file(f'{OUT_TEXT_DIR}/eng.{name}_openai_generated.csv', x + '\n')
+            append_to_file(f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_GENERATED_SENTENCES}.csv', x)
 
 
 def generate_prompts_for_images(name: str):
-    image_names = []
-    for file in os.listdir(OUT_IMAGE_DIR):
-        if file.endswith(".jpg"):
-            image_names.append(file)
+    image_names = get_all_images()
 
-    file_containing_text_on_pictures = f'{OUT_TEXT_DIR}/eng.{name}_text_on_pictures.csv'
-    file_containing_generated_text = f'{OUT_TEXT_DIR}/eng.{name}_generated_text.csv'
+    file_containing_text_on_pictures = f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_TEXT_ON_PICTURES}.csv'
+    file_containing_generated_text = f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_DESCRIPTIVE_TEXT}.csv'
 
-    text_on_pictures_dict = {}
-    with open(file_containing_text_on_pictures, 'r') as file:
-        for line in file:
-            parts = line.split(',')
-            text_on_pictures_dict[parts[0]] = parts[1].replace('\n', '')
+    text_on_pictures_dict = get_dict_from_file(file_containing_text_on_pictures)
+    generated_text_dict = get_dict_from_file(file_containing_generated_text)
 
-    generated_text_dict = {}
-    with open(file_containing_generated_text, 'r') as file:
-        for line in file:
-            parts = line.split(';')
-            generated_text_dict[parts[0]] = parts[1].replace('\n', '')
+    # Only keep first 100 images
+    image_names = image_names[:100]
 
     prompts = []
     for image_name in image_names:

@@ -8,7 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from threading import Semaphore
 
-from utils import get_name_from_path, get_absolute_paths
+from Recap.consts import OUT_TEXT_DIR, OUT_IMAGE_DIR
+from utils import get_name_from_path, get_absolute_paths, append_to_file, get_images_missing_from_files, \
+    get_absolute_paths_from_files
 
 url = 'https://boredhumans.com/photo_story.php'
 bad_responses = ["Error please try again.", "The server had an error processing your request."]
@@ -84,9 +86,7 @@ def save_important_generated_text(name: str, image_path: str, generated_text: st
     if len(sentences) > 2:
         generated_text = sentences[0] + '.' + sentences[1] + '.'
 
-    with open(f'out/text/eng.{name}_generated_text.csv', 'a') as file:
-        file.write(f'{image_name};{generated_text}\n')
-
+    append_to_file(f'out/text/eng.{name}_generated_text.csv', f'{image_name};{generated_text}\n')
 
 
 def threaded_automate_image_upload(thread_name, image_path, url):
@@ -101,7 +101,16 @@ def threaded_automate_image_upload(thread_name, image_path, url):
 
 
 def generate_text_from_images(name: str, directory: str):
-    image_paths = get_absolute_paths(directory)
+    text_file_name = f'{OUT_TEXT_DIR}/eng.{name}_generated_text.csv'
+    images_missing = get_images_missing_from_files(directory, text_file_name)
+    image_paths = get_absolute_paths_from_files(OUT_IMAGE_DIR, images_missing)
+
+    if not image_paths:
+        print("No images missing generated text.")
+        return
+
+    print(f"Generating text for {len(image_paths)} images...")
+
     threads = []
     for i, image_path in enumerate(image_paths):
         thread_name = f"Thread-{i}"

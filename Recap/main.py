@@ -1,8 +1,11 @@
 import os
 import shutil
+import time
 
+from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
+from Recap.utils import get_lines_from_file
 from boredHumans import generate_text_from_images
-from consts import OUT_IMAGE_DIR
+from consts import OUT_IMAGE_DIR, OUT_TEXT_DIR
 from fetchManhwa import download_images
 from imageModifier import modify_all_images, modify_images_to_fit_screen
 from open_ai import openai_generate_text
@@ -34,13 +37,45 @@ def _delete_temp_files():
     os.rmdir('temp')
 
 
+def _find_images_with_missing_texts():
+    text_on_pictures_file_path = f'{OUT_TEXT_DIR}/eng.{NAME_AND_CHAPTERS}_text_on_pictures.csv'
+    text_on_pictures_dict = {}
+    lines = get_lines_from_file(text_on_pictures_file_path)
+    for line in lines:
+        parts = line.split(';')
+        text_on_pictures_dict[parts[0]] = parts[1].replace('\n', '')
+
+    generated_text_file_path = f'{OUT_TEXT_DIR}/eng.{NAME_AND_CHAPTERS}_generated_text.csv'
+    generated_text_dict = {}
+    lines = get_lines_from_file(generated_text_file_path)
+    for line in lines:
+        parts = line.split(';')
+        generated_text_dict[parts[0]] = parts[1].replace('\n', '')
+
+    images = []
+    for file in os.listdir(OUT_IMAGE_DIR):
+        if file.endswith(".jpg"):
+            images.append(file)
+
+    for image in images:
+        if image not in text_on_pictures_dict or image not in generated_text_dict:
+            print(f"Image {image} is missing text")
+            print(f"Text on pictures: {text_on_pictures_dict.get(image)}")
+            print(f"Generated text: {generated_text_dict.get(image)}")
+            print("")
+
+
 def main():
-    _download_chapters()
-    modify_all_images()
-    modify_images_to_fit_screen()
-    _delete_temp_files()
-    generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
-    find_text_on_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+    # _download_chapters()
+    # modify_all_images()
+    # modify_images_to_fit_screen()
+    # _delete_temp_files()
+    # generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+    # time.sleep(2)
+    # find_text_on_images(NAME_AND_CHAPTERS)
+    # _find_images_with_missing_texts()
+    # clean_images(NAME_AND_CHAPTERS)
+    clean_text_files_for_unnecessary_lines(NAME_AND_CHAPTERS)
 
 
 
@@ -48,7 +83,5 @@ def main():
 if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {NAME_AND_CHAPTERS}...")
     print(f"=========================================")
-    # generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
-    print(OUT_IMAGE_DIR)
-    # find_text_on_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
-    openai_generate_text(NAME_AND_CHAPTERS)
+    main()
+    # openai_generate_text(NAME_AND_CHAPTERS)
