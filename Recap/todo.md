@@ -18,6 +18,7 @@ This background could be a rainy forest etc.
 Create a script that determines an optimal point somewhere in the middle, where the picture can be split.
 A determination could be the amount of white or black pixels in the image at that point in the middle.
 3. Timings to see what is slow
+4. Possible replace all her/his with "the persons"
 
 ## Conquer the world
 1. Translate to different languages. (Indian, Spanish, Russian, Arabic, etc.)

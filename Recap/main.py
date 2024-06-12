@@ -2,14 +2,14 @@ import os
 import shutil
 import time
 
+from Recap.boredHumans import generate_text_from_images
 from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
+from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
+from Recap.textFinder import find_text_on_images
 from Recap.utils import get_lines_from_file
-from boredHumans import generate_text_from_images
 from consts import OUT_IMAGE_DIR, OUT_TEXT_DIR
 from fetchManhwa import download_images
-from imageModifier import modify_all_images, modify_images_to_fit_screen
 from open_ai import openai_generate_text
-from textFinder import find_text_on_images
 
 """
 The following should be set before starting the script:
@@ -70,18 +70,16 @@ def main():
     # modify_all_images()
     # modify_images_to_fit_screen()
     # _delete_temp_files()
-    # generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
-    # time.sleep(2)
-    # find_text_on_images(NAME_AND_CHAPTERS)
-    # _find_images_with_missing_texts()
-    # clean_images(NAME_AND_CHAPTERS)
+    generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+    time.sleep(2)
+    find_text_on_images(NAME_AND_CHAPTERS)
+    _find_images_with_missing_texts()
+    clean_images(NAME_AND_CHAPTERS)
     clean_text_files_for_unnecessary_lines(NAME_AND_CHAPTERS)
-
-
+    # openai_generate_text(NAME_AND_CHAPTERS)  # COSTS MONEY!!!!
 
 
 if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {NAME_AND_CHAPTERS}...")
     print(f"=========================================")
     main()
-    # openai_generate_text(NAME_AND_CHAPTERS)

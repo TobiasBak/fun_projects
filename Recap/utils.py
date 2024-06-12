@@ -56,6 +56,7 @@ def get_lines_from_file(file_path: str):
             for i, line in enumerate(file):
                 try:
                     decode_line = line.decode('utf-8')
+                    decode_line = decode_line.replace('\r', '').replace('\n', '')
                     if decode_line == '\r\n':
                         continue
                     lines.append(decode_line)
@@ -92,6 +93,20 @@ def get_all_images(directory: str = consts.OUT_IMAGE_DIR):
     for file in os.listdir(directory):
         if file.endswith(".jpg"):
             images.append(file)
+    return images
+
+
+def get_sorted_list_of_images(directory: str = consts.OUT_IMAGE_DIR):
+    images = get_all_images(directory)
+
+    def sort_key(image_name: str):
+        # Split the filename on '.', convert the parts to integers, and return as a tuple
+        parts = image_name.split('.')[:2]
+        return tuple(int(part) for part in parts)
+
+    # Sort the images using the custom sort key
+    images.sort(key=sort_key)
+
     return images
 
 

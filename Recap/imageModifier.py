@@ -3,6 +3,7 @@ import os
 import numpy as np
 from PIL import Image
 
+from Recap.utils import get_sorted_list_of_images
 from consts import OUT_IMAGE_DIR
 
 TEMP_DIR = 'temp'
@@ -30,8 +31,7 @@ def modify_all_images():
 
 
 def modify_images_to_fit_screen():
-    images = os.listdir(TEMP_IMAGE_DIR)
-    images.sort(key=lambda x: int(x.split('.')[1]))
+    images = get_sorted_list_of_images("temp/images")
 
     split_indexes = _read_split_indexes()
     buffer = None  # Buffer will be at most 1 image, that is left over

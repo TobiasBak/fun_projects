@@ -89,12 +89,12 @@ def save_important_generated_text(name: str, image_path: str, generated_text: st
     append_to_file(f'out/text/eng.{name}_generated_text.csv', f'{image_name};{generated_text}\n')
 
 
-def threaded_automate_image_upload(thread_name, image_path, url):
+def threaded_automate_image_upload(thread_name, thread_count, name, image_path):
     # Acquire a semaphore
     semaphore.acquire()
     try:
-        print(f"Thread {thread_name} started.")
-        automate_image_upload(image_path, url)
+        print(f"Thread {thread_name}/{thread_count} started.")
+        automate_image_upload(name, image_path)
     finally:
         # Release the semaphore
         semaphore.release()
@@ -110,11 +110,12 @@ def generate_text_from_images(name: str, directory: str):
         return
 
     print(f"Generating text for {len(image_paths)} images...")
+    thread_count = len(image_paths)
 
     threads = []
     for i, image_path in enumerate(image_paths):
         thread_name = f"Thread-{i}"
-        thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, name, image_path))
+        thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, thread_count, name, image_path))
         thread.start()
         threads.append(thread)
 
