@@ -28,6 +28,9 @@ def _download_chapters():
 
 
 def _delete_temp_files():
+    if not os.path.exists('temp'):
+        return
+
     for filename in os.listdir('temp'):
         file_path = os.path.join('temp', filename)
         if os.path.isfile(file_path) or os.path.islink(file_path):
@@ -63,15 +66,16 @@ def _find_images_with_missing_texts():
             print(f"Text on pictures: {text_on_pictures_dict.get(image)}")
             print(f"Generated text: {generated_text_dict.get(image)}")
             print("")
+            raise Exception(f"Image {image} is missing text")
 
 
 def main():
     # _download_chapters()
     # modify_all_images()
     # modify_images_to_fit_screen()
-    # _delete_temp_files()
+    _delete_temp_files()
     generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
-    time.sleep(2)
+    time.sleep(1)
     find_text_on_images(NAME_AND_CHAPTERS)
     _find_images_with_missing_texts()
     clean_images(NAME_AND_CHAPTERS)
@@ -83,3 +87,4 @@ if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {NAME_AND_CHAPTERS}...")
     print(f"=========================================")
     main()
+
