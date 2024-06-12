@@ -67,9 +67,7 @@ def automate_image_upload(name, image_path):
         generated_text = new_generated_text_elements[0].text
 
         if generated_text not in bad_responses:
-            image_name = get_name_from_path(image_path)
-            with open(f'out/text/{name}_generated_text.csv', 'a') as file:
-                file.write(f'{image_name},{generated_text}\n')
+            save_important_generated_text(name, image_path, generated_text)
             return
 
         automate_image_upload(name, image_path)
@@ -77,6 +75,18 @@ def automate_image_upload(name, image_path):
     finally:
         # Close the WebDriver
         driver.quit()
+
+
+def save_important_generated_text(name: str, image_path: str, generated_text: str):
+    image_name = get_name_from_path(image_path)
+
+    sentences = generated_text.split('.')
+    if len(sentences) > 2:
+        generated_text = sentences[0] + '.' + sentences[1] + '.'
+
+    with open(f'out/text/eng.{name}_generated_text.csv', 'a') as file:
+        file.write(f'{image_name};{generated_text}\n')
+
 
 
 def threaded_automate_image_upload(thread_name, image_path, url):

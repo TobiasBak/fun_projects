@@ -5,7 +5,8 @@ from boredHumans import generate_text_from_images
 from consts import OUT_IMAGE_DIR
 from fetchManhwa import download_images
 from imageModifier import modify_all_images, modify_images_to_fit_screen
-from textFinder import process_images
+from open_ai import openai_generate_text
+from textFinder import find_text_on_images
 
 """
 The following should be set before starting the script:
@@ -43,6 +44,7 @@ def main():
 if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {NAME_AND_CHAPTERS}...")
     print(f"=========================================")
-    # generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGES_DIR)
+    # generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
     print(OUT_IMAGE_DIR)
-    process_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+    # find_text_on_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+    openai_generate_text(NAME_AND_CHAPTERS)
