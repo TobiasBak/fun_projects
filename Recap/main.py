@@ -39,6 +39,10 @@ def main():
     modify_all_images()
     modify_images_to_fit_screen()
     _delete_temp_files()
+    generate_text_from_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+    find_text_on_images(NAME_AND_CHAPTERS, OUT_IMAGE_DIR)
+
+
 
 
 if __name__ == "__main__":
