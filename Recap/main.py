@@ -79,8 +79,8 @@ def main():
     find_text_on_images(NAME_AND_CHAPTERS)
     _find_images_with_missing_texts()
     clean_images(NAME_AND_CHAPTERS)
-    clean_text_files_for_unnecessary_lines(NAME_AND_CHAPTERS)
-    # openai_generate_text(NAME_AND_CHAPTERS)  # COSTS MONEY!!!!
+    # clean_text_files_for_unnecessary_lines(NAME_AND_CHAPTERS) #  Not necessary, but nice to have
+    openai_generate_text(NAME_AND_CHAPTERS)  # COSTS MONEY!!!!
 
 
 if __name__ == "__main__":

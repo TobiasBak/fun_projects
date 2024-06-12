@@ -66,6 +66,10 @@ def openai_generate_text(name: str, prompt_overall_story: str = None):
 
     generated_prompts = generate_prompts_for_images(name)
 
+    if len(generated_prompts) == 0:
+        print("No prompts generated. Exiting...")
+        return
+
     for generated_prompt in generated_prompts:
         prompt += generated_prompt
 
@@ -74,29 +78,32 @@ def openai_generate_text(name: str, prompt_overall_story: str = None):
     print(prompt)
     print(f"Amount of tokens: {get_amount_of_tokens(prompt)}")
 
-    # chat_completion = client.chat.completions.create(
-    #     messages=[
-    #         {
-    #             "role": "user",
-    #             "content": prompt,
-    #         }
-    #     ],
-    #     model="gpt-3.5-turbo",
-    # )
-    #
-    # # Extract the content of the assistant's reply
-    # reply = chat_completion.choices[0].message.content
-    #
-    # replies = reply.split('\n')
-    #
-    # for x in replies:
-    #     if x != '':
-    #         print(x)
-    #         append_to_file(f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_GENERATED_SENTENCES}.csv', x)
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        model="gpt-3.5-turbo",
+    )
+
+    # Extract the content of the assistant's reply
+    reply = chat_completion.choices[0].message.content
+
+    replies = reply.split('\n')
+
+    for x in replies:
+        if x != '':
+            print(x)
+            append_to_file(f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_GENERATED_SENTENCES}.csv', x)
 
 
 def generate_prompts_for_images(name: str):
     image_names = get_images_missing_from_files(OUT_IMAGE_DIR, f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_GENERATED_SENTENCES}.csv')
+    if len(image_names) == 0:
+        print("No images missing generated sentences.")
+        return []
 
     file_containing_text_on_pictures = f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_TEXT_ON_PICTURES}.csv'
     file_containing_generated_text = f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_DESCRIPTIVE_TEXT}.csv'
