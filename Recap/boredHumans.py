@@ -10,10 +10,6 @@ from threading import Semaphore
 
 from utils import get_name_from_path, get_absolute_paths
 
-OUT_TEXT_DIR = 'out/text'
-OUT_IMAGES_DIR = 'out/images'
-os.makedirs(OUT_TEXT_DIR, exist_ok=True)
-
 url = 'https://boredhumans.com/photo_story.php'
 bad_responses = ["Error please try again.", "The server had an error processing your request."]
 

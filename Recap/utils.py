@@ -14,8 +14,6 @@ def get_name_from_path(path: str):
     return path_parts[-1]
 
 
-
-
 def get_absolute_paths(directory: str):
     paths = []
     for file in os.listdir(directory):
@@ -24,5 +22,6 @@ def get_absolute_paths(directory: str):
     return paths
 
 
-
-print(get_name_from_path('out/images/1.0.0.jpg'))
+def append_to_file(file_path: str, text: str):
+    with open(file_path, 'a') as file:
+        file.write(text)

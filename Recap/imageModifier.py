@@ -3,25 +3,25 @@ import os
 import numpy as np
 from PIL import Image
 
+from consts import OUT_IMAGE_DIR
+
 TEMP_DIR = 'temp'
-SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
-IMAGES_DIR = f'{TEMP_DIR}/images'
-OUT_DIR = 'out'
-OUT_IMAGES_DIR = f'{OUT_DIR}/images'
+TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
+TEMP_IMAGE_DIR = f'{TEMP_DIR}/images'
 IMAGE_MAX_HEIGHT = 1000
 
 
 def modify_all_images():
     # if file exists delete it
-    if os.path.exists(SPLIT_INDEXES_FILE):
-        os.remove(SPLIT_INDEXES_FILE)
+    if os.path.exists(TEMP_SPLIT_INDEXES_FILE):
+        os.remove(TEMP_SPLIT_INDEXES_FILE)
 
-    images = os.listdir(IMAGES_DIR)
+    images = os.listdir(TEMP_IMAGE_DIR)
     print(f"Modifying {len(images)} images...")
 
     count = 0
     for image in images:
-        _modify_image(f'{IMAGES_DIR}/{image}')
+        _modify_image(f'{TEMP_IMAGE_DIR}/{image}')
 
         # Helpful print
         if count % 100 == 0:
@@ -30,7 +30,7 @@ def modify_all_images():
 
 
 def modify_images_to_fit_screen():
-    images = os.listdir(IMAGES_DIR)
+    images = os.listdir(TEMP_IMAGE_DIR)
     images.sort(key=lambda x: int(x.split('.')[1]))
 
     split_indexes = _read_split_indexes()
@@ -57,7 +57,7 @@ def modify_images_to_fit_screen():
 
             resized_image = _scale_image(image_part)
 
-            _save_image_to_dir(resized_image, f'{OUT_IMAGES_DIR}/{_get_image_name(image)}.{count}.jpg')
+            _save_image_to_dir(resized_image, f'{OUT_IMAGE_DIR}/{_get_image_name(image)}.{count}.jpg')
             count += 1
 
 
@@ -146,7 +146,7 @@ def _write_indexes_to_file(indexes, image_name):
     # Ensure a directory to save the images
     os.makedirs(TEMP_DIR, exist_ok=True)
 
-    with open(SPLIT_INDEXES_FILE, 'a') as file:
+    with open(TEMP_SPLIT_INDEXES_FILE, 'a') as file:
         file.write(f'{image_name},')
         file.write(','.join(map(str, indexes)) + '\n')
 
@@ -175,7 +175,7 @@ def _get_image_name(image_path):
 def _read_split_indexes() -> dict:
     split_indexes = {}
 
-    with open(SPLIT_INDEXES_FILE, 'r') as file:
+    with open(TEMP_SPLIT_INDEXES_FILE, 'r') as file:
         lines = file.readlines()
 
     for line in lines:
@@ -191,7 +191,7 @@ def _read_split_indexes() -> dict:
 
 def _split_image(image, split_indexes) -> list[Image]:
     image_parts: list[Image] = []
-    img = Image.open(f'{IMAGES_DIR}/{image}')
+    img = Image.open(f'{TEMP_IMAGE_DIR}/{image}')
 
     for i in range(len(split_indexes) - 1):
         start = split_indexes[i]
@@ -203,7 +203,7 @@ def _split_image(image, split_indexes) -> list[Image]:
 
 
 def _save_image_to_dir(image, path):
-    os.makedirs(OUT_IMAGES_DIR, exist_ok=True)
+    os.makedirs(OUT_IMAGE_DIR, exist_ok=True)
     image.save(path)
 
 
