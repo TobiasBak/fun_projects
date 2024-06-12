@@ -14,13 +14,14 @@ OUT_TEXT_DIR = 'out/text'
 OUT_IMAGES_DIR = 'out/images'
 os.makedirs(OUT_TEXT_DIR, exist_ok=True)
 
-url = 'https://boredhumans.com/photo_story.php'  # Replace with the actual URL of the webpage
+url = 'https://boredhumans.com/photo_story.php'
+bad_responses = ["Error please try again.", "The server had an error processing your request."]
 
-# Create a semaphore object
-semaphore = Semaphore(5)
+THREADS = 10
+semaphore = Semaphore(10)  # Create a semaphore object
 
 
-def automate_image_upload(image_path, url):
+def automate_image_upload(name, image_path):
     # Set up the WebDriver (assuming ChromeDriver here)
     driver = webdriver.Chrome()
 
@@ -69,17 +70,13 @@ def automate_image_upload(image_path, url):
         # Retrieve the generated text
         generated_text = new_generated_text_elements[0].text
 
-        if generated_text == "Error please try again.":
-            automate_image_upload(image_path, url)
+        if generated_text not in bad_responses:
+            image_name = get_name_from_path(image_path)
+            with open(f'out/text/{name}_generated_text.csv', 'a') as file:
+                file.write(f'{image_name},{generated_text}\n')
+            return
 
-        if "The server had an error processing your request." in generated_text:
-            automate_image_upload(image_path, url)
-
-        # Append the generated text to a file. The file should be comma seperated with image file as first
-        # element and the generated text as second element
-        with open('out/text/generated_text.csv', 'a') as file:
-            file.write(f'{get_name_from_path(image_path)},{generated_text}\n')
-
+        automate_image_upload(name, image_path)
 
     finally:
         # Close the WebDriver
@@ -87,22 +84,22 @@ def automate_image_upload(image_path, url):
 
 
 def threaded_automate_image_upload(thread_name, image_path, url):
-    print(f"Thread {thread_name} started.")
     # Acquire a semaphore
     semaphore.acquire()
     try:
+        print(f"Thread {thread_name} started.")
         automate_image_upload(image_path, url)
     finally:
         # Release the semaphore
         semaphore.release()
-    print(f"Thread {thread_name} finished.")
 
 
-def generate_text_from_images(image_paths):
+def generate_text_from_images(name: str, directory: str):
+    image_paths = get_absolute_paths(directory)
     threads = []
     for i, image_path in enumerate(image_paths):
         thread_name = f"Thread-{i}"
-        thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, image_path, url))
+        thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, name, image_path))
         thread.start()
         threads.append(thread)
 

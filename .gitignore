@@ -5,7 +5,9 @@ __pycache__
 
 
 Recap/temp/
-Recap/out/
+Recap/out/audio
+Recap/out/images
+Recap/out/videos
 Recap/chrome-win
 Recap/CLIP
 Recap/hidden/*
