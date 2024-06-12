@@ -1,8 +1,10 @@
 import os
 import shutil
 
+from boredHumans import generate_text_from_images
 from fetchManhwa import download_images
 from imageModifier import modify_all_images, modify_images_to_fit_screen
+from utils import get_absolute_paths
 
 URL = 'https://toonily.com/webtoon/solo-leveling-005/'
 Chapters = [1, 10]
@@ -31,4 +33,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    generate_text_from_images(get_absolute_paths("out/images"))
