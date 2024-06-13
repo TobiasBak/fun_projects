@@ -8,7 +8,7 @@ import json
 from pydub import AudioSegment
 
 import setup
-from utils import get_absolute_path, get_absolute_paths, get_all_images, get_lines_from_file, get_sentences_dict
+from utils import get_absolute_path, get_sentences_dict
 
 temp_audio_file = f"temp/temp_audio.wav"
 audio_file_name = "1.0.0.mp3"
@@ -87,6 +87,42 @@ def get_words_in_sentence(sentence: str):
     return out
 
 
+def convert_to_hmmssmm(time: float) -> str:
+    """
+    The function takes a float time in seconds and converts it to a string in the format h:mm:ss.mm
+    """
+
+    # Get the hours, minutes, and seconds
+    hours = int(time / 3600)
+    minutes = int((time % 3600) / 60)
+    seconds = time % 60
+
+    # Get the milliseconds
+    milliseconds = int((seconds - int(seconds)) * 1000)
+
+    # Ensure miliseconds are only 2 digits
+    milliseconds = f"{milliseconds:02}"
+
+    # Return the time in the format h:mm:ss.mm
+    out = f"{hours:01}:{minutes:02}:{int(seconds):02}.{milliseconds[:2]}"
+    return out
+
+
+def convert_to_seconds(time: str) -> float:
+    """
+    The function takes a string time in the format h:mm:ss.mm and converts it to a float in seconds
+    """
+    # Split the time into hours, minutes, seconds, and milliseconds
+    time_parts = time.split(":")
+    hours = int(time_parts[0])
+    minutes = int(time_parts[1])
+    seconds = float(time_parts[2])
+
+    # Convert the time to seconds
+    time = (hours * 3600 + minutes * 60 + seconds)
+
+    return time
+
 def generate_subtitle_files():
     print(f"Generating subtitle files...")
 
@@ -114,10 +150,10 @@ def generate_subtitle_files():
             # f.write("YCbCr Matrix: TV.601\n")
             f.write("[V4+ Styles]\n")
             f.write(
-                "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold\n")
-            f.write("Style: Info,Futura,30,&H00F5F5F5,&H00F5F5F5,&H000A0A0A,&H000A0A0A,-1\n")
+                "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n")
+            f.write("Style: Info,Futura,20,&H00F5F5F5,&H00F5F5F5,&H000A0A0A,&H000A0A0A,-1,0,1,2,1,2,250,250,40,0\n")
             f.write("[Events]\n")
-            f.write("Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
+            f.write("Format: Start, End, Style, Text\n")
 
             amount_of_words = 0
             # For each sentence
@@ -129,13 +165,17 @@ def generate_subtitle_files():
                 # For each word in the sentence
                 if amount_of_words == len(words):
                     start_time = data['result'][0]['start']
-                    end_time = data['result'][len(words)]['end']
+                    end_time = data['result'][len(words) - 1]['end']
                 else:
-                    start_time = data['result'][amount_of_words - len(words) + 1]['start']
+                    start_time = data['result'][amount_of_words - len(words)]['start']
                     end_time = data['result'][-1]['end']
 
+                # Convert start_time and end_time to hrs:minutes:secs:ms format
+                start_time = convert_to_hmmssmm(start_time)
+                end_time = convert_to_hmmssmm(end_time)
+
                 # Write the sentence to the .ass file along with its start and end times
-                f.write(f"Dialogue: 0,{start_time},{end_time},Default,,0,0,0,,{sentence}\n")
+                f.write(f"Dialogue: {start_time},{end_time},Info,{sentence}\n")
 
 
 def generate_subtitles():
