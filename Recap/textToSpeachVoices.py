@@ -3,10 +3,10 @@
 import requests
 import json
 
-import settings
+from Recap.utils import get_lines_from_file, get_elevenlabs_api_keys
 
 # An API key is defined here. You'd normally get this from the service you're accessing. It's a form of authentication.
-XI_API_KEY = settings.ELEVEN_LABS_API_KEY
+XI_API_KEY = get_elevenlabs_api_keys()[0]
 
 # This is the URL for the API endpoint we'll be making a GET request to.
 url = "https://api.elevenlabs.io/v1/voices"
@@ -14,9 +14,9 @@ url = "https://api.elevenlabs.io/v1/voices"
 # Here, headers for the HTTP request are being set up.
 # Headers provide metadata about the request. In this case, we're specifying the content type and including our API key for authentication.
 headers = {
-  "Accept": "application/json",
-  "xi-api-key": XI_API_KEY,
-  "Content-Type": "application/json"
+    "Accept": "application/json",
+    "xi-api-key": XI_API_KEY,
+    "Content-Type": "application/json"
 }
 
 # A GET request is sent to the API endpoint. The URL and the headers are passed into the request.
@@ -29,6 +29,18 @@ data = response.json()
 # A loop is created to iterate over each 'voice' in the 'voices' list from the parsed data.
 # The 'voices' list consists of dictionaries, each representing a unique voice provided by the API.
 for voice in data['voices']:
-  # For each 'voice', the 'name' and 'voice_id' are printed out.
-  # These keys in the voice dictionary contain values that provide information about the specific voice.
-  print(f"{voice['name']}; {voice['voice_id']}")
+    # For each 'voice', the 'name' and 'voice_id' are printed out.
+    # These keys in the voice dictionary contain values that provide information about the specific voice.
+    print(f"{voice['name']}; {voice['voice_id']}")
+
+
+def get_voice_id(name: str):
+    name = name.lower()
+    lines = get_lines_from_file('elevenlabs_voices.csv')
+    for line in lines:
+        parts = line.split(';')
+        if parts[0].lower() == name:
+            return parts[1]
+
+    print(f"Voice with name '{name}' not found. Returning empty string.")
+    return ""

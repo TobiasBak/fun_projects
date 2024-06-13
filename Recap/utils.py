@@ -117,3 +117,14 @@ def get_dict_from_file(file_path: str):
         parts = line.split(';')
         file_dict[parts[0]] = parts[1].replace('\n', '')
     return file_dict
+
+
+def get_elevenlabs_api_keys() -> list:
+    lines = get_lines_from_file("hidden/eleven_lab_keys.csv")
+    keys = []
+    for line in lines:
+        parts = line.split(';')
+        api_key = parts[2].replace('\n', '')
+        keys.append(api_key)
+
+    return keys

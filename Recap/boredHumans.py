@@ -1,4 +1,3 @@
-import os
 import threading
 
 from selenium import webdriver
@@ -8,8 +7,10 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from threading import Semaphore
 
-from Recap.consts import OUT_TEXT_DIR, OUT_IMAGE_DIR
-from utils import get_name_from_path, get_absolute_paths, append_to_file, get_images_missing_from_files, \
+import consts
+import setup
+from Recap.consts import OUT_IMAGE_DIR
+from utils import get_name_from_path, append_to_file, get_images_missing_from_files, \
     get_absolute_paths_from_files
 
 url = 'https://boredhumans.com/photo_story.php'
@@ -19,7 +20,7 @@ THREADS = 10
 semaphore = Semaphore(10)  # Create a semaphore object
 
 
-def automate_image_upload(name, image_path):
+def automate_image_upload(image_path):
     # Set up the WebDriver (assuming ChromeDriver here)
     driver = webdriver.Chrome()
 
@@ -69,40 +70,39 @@ def automate_image_upload(name, image_path):
         generated_text = new_generated_text_elements[0].text
 
         if generated_text not in bad_responses:
-            save_important_generated_text(name, image_path, generated_text)
+            save_important_generated_text(image_path, generated_text)
             return
 
-        automate_image_upload(name, image_path)
+        automate_image_upload(image_path)
 
     finally:
         # Close the WebDriver
         driver.quit()
 
 
-def save_important_generated_text(name: str, image_path: str, generated_text: str):
+def save_important_generated_text(image_path: str, generated_text: str):
     image_name = get_name_from_path(image_path)
 
     sentences = generated_text.split('.')
     if len(sentences) > 2:
         generated_text = sentences[0] + '.' + sentences[1] + '.'
 
-    append_to_file(f'out/text/eng.{name}_generated_text.csv', f'{image_name};{generated_text}\n')
+    append_to_file(f"{consts.OUT_TEXT_DIR}/{setup.GENERATED_DESCRIPTIONS_FILE}", f'{image_name};{generated_text}\n')
 
 
-def threaded_automate_image_upload(thread_name, thread_count, name, image_path):
+def threaded_automate_image_upload(thread_name, thread_count, image_path):
     # Acquire a semaphore
     semaphore.acquire()
     try:
         print(f"Thread {thread_name}/{thread_count} started.")
-        automate_image_upload(name, image_path)
+        automate_image_upload(image_path)
     finally:
         # Release the semaphore
         semaphore.release()
 
 
-def generate_text_from_images(name: str, directory: str):
-    text_file_name = f'{OUT_TEXT_DIR}/eng.{name}_generated_text.csv'
-    images_missing = get_images_missing_from_files(directory, text_file_name)
+def generate_text_from_images(directory: str):
+    images_missing = get_images_missing_from_files(directory, setup.GENERATED_DESCRIPTIONS_FILE)
     image_paths = get_absolute_paths_from_files(OUT_IMAGE_DIR, images_missing)
 
     if not image_paths:
@@ -115,7 +115,7 @@ def generate_text_from_images(name: str, directory: str):
     threads = []
     for i, image_path in enumerate(image_paths):
         thread_name = f"Thread-{i}"
-        thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, thread_count, name, image_path))
+        thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, thread_count, image_path))
         thread.start()
         threads.append(thread)
 
