@@ -1,19 +1,20 @@
 import os
 
 import setup
-from Recap import consts
-from Recap.consts import OUT_TEXT_DIR, OUT_IMAGE_DIR
 from Recap.utils import get_lines_from_file, get_absolute_path, get_all_images, get_dict_from_file, append_to_file
 
 strings_to_remove = ["toonily"]
 
 
-def clean_images(directory: str):
-    lines = get_lines_from_file(f"{OUT_TEXT_DIR}/{setup.TEXT_ON_PICTURES_FILE}")
+def clean_images():
+
+    print(f"Cleaning images if they include the following strings: {strings_to_remove}")
+
+    lines = get_lines_from_file(setup.PATHS.TEXT_ON_PICTURES)
 
     for line in lines:
         parts = line.split(';')
-        image_path = get_absolute_path(OUT_IMAGE_DIR, parts[0])
+        image_path = get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{parts[0]}")
         text = parts[1]
 
         # Force text to lowercase
@@ -31,14 +32,11 @@ def clean_images(directory: str):
 def clean_text_files_for_unnecessary_lines():
     images = get_all_images()
 
-    text_on_pictures_file_name = f"{setup.TEXT_ON_PICTURES_FILE}"
-    text_on_pictures_dict = get_dict_from_file(f"{consts.OUT_TEXT_DIR}/{text_on_pictures_file_name}")
+    text_on_pictures_dict = get_dict_from_file(setup.PATHS.TEXT_ON_PICTURES)
+    generated_text_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
 
-    generated_text_file_name = f"{setup.GENERATED_DESCRIPTIONS_FILE}"
-    generated_text_dict = get_dict_from_file(f"{consts.OUT_TEXT_DIR}/{generated_text_file_name}")
-
-    text_on_pictures_file_path = get_absolute_path(OUT_TEXT_DIR, text_on_pictures_file_name)
-    generated_text_file_path = get_absolute_path(OUT_TEXT_DIR, generated_text_file_name)
+    text_on_pictures_file_path = get_absolute_path(setup.PATHS.TEXT_ON_PICTURES)
+    generated_text_file_path = get_absolute_path(setup.PATHS.DESCRIPTIONS)
 
     if len(text_on_pictures_dict.keys()) == len(generated_text_dict.keys()) and len(text_on_pictures_dict.keys()) == len(images) and len(generated_text_dict.keys()) == len(images):
         print("No unnecessary lines found in text files.")
@@ -57,12 +55,12 @@ def clean_text_files_for_unnecessary_lines():
     # Write the necessary lines back to the files
     for key in text_on_pictures_dict.keys():
         if key not in images:
-            print(f"Removing {key} from {text_on_pictures_file_name}")
+            print(f"Removing {key} from {setup.PATHS.TEXT_ON_PICTURES}")
             continue
-        append_to_file(f"{consts.OUT_TEXT_DIR}/{text_on_pictures_file_name}", f"{key};{text_on_pictures_dict[key]}\n")
+        append_to_file(setup.PATHS.TEXT_ON_PICTURES, f"{key};{text_on_pictures_dict[key]}\n")
 
     for key in generated_text_dict.keys():
         if key not in images:
-            print(f"Removing {key} from {generated_text_file_name}")
+            print(f"Removing {key} from {setup.PATHS.DESCRIPTIONS}")
             continue
-        append_to_file(f"{consts.OUT_TEXT_DIR}/{generated_text_file_name}", f"{key};{generated_text_dict[key]}\n")
+        append_to_file(setup.PATHS.DESCRIPTIONS, f"{key};{generated_text_dict[key]}\n")

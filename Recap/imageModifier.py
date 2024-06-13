@@ -3,8 +3,8 @@ import os
 import numpy as np
 from PIL import Image
 
+import setup
 from Recap.utils import get_sorted_list_of_images
-from consts import OUT_IMAGE_DIR
 
 TEMP_DIR = 'temp'
 TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
@@ -56,8 +56,8 @@ def modify_images_to_fit_screen():
             # Todo: If image is too big (max size * 1.5). Then we need to split it at an optimal point and, scale and save
 
             resized_image = _scale_image(image_part)
+            resized_image.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{count}.jpg')
 
-            _save_image_to_dir(resized_image, f'{OUT_IMAGE_DIR}/{_get_image_name(image)}.{count}.jpg')
             count += 1
 
 
@@ -200,11 +200,6 @@ def _split_image(image, split_indexes) -> list[Image]:
         image_parts.append(image_part)
 
     return image_parts
-
-
-def _save_image_to_dir(image, path):
-    os.makedirs(OUT_IMAGE_DIR, exist_ok=True)
-    image.save(path)
 
 
 def _resize_image(image: Image, new_width=None, new_height=None) -> Image:

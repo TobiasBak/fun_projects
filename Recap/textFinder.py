@@ -2,8 +2,7 @@ import os
 from PIL import Image
 
 import setup
-from consts import OUT_IMAGE_DIR, OUT_TEXT_DIR
-from utils import append_to_file, get_lines_from_file, get_dict_from_file
+from utils import append_to_file, get_dict_from_file
 from rapidocr_onnxruntime import RapidOCR
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -24,9 +23,10 @@ def _process_image_rapidocr(image_path: str):
 
 
 def find_text_on_images(directory: str):
-    filename = f'{OUT_TEXT_DIR}/{setup.TEXT_ON_PICTURES_FILE}'
-    text_file_dict = get_dict_from_file(filename)
+    text_file_dict = get_dict_from_file(setup.PATHS.TEXT_ON_PICTURES)
     images_processed = text_file_dict.keys()
+
+    print(f"Finding text on images in {directory}...")
 
     text_on_images = {}
     with ThreadPoolExecutor() as executor:
@@ -44,4 +44,4 @@ def find_text_on_images(directory: str):
 
     for name, value in text_on_images.items():
         text = f"{name};{value}\n"
-        append_to_file(filename, text)
+        append_to_file(setup.PATHS.TEXT_ON_PICTURES, text)

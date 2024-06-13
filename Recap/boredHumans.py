@@ -7,9 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from threading import Semaphore
 
-import consts
 import setup
-from Recap.consts import OUT_IMAGE_DIR
 from utils import get_name_from_path, append_to_file, get_images_missing_from_files, \
     get_absolute_paths_from_files
 
@@ -87,7 +85,7 @@ def save_important_generated_text(image_path: str, generated_text: str):
     if len(sentences) > 2:
         generated_text = sentences[0] + '.' + sentences[1] + '.'
 
-    append_to_file(f"{consts.OUT_TEXT_DIR}/{setup.GENERATED_DESCRIPTIONS_FILE}", f'{image_name};{generated_text}\n')
+    append_to_file(setup.PATHS.DESCRIPTIONS, f'{image_name};{generated_text}\n')
 
 
 def threaded_automate_image_upload(thread_name, thread_count, image_path):
@@ -102,11 +100,11 @@ def threaded_automate_image_upload(thread_name, thread_count, image_path):
 
 
 def generate_text_from_images(directory: str):
-    images_missing = get_images_missing_from_files(directory, setup.GENERATED_DESCRIPTIONS_FILE)
-    image_paths = get_absolute_paths_from_files(OUT_IMAGE_DIR, images_missing)
+    images_missing = get_images_missing_from_files(directory, setup.PATHS.DESCRIPTIONS)
+    image_paths = get_absolute_paths_from_files(setup.PATHS.OUT_IMAGE_DIR, images_missing)
 
     if not image_paths:
-        print("No images missing generated text.")
+        print("No images missing descriptive text.")
         return
 
     print(f"Generating text for {len(image_paths)} images...")

@@ -8,7 +8,6 @@ from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.textFinder import find_text_on_images
 from Recap.utils import get_lines_from_file, get_dict_from_file, get_all_images
-from consts import OUT_IMAGE_DIR, OUT_TEXT_DIR
 from fetchManhwa import download_images
 from open_ai import openai_generate_text
 
@@ -26,6 +25,8 @@ def _delete_temp_files():
     if not os.path.exists('temp'):
         return
 
+    print("Deleting temp files...")
+
     for filename in os.listdir('temp'):
         file_path = os.path.join('temp', filename)
         if os.path.isfile(file_path) or os.path.islink(file_path):
@@ -36,13 +37,12 @@ def _delete_temp_files():
 
 
 def _find_images_with_missing_texts(image_directory: str):
-    text_on_pictures_file_path = f'{OUT_TEXT_DIR}/{setup.TEXT_ON_PICTURES_FILE}'
-    text_on_pictures_dict = get_dict_from_file(text_on_pictures_file_path)
-
-    generated_text_file_path = f'{OUT_TEXT_DIR}/{setup.GENERATED_DESCRIPTIONS_FILE}'
-    generated_text_dict = get_dict_from_file(generated_text_file_path)
+    text_on_pictures_dict = get_dict_from_file(setup.PATHS.TEXT_ON_PICTURES)
+    generated_text_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
 
     images = get_all_images(image_directory)
+
+    print(f"Checking images in {image_directory} for missing text...")
 
     for image in images:
         if image not in text_on_pictures_dict or image not in generated_text_dict:
@@ -58,12 +58,12 @@ def main():
     # modify_all_images()
     # modify_images_to_fit_screen()
     _delete_temp_files()
-    generate_text_from_images(OUT_IMAGE_DIR)
+    generate_text_from_images(setup.PATHS.OUT_IMAGE_DIR)
     time.sleep(1)
-    find_text_on_images(OUT_IMAGE_DIR)
-    _find_images_with_missing_texts(OUT_IMAGE_DIR)
-    clean_images(OUT_IMAGE_DIR)
-    # clean_text_files_for_unnecessary_lines(NAME_AND_CHAPTERS) #  Not necessary, but nice to have
+    find_text_on_images(setup.PATHS.OUT_IMAGE_DIR)
+    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR)
+    clean_images()
+    # clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
     openai_generate_text()  # COSTS MONEY!!!!
 
 

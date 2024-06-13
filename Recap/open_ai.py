@@ -1,9 +1,7 @@
-import os
 
 from openai import OpenAI
 
-from Recap import consts
-from consts import OUT_TEXT_DIR, OUT_IMAGE_DIR
+import setup
 from utils import append_to_file, get_dict_from_file, get_images_missing_from_files
 
 prompt_beginning = f"""
@@ -53,7 +51,7 @@ def get_prompt_from_image(image_name, text_on_picture, description_of_picture) -
     return f"Picture: {image_name} | Text on picture: {text_on_picture} | Description of picture: {description_of_picture} |\n"
 
 
-def openai_generate_text(name: str, prompt_overall_story: str = None):
+def openai_generate_text(prompt_overall_story: str = None):
     client = OpenAI(
         # This is the default and can be omitted
         api_key=get_openai_api_key(),
@@ -64,10 +62,10 @@ def openai_generate_text(name: str, prompt_overall_story: str = None):
     if prompt_overall_story is not None:
         prompt += prompt_overall_story
 
-    generated_prompts = generate_prompts_for_images(name)
+    generated_prompts = generate_prompts_for_images()
 
     if len(generated_prompts) == 0:
-        print("No prompts generated. Exiting...")
+        print("No sentences missing. Exiting...")
         return
 
     for generated_prompt in generated_prompts:
@@ -96,17 +94,17 @@ def openai_generate_text(name: str, prompt_overall_story: str = None):
     for x in replies:
         if x != '':
             print(x)
-            append_to_file(f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_GENERATED_SENTENCES}.csv', x)
+            append_to_file(setup.PATHS.SENTENCES, x)
 
 
-def generate_prompts_for_images(name: str):
-    image_names = get_images_missing_from_files(OUT_IMAGE_DIR, f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_GENERATED_SENTENCES}.csv')
+def generate_prompts_for_images():
+    image_names = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
     if len(image_names) == 0:
         print("No images missing generated sentences.")
         return []
 
-    file_containing_text_on_pictures = f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_TEXT_ON_PICTURES}.csv'
-    file_containing_generated_text = f'{OUT_TEXT_DIR}/eng.{name}{consts.FILE_NAME_DESCRIPTIVE_TEXT}.csv'
+    file_containing_text_on_pictures = setup.PATHS.TEXT_ON_PICTURES
+    file_containing_generated_text = setup.PATHS.DESCRIPTIONS
 
     text_on_pictures_dict = get_dict_from_file(file_containing_text_on_pictures)
     generated_text_dict = get_dict_from_file(file_containing_generated_text)
@@ -120,7 +118,6 @@ def generate_prompts_for_images(name: str):
         description_of_picture = generated_text_dict[image_name]
         prompt = get_prompt_from_image(image_name, text_on_picture, description_of_picture)
         prompts.append(prompt)
-
 
     return prompts
 

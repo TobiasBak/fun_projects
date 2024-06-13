@@ -1,6 +1,6 @@
 import os
 
-from Recap import consts
+import setup
 
 
 def get_name_from_path(path: str):
@@ -14,6 +14,10 @@ def get_name_from_path(path: str):
         path_parts = path.split('\\\\')
 
     return path_parts[-1]
+
+
+def get_absolute_path(file_path: str):
+    return os.path.abspath(os.path.join(file_path))
 
 
 def get_absolute_paths(directory: str) -> list:
@@ -30,10 +34,6 @@ def get_absolute_paths_from_files(directory: str, files: list) -> list:
         abs_path = os.path.abspath(os.path.join(directory, file))
         paths.append(abs_path)
     return paths
-
-
-def get_absolute_path(directory, file_path: str):
-    return os.path.abspath(os.path.join(directory, file_path))
 
 
 def append_to_file(file_path: str, text: str):
@@ -69,16 +69,9 @@ def get_lines_from_file(file_path: str):
 
 
 def get_images_missing_from_files(image_dir: str, text_file_path: str):
-    images = []
-    for file in os.listdir(image_dir):
-        if file.endswith(".jpg"):
-            images.append(file)
+    images = get_all_images(image_dir)
 
-    text_file_dict = {}
-    lines = get_lines_from_file(text_file_path)
-    for line in lines:
-        parts = line.split(';')
-        text_file_dict[parts[0]] = parts[1].replace('\n', '')
+    text_file_dict = get_dict_from_file(text_file_path)
 
     missing_images = []
     for image in images:
@@ -88,7 +81,7 @@ def get_images_missing_from_files(image_dir: str, text_file_path: str):
     return missing_images
 
 
-def get_all_images(directory: str = consts.OUT_IMAGE_DIR):
+def get_all_images(directory: str = setup.PATHS.OUT_IMAGE_DIR):
     images = []
     for file in os.listdir(directory):
         if file.endswith(".jpg"):
@@ -96,7 +89,7 @@ def get_all_images(directory: str = consts.OUT_IMAGE_DIR):
     return images
 
 
-def get_sorted_list_of_images(directory: str = consts.OUT_IMAGE_DIR):
+def get_sorted_list_of_images(directory: str = setup.PATHS.OUT_IMAGE_DIR):
     images = get_all_images(directory)
 
     def sort_key(image_name: str):
