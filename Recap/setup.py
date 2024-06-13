@@ -4,6 +4,7 @@ import os
 DOWNLOAD_URL = 'https://toonily.com/webtoon/solo-leveling-005/'
 CHAPTERS = [1, 10]
 NAME_OF_BOOK = 'solo_leveling'
+TTS_VOICE_ID = "TxGEqnHWrfWFTfGW9XjX"
 
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
