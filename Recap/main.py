@@ -10,6 +10,7 @@ from Recap.textFinder import find_text_on_images
 from Recap.utils import get_lines_from_file, get_dict_from_file, get_all_images
 from fetchManhwa import download_images
 from open_ai import openai_generate_text
+from subtitles import generate_subtitles
 from textToSpeach import generate_audio_files
 
 """
@@ -58,7 +59,7 @@ def main():
     # _download_chapters()
     # modify_all_images()
     # modify_images_to_fit_screen()
-    _delete_temp_files()
+    # _delete_temp_files()
     generate_text_from_images(setup.PATHS.OUT_IMAGE_DIR)
     time.sleep(1)
     find_text_on_images(setup.PATHS.OUT_IMAGE_DIR)
@@ -66,7 +67,8 @@ def main():
     clean_images()
     # clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
     openai_generate_text()  # COSTS MONEY!!!!
-    generate_audio_files()
+    # generate_audio_files()
+    generate_subtitles()
 
 
 if __name__ == "__main__":

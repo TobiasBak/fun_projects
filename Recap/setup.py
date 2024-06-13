@@ -20,11 +20,13 @@ class PATHS:
     OUT_IMAGE_DIR = 'out/images'
     OUT_TEXT_DIR = 'out/text'
     OUT_AUDIO_DIR = 'out/audio'
+    OUT_SUBTITLE_DIR = 'out/subtitles'
+    OUT_VIDEO_DIR = 'out/videos'
     DESCRIPTIONS = f'{OUT_TEXT_DIR}/{FILES.DESCRIPTIONS}'
     TEXT_ON_PICTURES = f'{OUT_TEXT_DIR}/{FILES.TEXT_ON_PICTURES}'
     SENTENCES = f'{OUT_TEXT_DIR}/{FILES.SENTENCES}'
 
 
 # Generate directories if they do not exist
-for path in [PATHS.OUT_IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.OUT_AUDIO_DIR]:
+for path in [PATHS.OUT_IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.OUT_AUDIO_DIR, PATHS.OUT_SUBTITLE_DIR, PATHS.OUT_VIDEO_DIR]:
     os.makedirs(path, exist_ok=True)

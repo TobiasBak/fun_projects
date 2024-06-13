@@ -112,6 +112,15 @@ def get_dict_from_file(file_path: str):
     return file_dict
 
 
+def get_sentences_dict():
+    sentences_dict = {}
+    lines = get_lines_from_file(setup.PATHS.SENTENCES)
+    for line in lines:
+        parts = line.split(';')
+        sentences_dict[parts[0]] = parts[1].replace('\n', '') + " " + parts[2].replace('\n', '')
+    return sentences_dict
+
+
 def get_elevenlabs_api_keys() -> list:
     lines = get_lines_from_file("hidden/eleven_lab_keys.csv")
     keys = []

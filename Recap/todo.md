@@ -5,11 +5,10 @@
 
 
 ## Major steps
-1. Voiceover
-2. Subtitles
-3. Combine the images and the voiceover into a video. 
-4. Implement a method for combining the videos into a single video.
-5. Thumbnails, that are auto generated based on language of the video. 
+1. Subtitles
+2. Combine the images and the voiceover into a video. 
+3. Implement a method for combining the videos into a single video.
+4. Thumbnails, that are auto generated based on language of the video. 
 
 ## Improvements
 1. Use a background for the video, such that adhd viewers stay

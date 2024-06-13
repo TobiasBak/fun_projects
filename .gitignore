@@ -8,7 +8,11 @@ Recap/temp/
 Recap/out/audio
 Recap/out/images
 Recap/out/videos
+Recap/out/subtitles
+Recap/out/videos
 Recap/chrome-win
 Recap/CLIP
 Recap/hidden/*
 Recap/keys.py
+Recap/vosk-model
+Recap/ffmpeg

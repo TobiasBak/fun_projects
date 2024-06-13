@@ -5,7 +5,8 @@ import requests  # Used for making HTTP requests
 import json  # Used for working with JSON data
 
 import setup
-from Recap.utils import get_elevenlabs_api_keys, get_lines_from_file, get_dict_from_file, get_all_images
+from Recap.utils import get_elevenlabs_api_keys, get_lines_from_file, get_dict_from_file, get_all_images, \
+    get_sentences_dict
 
 # Define constants for the script
 CHUNK_SIZE = 1024  # Size of chunks to read/write at a time
@@ -63,13 +64,15 @@ def get_missing_audio_file_names() -> list[str]:
 
 
 def generate_audio_files():
-    sentences_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+    sentences_dict = get_sentences_dict()
+
     missing_audio_files = get_missing_audio_file_names()
     missing_audio_files = missing_audio_files[:10]
     print(f"Missing audio files: {missing_audio_files}")
 
     for audio_file_name in missing_audio_files:
         text = sentences_dict.get(f"{audio_file_name}.jpg")
+        print(f"Generating audio for {audio_file_name}.jpg with text: {text}")
         _generate_text_to_speach(get_elevenlabs_api_keys()[0], setup.TTS_VOICE_ID, audio_file_name, text)
 
 
