@@ -19,6 +19,7 @@ A determination could be the amount of white or black pixels in the image at tha
 3. Timings to see what is slow
 4. Possible replace all her/his with "the persons"
 5. Open pages instead of new browsers
+6. Multithread timings
 
 ## Conquer the world
 1. Translate to different languages. (Indian, Spanish, Russian, Arabic, etc.)

@@ -1,8 +1,5 @@
 import os
 
-import vosk
-import json
-import wave
 import json
 
 from pydub import AudioSegment
@@ -15,76 +12,6 @@ audio_file_name = "1.0.0.mp3"
 
 AudioSegment.converter = get_absolute_path("ffmpeg/bin/ffmpeg.exe")
 AudioSegment.ffprobe = get_absolute_path("ffmpeg/bin/ffprobe.exe")
-print(f"ffmpeg: {AudioSegment.converter}")
-
-# Load the model
-model = vosk.Model("vosk-model")
-
-
-def convert_mp3_to_wav(mp3_file_path, wav_file_path):
-    audio = AudioSegment.from_mp3(mp3_file_path)
-
-    # Ensure the directory exists
-    os.makedirs(os.path.dirname(wav_file_path), exist_ok=True)
-
-    audio.export(wav_file_path, format="wav")
-
-
-def create_timings_for_subtitles():
-    print(f"Generating timings for subtitles...")
-
-    audio_file_paths = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
-    for audio_file in audio_file_paths:
-        json_file_path = f"temp/json/{audio_file.split('.mp3')[0]}.json"
-
-        # Check if json file already exists
-        if os.path.exists(get_absolute_path(json_file_path)):
-            continue
-
-        audio_file_abs_path = get_absolute_path(f"{setup.PATHS.OUT_AUDIO_DIR}/{audio_file}")
-        # Generate temp_audio.wav file
-        convert_mp3_to_wav(audio_file_abs_path, temp_audio_file)
-
-        # Open the audio file
-        wf = wave.open(temp_audio_file, "rb")
-
-        # Create a recognizer with word timings
-        rec = vosk.KaldiRecognizer(model, wf.getframerate())
-        rec.SetWords(True)
-
-        # Transcribe the audio
-        while True:
-            data = wf.readframes(4000)
-            if len(data) == 0:
-                break
-            if rec.AcceptWaveform(data):
-                print(rec.Result())
-
-        # Get the final result
-        result = json.loads(rec.FinalResult())
-
-        # Write json result to file in temp folder
-        with open(get_absolute_path(json_file_path), "w") as f:
-            json.dump(result, f, indent=4)
-
-
-def get_sentences_from_string(sentences: str):
-    out = []
-    for sentence in sentences.split("."):
-        if sentence == "":
-            continue
-        if sentence.startswith(" "):
-            sentence = sentence[1:]
-        out.append(sentence + ".")
-    return out
-
-
-def get_words_in_sentence(sentence: str):
-    words = sentence.split(" ")
-    out = []
-    for word in words:
-        out.append(word.replace(",", "").replace(".", "").replace("!", "").replace("?", ""))
-    return out
 
 
 def convert_to_hmmssmm(time: float) -> str:
@@ -123,7 +50,8 @@ def convert_to_seconds(time: str) -> float:
 
     return time
 
-def generate_subtitle_files():
+
+def generate_subtitles():
     print(f"Generating subtitle files...")
 
     audio_files = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
@@ -131,9 +59,12 @@ def generate_subtitle_files():
 
     for audio_file in audio_files:
         audio_file_name = audio_file.split('.mp3')[0]
-        json_file_path = get_absolute_path("temp/json/" + f"/{audio_file_name}.json")
+        json_file_path = get_absolute_path("temp/timings/" + f"{audio_file_name}.json")
         ass_file_path = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{audio_file_name}.ass"
-        sentences = get_sentences_from_string(sentences_dict[f"{audio_file_name}.jpg"])
+        sentence: str = sentences_dict[f"{audio_file_name}.jpg"]
+
+        if 'é' in sentence or 'è' in sentence:
+            sentence = sentence.replace('è', 'e').replace('é', 'e')
 
         # Load the transcriptions and timings
         with open(json_file_path, 'r') as f:
@@ -155,29 +86,13 @@ def generate_subtitle_files():
             f.write("[Events]\n")
             f.write("Format: Start, End, Style, Text\n")
 
-            amount_of_words = 0
-            # For each sentence
-            for sentence in sentences:
-                words = get_words_in_sentence(sentence)
+            start_0_sec = data[0]['sec'] - 0.2
+            finish_0_sec = data[1]['sec']
+            # Todo: Possibly add value to start_1 to add delay before it goes away
 
-                amount_of_words += len(words)
+            # Convert start_time and end_time to hrs:minutes:secs:ms format
+            start_time_0 = convert_to_hmmssmm(start_0_sec)
+            finish_time_0 = convert_to_hmmssmm(finish_0_sec)
 
-                # For each word in the sentence
-                if amount_of_words == len(words):
-                    start_time = data['result'][0]['start']
-                    end_time = data['result'][len(words) - 1]['end']
-                else:
-                    start_time = data['result'][amount_of_words - len(words)]['start']
-                    end_time = data['result'][-1]['end']
-
-                # Convert start_time and end_time to hrs:minutes:secs:ms format
-                start_time = convert_to_hmmssmm(start_time)
-                end_time = convert_to_hmmssmm(end_time)
-
-                # Write the sentence to the .ass file along with its start and end times
-                f.write(f"Dialogue: {start_time},{end_time},Info,{sentence}\n")
-
-
-def generate_subtitles():
-    create_timings_for_subtitles()
-    generate_subtitle_files()
+            # Write the sentence to the .ass file along with its start and end times
+            f.write(f"Dialogue: {start_time_0},{finish_time_0},Info,{sentence}\n")

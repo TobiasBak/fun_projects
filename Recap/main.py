@@ -4,14 +4,15 @@ import time
 
 import setup
 from Recap.boredHumans import generate_text_from_images
-from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
+from Recap.cleanup import clean_images
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.textFinder import find_text_on_images
-from Recap.utils import get_lines_from_file, get_dict_from_file, get_all_images
+from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
-from open_ai import openai_generate_text
+from open_ai import openai_generate_text, generate_sentences
 from subtitles import generate_subtitles
-from textToSpeach import generate_audio_files
+from tts_google import google_tts_generate_audio_files
+from videoCreator import create_video
 
 """
 FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
@@ -56,23 +57,27 @@ def _find_images_with_missing_texts(image_directory: str):
 
 
 def main():
-    # _download_chapters()
-    # modify_all_images()
-    # modify_images_to_fit_screen()
-    _delete_temp_files()
+    # download_and_modify_images()
     generate_text_from_images(setup.PATHS.OUT_IMAGE_DIR)
     time.sleep(1)
     find_text_on_images(setup.PATHS.OUT_IMAGE_DIR)
     _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR)
     clean_images()
     # clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
-    openai_generate_text()  # COSTS MONEY!!!!
-    # # generate_audio_files()
-    # generate_subtitles()
+    generate_sentences()  # COSTS MONEY!!!!
+    google_tts_generate_audio_files()
+    generate_subtitles()
+    create_video()
+
+
+def download_and_modify_images():
+    _download_chapters()
+    modify_all_images()
+    modify_images_to_fit_screen()
+    _delete_temp_files()
 
 
 if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {setup.NAME_AND_CHAPTERS}...")
     print(f"=========================================")
     main()
-
