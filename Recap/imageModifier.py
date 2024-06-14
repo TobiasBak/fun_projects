@@ -214,6 +214,11 @@ def _resize_image(image: Image, new_width=None, new_height=None) -> Image:
     if new_height is None:
         new_height = int(new_width / aspect_ratio)
 
+    # Check if the new height is more than 1.5 times the original height
+    if new_height > 1.25 * image.height:
+        new_height = int(1.25 * image.height)
+        new_width = int(new_height * aspect_ratio)
+
     return image.resize((new_width, new_height))
 
 

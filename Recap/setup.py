@@ -2,7 +2,7 @@
 import os
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/solo-leveling-005/'
-CHAPTERS = [1, 10]
+CHAPTERS = [1, 2]
 NAME_OF_BOOK = 'solo_leveling'
 TTS_VOICE_ID = "TxGEqnHWrfWFTfGW9XjX"
 

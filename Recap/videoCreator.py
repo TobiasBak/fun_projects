@@ -49,11 +49,18 @@ subtitle_files = os.listdir(setup.PATHS.OUT_SUBTITLE_DIR)
 base_video = "temp/base_video.mp4"
 total_duration = 0
 
-video_background = f"""ffmpeg -n -i ambientVideos/0.mp4 -vf "scale=1920x1080,setsar=1:1,fps=30" -an {base_video}"""
-black_background = f'ffmpeg -n -f lavfi -i color=c=black:s=1920x1080:d=60 -vf "fps=30" {base_video}'
-subprocess.run(video_background)
+ambient_video = "ambientVideos/1"
+if not os.path.exists(f"{ambient_video}_1920.mp4"):
+    subprocess.run(f"ffmpeg -i {ambient_video}.mp4 -vf 'scale=1920:1080' {ambient_video}_1920.mp4")
+    ambient_video = f"{ambient_video}_1920.mp4"
 
-background_video_duration = get_video_duration("temp/base_video.mp4")
+if os.path.exists(f"{ambient_video}_1920.mp4"):
+    base_video = ambient_video
+
+# black_background = f'ffmpeg -n -f lavfi -i color=c=black:s=1920x1080:d=60 -vf "fps=30" {base_video}'
+# subprocess.run(black_background)
+
+background_video_duration = get_video_duration(base_video)
 
 # Generate intermediate videos
 for image_file in image_files:
