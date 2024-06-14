@@ -56,17 +56,17 @@ def _find_images_with_missing_texts(image_directory: str):
 
 
 def main():
-    _download_chapters()
-    modify_all_images()
-    modify_images_to_fit_screen()
-    # _delete_temp_files()
-    # generate_text_from_images(setup.PATHS.OUT_IMAGE_DIR)
-    # time.sleep(1)
-    # find_text_on_images(setup.PATHS.OUT_IMAGE_DIR)
-    # _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR)
-    # clean_images()
-    # # clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
-    # openai_generate_text()  # COSTS MONEY!!!!
+    # _download_chapters()
+    # modify_all_images()
+    # modify_images_to_fit_screen()
+    _delete_temp_files()
+    generate_text_from_images(setup.PATHS.OUT_IMAGE_DIR)
+    time.sleep(1)
+    find_text_on_images(setup.PATHS.OUT_IMAGE_DIR)
+    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR)
+    clean_images()
+    # clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
+    openai_generate_text()  # COSTS MONEY!!!!
     # # generate_audio_files()
     # generate_subtitles()
 

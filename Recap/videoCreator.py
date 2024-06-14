@@ -19,6 +19,7 @@ def get_duration_sec(image_name) -> float:
 
     return duration
 
+
 def get_video_duration(video_path):
     command = [
         'ffprobe',
@@ -46,7 +47,7 @@ image_files = image_files[:1]
 audio_files = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
 subtitle_files = os.listdir(setup.PATHS.OUT_SUBTITLE_DIR)
 
-base_video = "temp/base_video.mp4"
+base_video = "temp/videos/base_video.mp4"
 total_duration = 0
 
 ambient_video = "ambientVideos/1"
@@ -72,30 +73,20 @@ for image_file in image_files:
     subtitle_path = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{subtitle_file}"
 
     duration_sec = get_duration_sec(image_name)
-    buffer = 1 #  ToDo: Use this buffer as whitespace before next video comes. Or something similar.
-    # buffer_s = buffer / 2  # Convert buffer to seconds and divide by 2 # Todo: This does not work with values lower than 1 sec
+    buffer = 1  # ToDo: Use this buffer as whitespace before next video comes. Or something similar. This does not work with values lower than 1 sec
     duration_sec += buffer
-    # picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i out/images/1.0.0.jpg -filter_complex "[1:v]setpts=PTS+{0.0}/TB[out];[0:v][out]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,0)'" -pix_fmt yuv420p -c:a copy temp/{image_name}.mp4"""
-    # subtitles_and_audio = f"""ffmpeg -y -i temp/{image_name}.mp4 -itsoffset {buffer_s} -i {audio_path} -vf "subtitles={subtitle_path}" {setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_{image_name}.mp4"""
 
     if duration_sec + total_duration > background_video_duration:
         total_duration = 0
 
-    fade_in_start_sec = 0  # The start time of the fade in effect in seconds
-    fade_in_duration_sec = 2  # The duration of the fade in effect in seconds
-    fade_out_start_sec = duration_sec - 1  # The start time of the fade out effect in seconds
-    fade_out_duration_sec = 2  # The duration of the fade out effect in seconds
-
-    # picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -loop 1 -t {str(duration_sec)} -i out/images/1.0.0.jpg -filter_complex "[1:v]format=rgba,split[RGB][A];[A]alphaextract,fade=in:st={fade_in_start_sec}:d={fade_in_duration_sec}:alpha=1,fade=out:st={fade_out_start_sec}:d={fade_out_duration_sec}:alpha=1[Aout];[RGB][Aout]alphamerge[out];[0:v][out]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,0)'" -pix_fmt yuv420p -c:a copy temp/{image_name}.mp4"""
-
-    picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i {image_path} -filter_complex "[0:v][1:v] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,0)'" -pix_fmt yuv420p -c:a copy temp/{image_name}.mp4"""
-    subtitles_and_audio = f"""ffmpeg -y -i temp/{image_name}.mp4 -i {audio_path} -vf "subtitles={subtitle_path}" {setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_{image_name}.mp4"""
+    picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i {image_path} -filter_complex "[0:v][1:v] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,0)'" -pix_fmt yuv420p -c:a copy temp/videos/{image_name}.mp4"""
+    subtitles_and_audio = f"""ffmpeg -y -i temp/videos/{image_name}.mp4 -i {audio_path} -vf "subtitles={subtitle_path}" {setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_{image_name}.mp4"""
 
     subprocess.run(picture)
     subprocess.run(subtitles_and_audio)
 
     # Delete the intermediate video: temp/{image_name}.mp4
-    os.remove(f"temp/{image_name}.mp4")
+    os.remove(f"temp/videos/{image_name}.mp4")
 
     total_duration += duration_sec
 

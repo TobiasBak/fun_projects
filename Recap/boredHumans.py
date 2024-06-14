@@ -112,7 +112,7 @@ def generate_text_from_images(directory: str):
 
     threads = []
     for i, image_path in enumerate(image_paths):
-        thread_name = f"Thread-{i}"
+        thread_name = f"{i}"
         thread = threading.Thread(target=threaded_automate_image_upload, args=(thread_name, thread_count, image_path))
         thread.start()
         threads.append(thread)

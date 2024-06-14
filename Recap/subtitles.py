@@ -35,7 +35,7 @@ def create_timings_for_subtitles():
 
     audio_file_paths = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
     for audio_file in audio_file_paths:
-        json_file_path = f"temp/{audio_file.split('.mp3')[0]}.json"
+        json_file_path = f"temp/json/{audio_file.split('.mp3')[0]}.json"
 
         # Check if json file already exists
         if os.path.exists(get_absolute_path(json_file_path)):
@@ -131,7 +131,7 @@ def generate_subtitle_files():
 
     for audio_file in audio_files:
         audio_file_name = audio_file.split('.mp3')[0]
-        json_file_path = get_absolute_path("temp" + f"/{audio_file_name}.json")
+        json_file_path = get_absolute_path("temp/json/" + f"/{audio_file_name}.json")
         ass_file_path = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{audio_file_name}.ass"
         sentences = get_sentences_from_string(sentences_dict[f"{audio_file_name}.jpg"])
 

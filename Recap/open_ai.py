@@ -1,4 +1,3 @@
-
 from openai import OpenAI
 
 import setup
@@ -40,7 +39,7 @@ Don't use names such as "Kai", "Alex", "Adam", "Hana"  if similar names do not a
 """
 
 propmt_ending = """
-Remember not to include names in the sentences unless the name is within B: "Text on picture" texts.
+Don not include names in the generated sentences unless they are in the allowed names list. 
 You must iterate over each of the 50 above pictures and generate an answer for each.
 """
 
