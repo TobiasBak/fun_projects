@@ -6,44 +6,37 @@ from utils import append_to_file, get_dict_from_file, get_images_missing_from_fi
 prompt_beginning = f"""
 You are narrating over pictures in a picture book. 
 Each picture will have specific elements provided: 
-- A: the filename, 
-- B: "Text on picture" (the text written on the picture), 
-- C: "Descriptive Text" (a description of what is happening in the picture). 
+    1. The filename, 
+    2. "Descriptive Text" (a description of what is happening in the picture). 
 
-Your task is to generate a sentence about what is happening in the picture.
+Your task is to create a short narration that describes the image and continues the story.
 
-**Following is a short description of overall story to guide you in generating sentences.**
-{setup.STORY}
-
-**Allowed names in the sentences:**
+**Following is a short description of overall story to guide you in generating sentences:** {setup.STORY}
+**Allowed names in the sentences:** 
 [{setup.AllOWED_NAMES}]
 
 **Instructions:**
-1. Generate a sentence for each picture.
-2. Generated sentences must be simple to understand.
-3. Generated sentences must be in present tense.
-4. Do not generate sentences that start with "In the".
-5. Only include names in generated sentences if they are in the allowed names list.
-6. Use pronouns like "he", "she", "they", "the man", or "the woman" instead of names.
-7. Respond to each picture in the format: `<filename>;<sentence1>`
+1. Generate a descriptive narration for each picture.
+2. Generated narrations must be in present tense.
+3. Only include names in generated sentences if they are in the allowed names list.
+4. Use pronouns like "he", "she", "they", "the man", or "the woman" instead of names.
+5. Respond to each picture in the format: `<filename>;<story>`
 
 **Format for each picture:**
-- Picture: `<filename>` |
-- Text on picture: `<text>` |
-- Description of picture: `<description>` |  
+- Image: `<filename>` | Description of image: `<description>` |  
 
 **Response format:**
 `<filename>;<sentence1>
 
 **Pictures**
-Below, all pictures are listed. Please use the provided text for pictures to guide you narration of the story.
+Below, all filenames are listed in the specified format.
 Don't use names such as "Kai", "Alex", "Adam", "Hana" that are not in the allowed names list.  
 
 """
 
 propmt_ending = f"""
 Do not include names in the generated sentences unless they are one of [{setup.AllOWED_NAMES}]. 
-You must iterate over each of the 50 above pictures and generate an answer for each that includes the short sentences.
+You must iterate over each of the above pictures and generate a story for each.
 """
 
 
@@ -52,8 +45,8 @@ def get_openai_api_key():
         return file.read().replace('\n', '')
 
 
-def get_prompt_from_image(image_name, text_on_picture, description_of_picture) -> str:
-    return f"Picture: {image_name} | Text on picture: {text_on_picture} | Description of picture: {description_of_picture} |\n"
+def get_prompt_from_image(image_name, description_of_picture) -> str:
+    return f"Image: {image_name} | Description of image: {description_of_picture} |\n"
 
 
 def openai_generate_text(images: list):
@@ -74,8 +67,8 @@ def openai_generate_text(images: list):
         prompt += generated_prompt
 
     prompt += propmt_ending
-
     print(prompt)
+
     print(f"Amount of tokens: {get_amount_of_tokens(prompt)}")
 
     chat_completion = client.chat.completions.create(
@@ -100,17 +93,12 @@ def openai_generate_text(images: list):
 
 
 def generate_prompts_for_images(images: list):
-    file_containing_text_on_pictures = setup.PATHS.TEXT_ON_PICTURES
-    file_containing_generated_text = setup.PATHS.DESCRIPTIONS
-
-    text_on_pictures_dict = get_dict_from_file(file_containing_text_on_pictures)
-    generated_text_dict = get_dict_from_file(file_containing_generated_text)
+    generated_text_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
 
     prompts = []
     for image_name in images:
-        text_on_picture = text_on_pictures_dict[image_name]
         description_of_picture = generated_text_dict[image_name]
-        prompt = get_prompt_from_image(image_name, text_on_picture, description_of_picture)
+        prompt = get_prompt_from_image(image_name, description_of_picture)
         prompts.append(prompt)
 
     return prompts

@@ -69,7 +69,7 @@ def get_lines_from_file(file_path: str):
 
 
 def get_images_missing_from_files(image_dir: str, text_file_path: str):
-    images = get_all_images(image_dir)
+    images = get_sorted_list_of_images(image_dir)
 
     text_file_dict = get_dict_from_file(text_file_path)
 

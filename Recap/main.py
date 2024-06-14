@@ -4,11 +4,12 @@ import time
 
 import setup
 from Recap.boredHumans import generate_text_from_images
-from Recap.cleanup import clean_images
+from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.textFinder import find_text_on_images
 from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
+from gemini import generate_descriptive_text, get_files_that_gemini_deem_unnecessary, generate_sentences_gemini
 from open_ai import openai_generate_text, generate_sentences
 from subtitles import generate_subtitles
 from tts_google import google_tts_generate_audio_files
@@ -40,7 +41,6 @@ def _delete_temp_files():
 
 
 def _find_images_with_missing_texts(image_directory: str):
-    text_on_pictures_dict = get_dict_from_file(setup.PATHS.TEXT_ON_PICTURES)
     generated_text_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
 
     images = get_all_images(image_directory)
@@ -48,9 +48,8 @@ def _find_images_with_missing_texts(image_directory: str):
     print(f"Checking images in {image_directory} for missing text...")
 
     for image in images:
-        if image not in text_on_pictures_dict or image not in generated_text_dict:
+        if image not in  generated_text_dict:
             print(f"Image {image} is missing text")
-            print(f"Text on pictures: {text_on_pictures_dict.get(image)}")
             print(f"Generated text: {generated_text_dict.get(image)}")
             print("")
             raise Exception(f"Image {image} is missing text")
@@ -58,16 +57,18 @@ def _find_images_with_missing_texts(image_directory: str):
 
 def main():
     # download_and_modify_images()
-    generate_text_from_images(setup.PATHS.OUT_IMAGE_DIR)
+    generate_descriptive_text()
     time.sleep(1)
-    find_text_on_images(setup.PATHS.OUT_IMAGE_DIR)
     _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR)
     clean_images()
-    # clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
+    clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
+    get_files_that_gemini_deem_unnecessary()
+    clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
     generate_sentences()  # COSTS MONEY!!!!
-    google_tts_generate_audio_files()
-    generate_subtitles()
-    create_video()
+    generate_sentences_gemini()
+    # google_tts_generate_audio_files()
+    # generate_subtitles()
+    # create_video()
 
 
 def download_and_modify_images():

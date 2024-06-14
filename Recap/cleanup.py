@@ -10,7 +10,7 @@ def clean_images():
 
     print(f"Cleaning images if they include the following strings: {strings_to_remove}")
 
-    lines = get_lines_from_file(setup.PATHS.TEXT_ON_PICTURES)
+    lines = get_lines_from_file(setup.PATHS.DESCRIPTIONS)
 
     for line in lines:
         parts = line.split(';')
@@ -32,32 +32,19 @@ def clean_images():
 def clean_text_files_for_unnecessary_lines():
     images = get_all_images()
 
-    text_on_pictures_dict = get_dict_from_file(setup.PATHS.TEXT_ON_PICTURES)
     generated_text_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
 
-    text_on_pictures_file_path = get_absolute_path(setup.PATHS.TEXT_ON_PICTURES)
     generated_text_file_path = get_absolute_path(setup.PATHS.DESCRIPTIONS)
 
-    if len(text_on_pictures_dict.keys()) == len(generated_text_dict.keys()) and len(text_on_pictures_dict.keys()) == len(images) and len(generated_text_dict.keys()) == len(images):
+    if len(generated_text_dict.keys()) == len(images):
         print("No unnecessary lines found in text files.")
         return
 
     print(f"Unnecessary lines found in text files. Cleaning...")
 
-    # Open the files in write mode to clear their contents
-    with open(text_on_pictures_file_path, 'w') as f:
-        f.write('')
-        pass
     with open(generated_text_file_path, 'w') as f:
         f.write('')
         pass
-
-    # Write the necessary lines back to the files
-    for key in text_on_pictures_dict.keys():
-        if key not in images:
-            print(f"Removing {key} from {setup.PATHS.TEXT_ON_PICTURES}")
-            continue
-        append_to_file(setup.PATHS.TEXT_ON_PICTURES, f"{key};{text_on_pictures_dict[key]}\n")
 
     for key in generated_text_dict.keys():
         if key not in images:

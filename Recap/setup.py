@@ -22,8 +22,7 @@ NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
 
 
 class FILES:
-    DESCRIPTIONS = f'eng.{NAME_AND_CHAPTERS}_generated_text.csv'
-    TEXT_ON_PICTURES = f'eng.{NAME_AND_CHAPTERS}_text_on_pictures.csv'
+    DESCRIPTIONS = f'eng.{NAME_AND_CHAPTERS}_descriptions.csv'
     SENTENCES = f'eng.{NAME_AND_CHAPTERS}_generated_sentences.csv'
 
 
@@ -34,7 +33,6 @@ class PATHS:
     OUT_SUBTITLE_DIR = 'out/subtitles'
     OUT_VIDEO_DIR = 'out/videos'
     DESCRIPTIONS = f'{OUT_TEXT_DIR}/{FILES.DESCRIPTIONS}'
-    TEXT_ON_PICTURES = f'{OUT_TEXT_DIR}/{FILES.TEXT_ON_PICTURES}'
     SENTENCES = f'{OUT_TEXT_DIR}/{FILES.SENTENCES}'
 
 
