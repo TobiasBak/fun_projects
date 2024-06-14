@@ -26,8 +26,8 @@ def _generate_text_to_speach(api_key: str, voice_id: str, audio_filename: str, t
         "text": text,
         "model_id": "eleven_multilingual_v2",
         "voice_settings": {
-            "stability": 0.5,
-            "similarity_boost": 0.9,
+            "stability": 0.65,
+            "similarity_boost": 0.85,
             "style": 0.0,
             "use_speaker_boost": True
         }

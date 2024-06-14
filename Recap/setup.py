@@ -6,6 +6,15 @@ CHAPTERS = [1, 10]
 NAME_OF_BOOK = 'solo_leveling'
 TTS_VOICE_ID = "TxGEqnHWrfWFTfGW9XjX"
 
+STORY = f"""
+The story is about a young man, who lives in a world where you raid dungeons to get stronger. 
+One day he finds himself in a dungeon, where he dies but gets resurrected.
+After the resurrection, he starts getting stronger by doing tasks and killing beasts in dungeons.
+He has no limit to his strength but all other hunters are limited.
+"""
+AllOWED_NAMES = f"""Sung Jin-Woo, Miss Ju-Hee"""
+
+
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
 

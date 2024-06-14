@@ -5,27 +5,30 @@ import setup
 from utils import append_to_file, get_dict_from_file, get_images_missing_from_files
 
 prompt_beginning = f"""
-You are narrating over pictures in a picture book. Each picture will have specific elements provided: A: the filename, B: "Text on picture" (the text written on the picture), C: "Descriptive Text" (a description of what is happening in the picture). Your task is to generate two short, simple sentences per picture that are easy for children to understand.
+You are narrating over pictures in a picture book. 
+Each picture will have specific elements provided: A: the filename, B: "Text on picture" (the text written on the picture), C: "Descriptive Text" (a description of what is happening in the picture). 
+
+Your task is to generate two short, simple sentences.
+
+**Short description of overall story**
+{setup.STORY}
+
+**Allowed names:**
+[{setup.AllOWED_NAMES}]
 
 **Instructions:**
 1. Generate two very short sentences for each picture.
 2. Generated sentences must be very short and simple.
 3. Generated sentences must be in present tense.
 4. Do not generate sentences that start with "In the".
-5. Only generate names if they are mentioned in the "Text on picture" not otherwise.
-6. Use pronouns like "he", "she", "they", "the main character", "the protagonist", or "the antagonist" if names are not mentioned in the "Text on picture".
+5. Only generate names if they are in the allowed names list.
+6. Use pronouns like "he", "she", "they", "the main character", "the protagonist", or "the antagonist".
 7. Respond to each picture in the format: `<filename>;<sentence1>;<sentence2>`
 
 **Format for each picture:**
 - Picture: `<filename>` |
 - Text on picture: `<text>` |
 - Description of picture: `<description>` |  
-
-**Example:**
-Picture: 1.0.0.jpg | Text on picture: GOD- DAMMIT.. | Description of picture: In the heart of the electrified battlefield, Kai clenched his teeth, a mix of frustration and determination etched on his face as he muttered, "God-dammit.. |
-
-**Example response:**
-1.4.0.jpg;In the electrified battlefield, the main character clenched his teeth with frustration and determination.;Muttering, "God-dammit," his face etched with a mix of emotions.
 
 **Response format:**
 `<filename>;<sentence1>;<sentence2>`
