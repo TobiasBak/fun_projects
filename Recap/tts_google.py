@@ -2,10 +2,16 @@ import json
 import os
 import sys
 
+import nltk
+from nltk.tokenize import sent_tokenize
+
 from google.cloud import texttospeech_v1beta1 as tts
 
 import setup
 from utils import get_all_images, get_sentences_dict
+
+# Make sure to download the necessary resources
+nltk.download('punkt')
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'hidden/credentials.json'
 client = tts.TextToSpeechClient()
@@ -28,6 +34,7 @@ def _generate_text_to_speach(audio_filename: str, text: str):
 
     # Calculate the size of the request body
     request_body_size = sys.getsizeof(synthesis_input)
+    print(f"{audio_filename}: {request_body_size} bytes")
 
     response = client.synthesize_speech(
         request=tts.SynthesizeSpeechRequest(
@@ -54,16 +61,35 @@ def _generate_text_to_speach(audio_filename: str, text: str):
     return None
 
 
-def generate_ssml_from_text(sentence: str) -> str:
+def get_senteces_from_string(sentences: str) -> list:
+    return sent_tokenize(sentences)
+
+
+def generate_ssml_from_text(sentences: str) -> str:
+    # Get sentences from string
+    # The cases that are troublesome
+
+    sentence_array = get_senteces_from_string(sentences)
+    print(sentence_array)
+
+    sentences_with_marks = ""
+
+    for i, sentence in enumerate(sentence_array):
+        sentences_with_marks += f'<mark name="start_{i}"/> {sentence}'
+
     out = f"""
     <speak>
-    <mark name="start_0"/> {sentence} <mark name="finish_0"/>
+    <break time="300ms"/>
+    {sentences_with_marks}
+    <break time="200ms"/>
+    <mark name="finish"/>
     </speak>
     """
+
     return out
 
 
-def get_missing_audio_files():
+def get_missing_audio_file_names():
     images = get_all_images()
     audio_files = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
     audio_file_names = [file.split('.mp3')[0].replace(' ', '') for file in audio_files]
@@ -75,12 +101,11 @@ def get_missing_audio_files():
 
 def google_tts_generate_audio_files():
     sentences_dict = get_sentences_dict()
-    print(sentences_dict)
 
-    missing_audio_files = get_missing_audio_files()
-    print(f"Missing audio files: {missing_audio_files}")
+    missing_audio_file_names = get_missing_audio_file_names()
+    print(f"Missing audio files: {missing_audio_file_names}")
 
-    for audio_file_name in missing_audio_files:
+    for audio_file_name in missing_audio_file_names:
         text = sentences_dict.get(f"{audio_file_name}.jpg")
         print(f"Generating audio for {audio_file_name}.jpg with text: {text}")
         ssml = generate_ssml_from_text(text)

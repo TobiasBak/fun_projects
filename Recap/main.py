@@ -3,14 +3,12 @@ import shutil
 import time
 
 import setup
-from Recap.boredHumans import generate_text_from_images
 from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
-from Recap.textFinder import find_text_on_images
 from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
 from gemini import generate_descriptive_text, get_files_that_gemini_deem_unnecessary, generate_sentences_gemini
-from open_ai import openai_generate_text, generate_sentences
+from old.open_ai import generate_sentences
 from subtitles import generate_subtitles
 from tts_google import google_tts_generate_audio_files
 from videoCreator import create_video
@@ -40,8 +38,8 @@ def _delete_temp_files():
     os.rmdir('temp')
 
 
-def _find_images_with_missing_texts(image_directory: str):
-    generated_text_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
+def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
+    generated_text_dict = get_dict_from_file(text_file_path)
 
     images = get_all_images(image_directory)
 
@@ -59,13 +57,14 @@ def main():
     # download_and_modify_images()
     generate_descriptive_text()
     time.sleep(1)
-    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR)
+    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
     clean_images()
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
-    get_files_that_gemini_deem_unnecessary()
+    # get_files_that_gemini_deem_unnecessary()
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
-    generate_sentences()  # COSTS MONEY!!!!
     generate_sentences_gemini()
+    time.sleep(1)
+    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
     # google_tts_generate_audio_files()
     # generate_subtitles()
     # create_video()
@@ -75,7 +74,7 @@ def download_and_modify_images():
     _download_chapters()
     modify_all_images()
     modify_images_to_fit_screen()
-    _delete_temp_files()
+    # _delete_temp_files()
 
 
 if __name__ == "__main__":

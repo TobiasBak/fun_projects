@@ -81,6 +81,8 @@ def generate_videos_for_images():
 
     # Generate intermediate videos
     for image_name in image_file_names_missing_videos:
+        print(f"Generating video for {image_name}")
+
         image_path = f"{setup.PATHS.OUT_IMAGE_DIR}/{image_name}.jpg"
         audio_file = f"{image_name}.mp3"
         audio_path = f"{setup.PATHS.OUT_AUDIO_DIR}/{audio_file}"
@@ -97,8 +99,11 @@ def generate_videos_for_images():
         picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i {image_path} -filter_complex "[0:v][1:v] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,0)'" -pix_fmt yuv420p -c:a copy -threads {num_threads} temp/videos/{image_name}.mp4"""
         subtitles_and_audio = f"""ffmpeg -y -i temp/videos/{image_name}.mp4 -i {audio_path} -vf "subtitles={subtitle_path}" -threads {num_threads} {setup.PATHS.OUT_VIDEO_DIR}/{image_name}.mp4"""
 
+        print(f"Generating picture video for {image_name}")
         subprocess.run(picture)
+        print(f"Generating subtitles and audio for {image_name}")
         subprocess.run(subtitles_and_audio)
+        print(f"Done generating video for {image_name}")
 
         # Delete the intermediate video: temp/{image_name}.mp4
         os.remove(f"temp/videos/{image_name}.mp4")

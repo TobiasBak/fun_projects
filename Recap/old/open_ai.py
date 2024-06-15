@@ -41,7 +41,7 @@ You must iterate over each of the above pictures and generate a story for each.
 
 
 def get_openai_api_key():
-    with open('hidden/openai_key.txt', 'r') as file:
+    with open('../hidden/openai_key.txt', 'r') as file:
         return file.read().replace('\n', '')
 
 

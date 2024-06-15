@@ -30,6 +30,11 @@ def modify_all_images():
         count += 1
 
 
+def get_letter_from_count(count: int):
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    return alphabet[count % len(alphabet)]
+
+
 def modify_images_to_fit_screen():
     images = get_sorted_list_of_images("temp/images")
 
@@ -56,7 +61,7 @@ def modify_images_to_fit_screen():
             # Todo: If image is too big (max size * 1.5). Then we need to split it at an optimal point and, scale and save
 
             resized_image = _scale_image(image_part)
-            resized_image.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{count}.jpg')
+            resized_image.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.jpg')
 
             count += 1
 
@@ -106,7 +111,7 @@ def _find_black_or_white_rows(img_path):
         black_pixels = np.sum(row == 0)
         white_pixels = np.sum(row == 255)
         total_pixels = len(row)
-        if black_pixels / total_pixels > 0.98 or white_pixels / total_pixels > 0.995:
+        if black_pixels / total_pixels > 0.98 or white_pixels / total_pixels > 0.99:
             out.append(i)
 
     return out
