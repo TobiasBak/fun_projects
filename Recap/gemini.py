@@ -39,6 +39,7 @@ You must only return 1 string containing all the details from the descriptions.
 **Input:**
 """
 
+
 def get_api_key():
     with open(get_absolute_path('hidden/gemini_key.txt'), 'r') as file:
         lines = file.readlines()
@@ -230,7 +231,6 @@ You will be provided with the filenames and descriptions below:
 """
 
 
-
 def generate_sentences_for_images_gemini(images: list[str]):
     prompt = prompt_beginning
 
@@ -263,7 +263,6 @@ def generate_sentences_for_images_gemini(images: list[str]):
 
     if replies[-1] == '```':
         replies.pop(-1)
-
 
     for x in replies:
         if x == '':
