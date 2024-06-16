@@ -81,7 +81,7 @@ def generate_videos_for_images():
     # Get the list of images, audio files, and subtitles
     image_file_names_missing_videos = get_image_names_missing_videos()
 
-    base_video = create_ambience_video("1.mp4", 12, 3)
+    base_video = create_ambience_video("1.mp4", 13, 3)
 
     os.makedirs("temp/videos", exist_ok=True)
 
