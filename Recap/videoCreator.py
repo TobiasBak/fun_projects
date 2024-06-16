@@ -39,6 +39,8 @@ def get_video_duration(video_path):
     if duration is None:
         duration = output_json.get('streams', [{}])[0].get('duration')
 
+    print(f"Video: {video_path}: Duration: {duration}")
+
     return float(duration)
 
 
@@ -58,21 +60,28 @@ def get_image_names_missing_videos():
     return images_missing_video_files
 
 
+def create_ambience_video(name: str, time: float) -> str:
+    ambient_video_path = f"ambientVideos/{name}"
+    ambient_video_1920_path = f"ambientVideos/{name.split('.mp3')[0]}_1920.mp4"
+
+    if os.path.exists(ambient_video_1920_path):
+        return ambient_video_1920_path
+
+    # Generate a video with the duration of time based on ambient_video_path
+    subprocess.run(f"""ffmpeg -y -i {ambient_video_path} -vf "scale=1920:1080" -r 24 -t 10 -an temp/ambient_video.mp4""")
+
+    # Generate a video with a 60 second duration, based on temp/ambient_video
+    subprocess.run(f"""ffmpeg -y -stream_loop -1 -i temp/ambient_video.mp4 -t 60 -an {ambient_video_1920_path}""")
+
+    return ambient_video_1920_path
+
+
+
 def generate_videos_for_images():
     # Get the list of images, audio files, and subtitles
     image_file_names_missing_videos = get_image_names_missing_videos()
 
-    ambient_video = "ambientVideos/1"
-    ambient_video_1920 = f"{ambient_video}_1920.mp4"
-    if not os.path.exists(ambient_video_1920):
-        print(f"Path did not exists")
-        subprocess.run(f"""ffmpeg -i {ambient_video}.mp4 -vf "scale=1920:1080" -r 24 -an {ambient_video_1920}""")
-
-    base_video = ambient_video_1920
-
-
-    # black_background = f'ffmpeg -n -f lavfi -i color=c=black:s=1920x1080:d=60 -vf "fps=24" {base_video}'
-    # subprocess.run(black_background)
+    base_video = create_ambience_video("1.mp4", 10)
 
     os.makedirs("temp/videos", exist_ok=True)
 
@@ -136,9 +145,47 @@ def concat_video_files():
             abs_path = get_absolute_path(f"{setup.PATHS.OUT_VIDEO_DIR}/{video_file}")
             f.write(f"file '{abs_path}'\n")
 
+    video_path = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}.mp4"
+    audio_path = "backgroundAudio/1_decreased.mp3"
+    video_with_audio_path = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_background_audio.mp4"""
+
     # Generate the final video
-    final_video = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy -threads {num_threads} {setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}.mp4"""
+    final_video = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy -threads {num_threads} {video_path}"""
     subprocess.run(final_video)
+
+    # Add audio track to video
+    combine_video_with_audio = f"""ffmpeg -y -i {video_path} -stream_loop -1 -i {audio_path} -map 0 -map 1:a -c:v copy -shortest -threads {num_threads} {video_with_audio_path}"""
+    # combine_video_with_audio = f"""ffmpeg -i {video_path} -stream_loop -1 -i {audio_path} -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest {setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_background_audio.mkv"""
+    subprocess.run(combine_video_with_audio)
+
+    final_video_name = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_final.mp4"
+
+    # Convert mkv file to mp4
+    # subprocess.run(f"""ffmpeg -i {video_with_audio_path} -c copy -map 0 {final_video_name}""")
+
+create_ambience_video("1.mp4", 10)
+concat_video_files()
+
+def decrease_volume_of_audio(file_path: str, volume: float):
+    audio_path = file_path
+    out = f"{file_path.split('.mp3')[0]}_decreased.mp3"
+
+    decrease_volume = f"""ffmpeg -y -i {audio_path} -filter:a "volume={str(volume)}" -threads {num_threads} {out}"""
+    subprocess.run(decrease_volume)
+
+# decrease_volume_of_audio(f"backgroundAudio/1.mp3", 0.02)
+
+def test_logo():
+    test_video = "out/videos/1.0.A.mp4"
+    logo = "out/images/1.1.A.jpg"
+
+    my_string = f""" ffmpeg -i test.mp4 -loop 1 -i logo.png -filter_complex "[1][0]scale2ref=w=oh*mdar:h=ih/10[logo][input0]; [logo]format=rgba, fade=in: st=1: d=0.5: alpha=1 ,fade=out:st=6:d=0.5:alpha=1 [logo2]; [input0][logo2]overlay=x=main_w*0.05:(main_h-overlay_h)-(main_h * 0.1):" output.mp4"""
+
+    subprocess.run(my_string)
+
+# test_logo()
+
+
 
 
 def create_video():

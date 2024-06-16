@@ -65,9 +65,9 @@ def main():
     generate_sentences_gemini()
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
-    # google_tts_generate_audio_files()
-    # generate_subtitles()
-    # create_video()
+    google_tts_generate_audio_files()
+    generate_subtitles()
+    create_video()
 
 
 def download_and_modify_images():

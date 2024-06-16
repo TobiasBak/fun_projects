@@ -16,14 +16,5 @@
 
 
 
-
-
-possible image describers:
-1. https://github.com/GoogleCloudPlatform/generative-ai/blob/main/vision/getting-started/visual_captioning.ipynb
-2. https://huggingface.co/Salesforce/blip2-opt-2.7b (local model)
-
-
-
-
-pip install requests requests-toolbelt
-
+Cinematic songs:
+https://www.storyblocks.com/audio/search/slow-motion-cinematic

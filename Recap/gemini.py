@@ -29,7 +29,9 @@ You must generate an in depth description for each jpg that include the followin
 2. Setting: A detailed description of the setting in the pictures. Where are we?
 3. Plot: A detailed description of what is happening in the pictures.
 4. Feeling: A detailed description of the feeling the pictures conveys. 
-5. Text: A detailed description of the text in the pictures. All text should be interpreted in lowercase. Such that when it in the picture says "HELLO", you should write "Hello". An example of how to describe the text in the image is: "At the top of the image, there is text that says 'Hello'. Below the character there is more text that says 'Goodbye'."
+5. Text: A detailed description of the text in the pictures. All text should be interpreted in lowercase. Only english words should be interpreted.
+Do not mention speech bubbles instead describe the text and where the text is located compared to the characters.
+6. Non-english characters: All characters must be in english. Never add characters such as: "훠-!", "풉" to the descriptions. Only describe english characters.
 
 **Return Format:**
 The combined description must be returned in the following format. This means remove all newlines and replace them with a space.:
@@ -190,22 +192,29 @@ def get_files_that_gemini_deem_unnecessary():
 prompt_beginning = f"""
 **AI Mission Brief:** Turning Image Descriptions into a Narrative
 **Mission Objective:**
-You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story. Each sentence generated should contribute to the overall narrative and provide a seamless transition between images. The resulting story should read as a unified and engaging piece, capturing the essence and emotions of the scenes depicted. Each image should be described by two precise sentences.
+You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
+Each sentence generated should contribute to the overall narrative and provide a seamless transition between images. 
+The resulting story should 100% english and read as a unified and engaging piece, capturing the essence and emotions of the scenes depicted. 
+Each image should be described by two precise sentences.
 
 **Task Outline:**
 1. Image Descriptions: You will be given descriptions of 100 images. Each description includes specific details about the visual elements, emotions conveyed, and context of the image.
-2. Narrative Transformation: Based on these descriptions, generate sentences that collectively form a continuous story.
+2. Narrative Transformation: Based on these descriptions, generate two sentences for each image that collectively form a continuous story.
 3. Story Flow: Ensure the sentences flow logically from one to the next, maintaining a coherent and engaging narrative.
 
 **Rules and Guidelines:**
-1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows." Instead, focus on narrating the events and emotions as if they are happening in real-time.
+1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows." or "The speech bubble". Instead, focus on narrating the events and emotions as if they are happening in real-time.
 2. Character Consistency: Maintain consistency in characters' names, attributes, and roles throughout the story. Introduce characters smoothly and keep their actions and descriptions coherent across sentences.
 3. Emotion and Context: Highlight the emotions and context described in the images to enrich the story. Use descriptive language to convey the atmosphere, characters' feelings, and settings.
 4. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
 5. Descriptive Detail: Incorporate specific details from the descriptions into the story, enhancing the imagery and helping readers visualize the scenes.
 6. Avoid Mentioning Speech Bubbles: They are merely there to describe the scene and not something the characters can see.
+7. Text from descriptions: Avoid directly mentioning speech bubbles in sentences. Instead, incorporate the text into the narrative seamlessly.
 7. Avoid Spoilers: Reveal information gradually as it happens. Ensure that no critical plot points are disclosed prematurely.
 8. Vary Sentence Structure: Avoid starting too many sentences with quotes. Use a variety of sentence structures to keep the narrative engaging and dynamic.
+9. Sentence lengths.: Each image should be described by two simple sentences.
+10. Non-english characters: All characters must be in english. Never add characters such as: "훠-!", "풉"
+11. Vary mentioning names: Often use of names should be prevented by using pronouns. 
 
 **Example Input Description:**
 "1.0.B.jpg; There is text above him that says 'E-Rank Hunter.' There is more text below him that says 'The Hunter Guild's' and 'Haa.' The image conveys a feeling of despair and determination. A young man is lying on the ground, bleeding profusely from multiple wounds. He is wearing a blue hoodie with the hood up. His hair is short and dark. His face is contorted in pain, but he has a determined look in his eyes. The background is dark, and it appears he is in some sort of abandoned building."
@@ -216,9 +225,11 @@ You are tasked with transforming a series of detailed image descriptions into a 
 **Process:**
 1. Read the Description: Carefully read and understand each image description.
 2. Extract Key Elements: Identify key elements such as characters, emotions, settings, and actions.
-3. Generate Sentence: Formulate a sentence that incorporates these elements and contributes to the overall narrative.
+3. Generate Sentence: Formulate a sentence in present tense that incorporates these elements and contributes to the overall narrative.
 4. Ensure Continuity: Ensure each generated sentence logically follows the previous one, maintaining narrative coherence.
-5. Avoid Premature Context: Introduce context gradually, ensuring a smooth and natural unfolding of the story.
+5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
+6. Avoid direct references to the image such as: "The speech bubble", "In the image", "The picture shows", "the text above them read".
+7. Only use english characters. Any non english-characters such as "훠-!", "풉" or any other asian/japanese must not be used in generated sentences.
 By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the visual and emotional content of the images into a written narrative.
 
 **Output:**
@@ -258,7 +269,7 @@ def generate_sentences_for_images_gemini(images: list[str]):
     replies = responses.text.split('\n')
 
     # Remove first and last index if it is json
-    if replies[0] == '```json':
+    if replies[0] == '```json' or replies[0] == '```':
         replies.pop(0)
 
     if replies[-1] == '```':

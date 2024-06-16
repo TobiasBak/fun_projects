@@ -114,12 +114,16 @@ def generate_subtitles():
                 print(f"Start time: {start_time}")
                 print(f"Finish time: {finish_time}")
 
-                if i == 0 and start_time >= 0.2:
-                    start_time = start_time - 0.2
+                if i == 0 and start_time >= 0.3:
+                    start_time = start_time - 0.3
                 elif i == 0:
                     start_time = 0.0
 
                 start_time = convert_to_hmmssmm(start_time)
                 finish_time = convert_to_hmmssmm(finish_time)
+
+                print(f"Element: {element}")
+
+                print(f"Sentence: {sentences[i]}")
 
                 f.write(f"Dialogue: {start_time},{finish_time},Info,{sentences[i]}\n")
