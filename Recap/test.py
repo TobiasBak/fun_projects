@@ -137,6 +137,14 @@ def generate_image_videos():
 
 def generate_concated_video():
     video_files = os.listdir("temp/videos")
+
+    def sort_key(image_name: str):
+        # Split the filename on '.', convert the parts to integers, and return as a tuple
+        parts = image_name.split('.')[:2]
+        return tuple(int(part) for part in parts)
+
+    video_files.sort(key=sort_key)
+
     print(video_files)
     with open('temp/concat.txt', 'w') as f:
         for file in video_files:
