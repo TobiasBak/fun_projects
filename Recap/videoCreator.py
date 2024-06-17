@@ -52,14 +52,9 @@ def get_image_names_missing_videos():
     image_names = [image.split('.jpg')[0] for image in images]
 
     video_files = os.listdir(setup.PATHS.OUT_VIDEO_DIR)
-    print(f"Video files: {video_files}")
     video_file_names = [file.split('.mp4')[0] for file in video_files]
 
-    print(f"Images: {image_names}")
-    print(f"Video files: {video_file_names}")
-
     images_missing_video_files = [name for name in image_names if name not in video_file_names]
-    print(f"Images missing video files: {images_missing_video_files}")
     return images_missing_video_files
 
 

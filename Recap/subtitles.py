@@ -20,8 +20,6 @@ def convert_to_hmmssmm(time: float) -> str:
     The function takes a float time in seconds and converts it to a string in the 0:00:00:00 format ie. Hrs:Mins:Secs:hundredths
     """
 
-    print(f"Time in: {time}")
-
     # Get the hours, minutes, and seconds
     hours = int(time / 3600)
     minutes = int((time % 3600) / 60)
@@ -30,7 +28,6 @@ def convert_to_hmmssmm(time: float) -> str:
 
     # Return the time in the format h:mm:ss.mm
     out = f"{hours:01}:{minutes:02}:{seconds:02}.{milliseconds:02}"
-    print(f"Time out: {out}")
 
     return out
 
@@ -46,12 +43,9 @@ def convert_to_seconds(time: str) -> float:
     seconds = int(time_parts[2].split(".")[0])
     milliseconds = int(time_parts[2].split(".")[1])
 
-    print(f"Time in: {time}")
-
     # Convert the time to seconds
     time = hours * 3600 + minutes * 60 + seconds + milliseconds / 100
 
-    print(f"Time out: {time}")
     return time
 
 

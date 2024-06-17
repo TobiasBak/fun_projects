@@ -39,3 +39,8 @@ class PATHS:
 # Generate directories if they do not exist
 for path in [PATHS.OUT_IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.OUT_AUDIO_DIR, PATHS.OUT_SUBTITLE_DIR, PATHS.OUT_VIDEO_DIR]:
     os.makedirs(path, exist_ok=True)
+
+os.makedirs('temp/videos', exist_ok=True)
+os.makedirs('temp/audio', exist_ok=True)
+os.makedirs('temp/timings', exist_ok=True)
+os.makedirs('temp/videos', exist_ok=True)
