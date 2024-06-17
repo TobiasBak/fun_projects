@@ -1,12 +1,15 @@
 import json
+import math
 import os
 import subprocess
+import time
 
 import setup
 from subtitles import convert_to_seconds
 from utils import get_all_images, get_absolute_path, get_lines_from_file
 
 num_threads = 4  # Set this to the number of cores in your CPU
+
 
 def get_duration_sec(image_name) -> float:
     lines = get_lines_from_file(f"{setup.PATHS.OUT_SUBTITLE_DIR}/{image_name}.ass")
@@ -68,13 +71,13 @@ def create_ambience_video(name: str, start: float, duration: float) -> str:
         return ambient_video_1920_path
 
     # Generate a video with the duration of time based on ambient_video_path
-    subprocess.run(f"""ffmpeg -y -t {duration} -ss {start}  -i {ambient_video_path} -vf "scale=1920:1080" -r 24 -an temp/ambient_video.mp4""")
+    subprocess.run(
+        f"""ffmpeg -y -t {duration} -ss {start}  -i {ambient_video_path} -vf "scale=1920:1080" -r 24 -an temp/ambient_video.mp4""")
 
     # Generate a video with a 60 second duration, based on temp/ambient_video
     subprocess.run(f"""ffmpeg -y -stream_loop -1 -i temp/ambient_video.mp4 -t 60 -an {ambient_video_1920_path}""")
 
     return ambient_video_1920_path
-
 
 
 def generate_videos_for_images():
@@ -124,6 +127,12 @@ def concat_video_files():
     # Get the list of video files to concatenate
     video_files = os.listdir(setup.PATHS.OUT_VIDEO_DIR)
 
+    # Remove videofiles that do not start with numbers
+    video_files_copy = video_files.copy()
+    for file in video_files_copy:
+        if not file[0].isdigit():
+            video_files.remove(file)
+
     # Sort the video_files
     def sort_key(image_name: str):
         # Split the filename on '.', convert the parts to integers, and return as a tuple
@@ -147,21 +156,55 @@ def concat_video_files():
 
     video_path = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}.mp4"
     audio_path = "backgroundAudio/1_decreased.mp3"
-    video_with_audio_path = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_background_audio.mp4"""
+    video_no_audio = f"temp/no_audio.mkv"
+    video_path_combined_audio = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_combined_audio.mkv"""
 
-    # Generate the final video
-    final_video = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy -threads {num_threads} {video_path}"""
-    subprocess.run(final_video)
+    # # Generate the final video
+    # final_video = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy -threads {num_threads} {video_path}"""
+    # subprocess.run(final_video)
+    #
+    # # Extract audio stream
+    # audio_stream = f"""ffmpeg -y -i {video_path} -map 0:a:0 -c copy out.m4a"""
+    # subprocess.run(audio_stream)
+    #
+    # # Extract length of audio_stream
+    # audio_length_command = f"""ffprobe -i out.m4a -show_entries format=duration -v quiet -of csv="p=0" """
+    # audio_length = subprocess.check_output(audio_length_command, shell=True).decode('utf-8')
+    # print(f"Audio length: {audio_length}")
+    # audio_length = math.ceil(float(audio_length))
+    #
+    # # Create background music that loops over song and is the same length as the audio track
+    # background_music = f"""ffmpeg -y -stream_loop -1 -i {audio_path} -t {audio_length} -c copy out_background.mp3"""
+    # subprocess.run(background_music)
+    #
+    # # Combine audio tracks.
+    # combine_audio_tracks = f"""ffmpeg -y -i out.m4a -i out_background.mp3 -filter_complex "[0][1]amerge=inputs=2,pan=stereo|FL<c0+c1|FR<c2+c3[a]" -map "[a]" temp/output.m4a"""
+    # subprocess.run(combine_audio_tracks)
+    #
+    # # Create a video from the original but with no audio
+    # video_no_audio = f"""ffmpeg -y -i {video_path} -c copy -an {video_no_audio}"""
+    # subprocess.run(video_no_audio)
 
-    # Add audio track to video
-    combine_video_with_audio = f"""ffmpeg -y -i {video_path} -stream_loop -1 -i {audio_path} -map 0 -map 1:a -c:a copy -shortest -threads {num_threads} {video_with_audio_path}"""
-    # combine_video_with_audio = f"""ffmpeg -i {video_path} -stream_loop -1 -i {audio_path} -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest {setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_background_audio.mkv"""
-    subprocess.run(combine_video_with_audio)
+    # Combine output.m4a with video, but only keep the audio from output.m4a
+    combine_audio_with_video = f"""ffmpeg -y -i {video_no_audio} -i temp/output.m4a -c:v copy -c:a aac output.mp4"""
+    subprocess.run(combine_audio_with_video)
 
-    final_video_name = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_final.mp4"
+    #
+    # # Add audio track to video
+    # # combine_video_with_audio = f"""ffmpeg -y -i {video_path} -stream_loop -1 -i {audio_path} -map 0 -map 1:a -c:v libx264 -shortest {video_with_audio_path}"""
+    # combine_video_with_audio = f"""ffmpeg -y -i {video_path} -stream_loop -1 -i {audio_path} -map 0 -map 1:a -c:v copy -shortest {video_with_audio_path}"""
+    # # combine_video_with_audio = f"""ffmpeg -y -i {video_path} -stream_loop -1 -i {audio_path} -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest {video_with_audio_path}"""
+    # subprocess.run(combine_video_with_audio)
+
+    # new_video_mp4 = video_with_audio_path.replace(".mkv", ".mp4")
+    # # turn_into_mp4 = f"""ffmpeg -y -i {video_with_audio_path} -c:v copy -c:a copy {new_video_mp4}"""
+    # turn_into_mp4 = f"""ffmpeg -i {video_with_audio_path} -c:v copy -c:a aac -b:a 160k -ac 2 -filter_complex amerge=inputs=2 {new_video_mp4}"""
+    # subprocess.run(turn_into_mp4)
 
 
 
+    # Delete the video_with_audio_path
+concat_video_files()
 
 
 def decrease_volume_of_audio(file_path: str, volume: float):
@@ -171,7 +214,8 @@ def decrease_volume_of_audio(file_path: str, volume: float):
     decrease_volume = f"""ffmpeg -y -i {audio_path} -filter:a "volume={str(volume)}" -threads {num_threads} {out}"""
     subprocess.run(decrease_volume)
 
-# decrease_volume_of_audio(f"backgroundAudio/1.mp3", 0.02)
+
+# decrease_volume_of_audio(f"backgroundAudio/1.mp3", 0.1)
 
 def test_logo():
     test_video = "out/videos/1.0.A.mp4"
@@ -181,9 +225,8 @@ def test_logo():
 
     subprocess.run(my_string)
 
+
 # test_logo()
-
-
 
 
 def create_video():
