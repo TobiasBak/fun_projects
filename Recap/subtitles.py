@@ -17,38 +17,41 @@ AudioSegment.ffprobe = get_absolute_path("ffmpeg/bin/ffprobe.exe")
 
 def convert_to_hmmssmm(time: float) -> str:
     """
-    The function takes a float time in seconds and converts it to a string in the format h:mm:ss.mm
+    The function takes a float time in seconds and converts it to a string in the 0:00:00:00 format ie. Hrs:Mins:Secs:hundredths
     """
+
+    print(f"Time in: {time}")
 
     # Get the hours, minutes, and seconds
     hours = int(time / 3600)
     minutes = int((time % 3600) / 60)
-    seconds = time % 60
-
-    # Get the milliseconds
-    milliseconds = int((seconds - int(seconds)) * 1000)
-
-    # Ensure miliseconds are only 2 digits
-    milliseconds = f"{milliseconds:02}"
+    seconds = int(time % 60)
+    milliseconds = int((time % 1) * 100)
 
     # Return the time in the format h:mm:ss.mm
-    out = f"{hours:01}:{minutes:02}:{int(seconds):02}.{milliseconds[:2]}"
+    out = f"{hours:01}:{minutes:02}:{seconds:02}.{milliseconds:02}"
+    print(f"Time out: {out}")
+
     return out
 
 
 def convert_to_seconds(time: str) -> float:
     """
-    The function takes a string time in the format h:mm:ss.mm and converts it to a float in seconds
+    The function takes a string time in the 0:00:00:00 format ie. Hrs:Mins:Secs:hundredths
     """
     # Split the time into hours, minutes, seconds, and milliseconds
     time_parts = time.split(":")
     hours = int(time_parts[0])
     minutes = int(time_parts[1])
-    seconds = float(time_parts[2])
+    seconds = int(time_parts[2].split(".")[0])
+    milliseconds = int(time_parts[2].split(".")[1])
+
+    print(f"Time in: {time}")
 
     # Convert the time to seconds
-    time = (hours * 3600 + minutes * 60 + seconds)
+    time = hours * 3600 + minutes * 60 + seconds + milliseconds / 100
 
+    print(f"Time out: {time}")
     return time
 
 
@@ -125,5 +128,10 @@ def generate_subtitles():
                 print(f"Element: {element}")
 
                 print(f"Sentence: {sentences[i]}")
+                # Replace byte 0x92 with an apostrophe
+                print(f"ass_file: {ass_file_path}: {sentence}")
+                sentence_to_add = sentences[i].replace('’', "'")
 
-                f.write(f"Dialogue: {start_time},{finish_time},Info,{sentences[i]}\n")
+                f.write(f"Dialogue: {start_time},{finish_time},Info,{sentence_to_add}\n")
+
+generate_subtitles()
