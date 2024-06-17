@@ -6,7 +6,7 @@ import time
 
 import setup
 from subtitles import convert_to_seconds
-from utils import get_all_images, get_absolute_path, get_lines_from_file
+from utils import get_all_images, get_absolute_path, get_lines_from_file, get_sorted_list_of_images
 
 num_threads = 4  # Set this to the number of cores in your CPU
 
@@ -48,7 +48,7 @@ def get_video_duration(video_path):
 
 
 def get_image_names_missing_videos():
-    images = get_all_images()
+    images = get_sorted_list_of_images()
     image_names = [image.split('.jpg')[0] for image in images]
 
     video_files = os.listdir(setup.PATHS.OUT_VIDEO_DIR)
@@ -83,6 +83,7 @@ def create_ambience_video(name: str, start: float, duration: float) -> str:
 def generate_videos_for_images():
     # Get the list of images, audio files, and subtitles
     image_file_names_missing_videos = get_image_names_missing_videos()
+    image_file_names_missing_videos = image_file_names_missing_videos[:5]
 
     base_video = create_ambience_video("1.mp4", 13, 3)
 
@@ -108,7 +109,8 @@ def generate_videos_for_images():
         if duration_sec + total_duration > background_video_duration:
             total_duration = 0
 
-        picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i {image_path} -filter_complex "[0:v][1:v] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,0)'" -pix_fmt yuv420p -an -threads {num_threads} temp/videos/{image_name}.mp4"""
+        # picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i {image_path} -filter_complex "[0:v][1:v] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:enable='gt(t,{duration_sec})'" -an temp/videos/{image_name}.mp4"""
+        picture = f"""ffmpeg -y -t {str(duration_sec)} -ss {str(total_duration)} -i {base_video} -i {image_path} -filter_complex "overlay=10:10" temp/videos/{image_name}.mp4"""
         subtitles_and_audio = f"""ffmpeg -y -i temp/videos/{image_name}.mp4 -i {audio_path} -vf "subtitles={subtitle_path}" -threads {num_threads} {setup.PATHS.OUT_VIDEO_DIR}/{image_name}.mp4"""
 
         print(f"Generating picture video for {image_name}")
@@ -158,7 +160,7 @@ def concat_video_files():
     audio_path = "backgroundAudio/1_decreased.mp3"
     video_no_audio = f"temp/no_audio.mkv"
     video_path_combined_audio = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_combined_audio.mkv"""
-
+    #
     # # Generate the final video
     # final_video = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy -threads {num_threads} {video_path}"""
     # subprocess.run(final_video)
