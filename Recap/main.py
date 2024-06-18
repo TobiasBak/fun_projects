@@ -7,7 +7,8 @@ from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
-from gemini import generate_descriptive_text, get_files_that_gemini_deem_unnecessary, generate_sentences_gemini
+from gemini import generate_descriptive_text, get_files_that_gemini_deem_unnecessary, generate_sentences_gemini, \
+    optimize_sentences_gemini
 from old.open_ai import generate_sentences
 from subtitles import generate_subtitles
 from tts_google import google_tts_generate_audio_files
@@ -62,12 +63,11 @@ def main():
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
     # get_files_that_gemini_deem_unnecessary()
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
-    # generate_sentences_gemini()
-    # time.sleep(1)
-    # _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
-    # google_tts_generate_audio_files()
-    # generate_subtitles()
-    # create_video()
+    generate_sentences_gemini()
+    time.sleep(1)
+    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
+    google_tts_generate_audio_files()
+    generate_subtitles()
 
 
 def download_and_modify_images():

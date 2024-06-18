@@ -14,7 +14,6 @@ from utils import get_name_from_path, append_to_file, get_images_missing_from_fi
 url = 'https://boredhumans.com/photo_story.php'
 bad_responses = ["Error please try again.", "The server had an error processing your request."]
 
-THREADS = 10
 semaphore = Semaphore(10)  # Create a semaphore object
 
 

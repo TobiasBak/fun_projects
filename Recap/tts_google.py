@@ -23,7 +23,8 @@ voice = tts.VoiceSelectionParams(
 
 audio_config = tts.AudioConfig(
     audio_encoding=tts.AudioEncoding.MP3,
-    speaking_rate=setup.TTS_SPEAKING_RATE
+    speaking_rate=setup.TTS_SPEAKING_RATE,
+    pitch=setup.TTS_PITCH,
 )
 
 os.makedirs("temp/timings", exist_ok=True)

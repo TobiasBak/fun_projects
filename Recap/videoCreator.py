@@ -201,7 +201,7 @@ def concat_video_files():
 
 
     # Delete the video_with_audio_path
-concat_video_files()
+# concat_video_files()
 
 
 def decrease_volume_of_audio(file_path: str, volume: float):

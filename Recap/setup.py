@@ -6,7 +6,8 @@ CHAPTERS = [1, 2]
 NAME_OF_BOOK = 'solo_leveling'
 TTS_VOICE_LAN_CODE = "en-US"
 TTS_VOICE_NAME = "en-US-Neural2-J"
-TTS_SPEAKING_RATE = 1.05
+TTS_SPEAKING_RATE = 1.00
+TTS_PITCH = -6.00
 
 STORY = f"""
 The story is about a young man, who lives in a world where you raid dungeons to get stronger. 
