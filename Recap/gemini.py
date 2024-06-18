@@ -7,7 +7,7 @@ from google.generativeai.types import HarmBlockThreshold
 import setup
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, append_to_file_list, get_images_missing_from_files, \
-    append_to_file
+    append_to_file, get_dict_from_file
 from PIL import Image, ImageDraw, ImageFont
 
 AMOUNT_OF_IMAGES = 10
@@ -49,7 +49,7 @@ def get_api_key():
 
 
 genai.configure(api_key=get_api_key())
-model = genai.GenerativeModel('gemini-1.5-flash-latest')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 
 def get_image_with_name_on_top(image: str):
@@ -88,6 +88,7 @@ def _generate_description_for_images(image: str) -> list[str]:
     content = []
 
     img_data = Image.open(get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{image}"))
+    print(img_data)
     content.append(img_data)
 
     modified_prompt = prompt + f"You are describing {image} in detail. \n"
@@ -189,7 +190,7 @@ def get_files_that_gemini_deem_unnecessary():
     print(responses.text)
 
 
-prompt_beginning = f"""
+p_1 = f"""
 **AI Mission Brief:** Turning Image Descriptions into a Narrative
 **Mission Objective:**
 You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
@@ -201,26 +202,32 @@ Each image should be described by two precise sentences.
 1. Image Descriptions: You will be given descriptions of 100 images. Each description includes specific details about the visual elements, emotions conveyed, and context of the image.
 2. Narrative Transformation: Based on these descriptions, generate two sentences for each image that collectively form a continuous story.
 3. Story Flow: Ensure the sentences flow logically from one to the next, maintaining a coherent and engaging narrative.
+4. Quotes: Do put any quote the text from the images at any given point. 
+
+Return "Understood" when read
+"""
+
+p_2 = f"""
+You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
-1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows." or "The speech bubble". Instead, focus on narrating the events and emotions as if they are happening in real-time.
-2. Character Consistency: Maintain consistency in characters' names, attributes, and roles throughout the story. Introduce characters smoothly and keep their actions and descriptions coherent across sentences.
-3. Emotion and Context: Highlight the emotions and context described in the images to enrich the story. Use descriptive language to convey the atmosphere, characters' feelings, and settings.
-4. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
-5. Descriptive Detail: Incorporate specific details from the descriptions into the story, enhancing the imagery and helping readers visualize the scenes.
-6. Avoid Mentioning Speech Bubbles: They are merely there to describe the scene and not something the characters can see.
-7. Text from descriptions: Avoid directly mentioning speech bubbles in sentences. Instead, incorporate the text into the narrative seamlessly.
-7. Avoid Spoilers: Reveal information gradually as it happens. Ensure that no critical plot points are disclosed prematurely.
-8. Vary Sentence Structure: Avoid starting too many sentences with quotes. Use a variety of sentence structures to keep the narrative engaging and dynamic.
-9. Sentence lengths.: Each image should be described by two simple sentences.
-10. Non-english characters: All characters must be in english. Never add characters such as: "훠-!", "풉"
-11. Vary mentioning names: Often use of names should be prevented by using pronouns. 
+1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows." or "The speech bubble". 
+2. Emotion and Context: Highlight the emotions and context described in the images to enrich the story. Use descriptive language to convey the atmosphere, characters' feelings, and settings.
+3. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
+4. Avoid Mentioning Speech Bubbles: They are merely there to describe the scene and not something the characters can see.
+5. Text from descriptions: Avoid directly mentioning speech bubbles in sentences. Do not use any text from the pictures in any sentence. 
+6. Vary Sentence Structure: Avoid starting too many sentences with quotes. Use a variety of sentence structures to keep the narrative engaging and dynamic.
+7. Sentence lengths.: Each image should be described by two simple sentences.
+8. Non-english characters: All characters must be in english. Never add characters such as: "훠-!", "풉"
+9. Pronouns: Use of names should be prevented by using pronouns. 
+10. Text on images: Use of text on images or mentioning speechbubbles or text on image is highly forbidden.
+11. Vary sentence structure: Avoid starting multiple sentences with the same word or phrase. Vary the sentence structure to maintain reader interest.
 
-**Example Input Description:**
-"1.0.B.jpg; There is text above him that says 'E-Rank Hunter.' There is more text below him that says 'The Hunter Guild's' and 'Haa.' The image conveys a feeling of despair and determination. A young man is lying on the ground, bleeding profusely from multiple wounds. He is wearing a blue hoodie with the hood up. His hair is short and dark. His face is contorted in pain, but he has a determined look in his eyes. The background is dark, and it appears he is in some sort of abandoned building."
+Return "Understood" when the rules and guidelines are understood.
+"""
 
-**Example Output Sentence:**
-"1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold, dark floor. Despite the pain etched across his face, Sung Jin-Woo's eyes burned with determination."
+p_3 = f"""
+You must follow the process when generating sentences based on the descriptions
 
 **Process:**
 1. Read the Description: Carefully read and understand each image description.
@@ -230,61 +237,84 @@ Each image should be described by two precise sentences.
 5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
 6. Avoid direct references to the image such as: "The speech bubble", "In the image", "The picture shows", "the text above them read".
 7. Only use english characters. Any non english-characters such as "훠-!", "풉" or any other asian/japanese must not be used in generated sentences.
+8. Variety: Vary sentence structure by starting sentences in different ways. Avoid starting multiple sentences with "The"
 By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the visual and emotional content of the images into a written narrative.
+
+Return "Understood" when it is understood.
+"""
+
+p_4 = f"""
+Following is examples on input and output and the expected output format.
+
+**Example Input Description:**
+"1.0.B.jpg; There is text above him that says 'E-Rank Hunter.' There is more text below him that says 'The Hunter Guild's' and 'Haa.' The image conveys a feeling of despair and determination. A young man is lying on the ground, bleeding profusely from multiple wounds. He is wearing a blue hoodie with the hood up. His hair is short and dark. His face is contorted in pain, but he has a determined look in his eyes. The background is dark, and it appears he is in some sort of abandoned building."
+
+**Example Output Sentence:**
+"1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold, dark floor. Despite the pain etched across his face, Sung Jin-Woo's eyes burned with determination."
 
 **Output:**
 For each of the inputted lines, generate a return string in the following format:
 `<image_name>`; `<sentences>`
 The return should be plaintext, not in JSON format.
 
-**Inputs:**
-You will be provided with the filenames and descriptions below:
+Return "Understood" when read. 
 """
 
 
 def generate_sentences_for_images_gemini(images: list[str]):
-    prompt = prompt_beginning
-
     generated_prompts = generate_prompts_for_images(images)
+    prompts = [p_1, p_2, p_3, p_4]
 
     if len(generated_prompts) == 0:
         print("No sentences missing. Exiting...")
         return
 
-    for generated_prompt in generated_prompts:
-        prompt += generated_prompt
+    chat = model.start_chat(history=[])
 
-    tokens = model.count_tokens(prompt, generation_config={"temperature": 1})
-    print(f"Amount of tokens: {tokens}")
-    print(prompt)
+    for p in prompts:
+        r = chat.send_message(p, generation_config={"temperature": 1})
+        print(r.text)
 
-    responses = model.generate_content(prompt)
-    print(f"RAW RESPONSE=================")
-    print(responses.text)
+    g_prompt = ""
+    # Go through generated prompts 10 by 10
+    for i in range(0, len(generated_prompts), 10):
+        for generated_prompt in generated_prompts[i:i + 10]:
+            g_prompt += generated_prompt
+        tokens = model.count_tokens(g_prompt)
+        print(f"Amount of tokens: {tokens}")
+        print(g_prompt)
 
-    if not responses.text:
-        print("No sentences generated.")
-        return
+        responses = chat.send_message(g_prompt, generation_config={"temperature": 1})
+        print(f"RAW RESPONSE=================")
+        print(responses.text)
 
-    replies = responses.text.split('\n')
+        if not responses.text:
+            print("No sentences generated.")
+            return
 
-    # Remove first and last index if it is json
-    if replies[0] == '```json' or replies[0] == '```':
-        replies.pop(0)
+        replies = responses.text.split('\n')
 
-    if replies[-1] == '```':
-        replies.pop(-1)
+        # Remove first and last index if it is json
+        if replies[0] == '```json' or replies[0] == '```':
+            replies.pop(0)
 
-    for x in replies:
-        if x == '':
-            continue
+        if replies[-1] == '```':
+            replies.pop(-1)
 
-        parts = x.split(';')
-        description = parts[1]
-        if description[:1] == '"' and description[-1:] == '"':
-            description = description[1:-1]
+        for x in replies:
+            if x == '':
+                continue
 
-        append_to_file(setup.PATHS.SENTENCES, f"{parts[0]}; {description}")
+            parts = x.split(';')
+            description = parts[1]
+            if description[:1] == '"' and description[-1:] == '"':
+                description = description[1:-1]
+
+            append_to_file(setup.PATHS.SENTENCES, f"{parts[0]}; {description}")
+
+        g_prompt = ""
+
+
 
 
 def generate_sentences_gemini():
@@ -299,3 +329,61 @@ def generate_sentences_gemini():
     # generate_sentences_for_images_gemini(images)
     for i in range(0, len(images), 100):
         generate_sentences_for_images_gemini(images[i:i + 100])
+
+
+optimize_prompt = prompt = f"""
+*Task:* 
+You are given a list of image descriptions formatted as "<image_name>; <story>". Your task is to optimize these descriptions by:
+
+1. Removing direct quotes and integrating their content into the descriptive text.
+2. Reducing the repetition of the same name by replacing it with pronouns or descriptive phrases.
+3. Simplifying sentences to make them easy to read, avoiding too many commas.
+4. Ensuring there are no quote characters in the text as it can be difficult for text-to-speech (TTS) systems to understand.
+
+**Detailed Instructions:**
+1. Remove Direct Quotes: Instead of using quotation marks, rephrase the quoted material as part of the narrative.
+2. Reduce Name Repetition: Use pronouns or descriptive phrases to refer to characters instead of repeating their names.
+3. Simplify Sentences: Create short, clear sentences. Avoid using multiple commas to make the sentences easier to read.
+4. Avoid Quotes: Ensure there are no quote characters (" ") in the text.
+
+**Return format:**
+You must return a string in the following format for each image name in the input: 
+<image_name>; <story>
+
+
+**Input:**
+"""
+
+optimize_prompt_end = f"""
+Iterate through the inputs and rewrite and restructure each sentence according to the guidelines.
+"""
+
+
+def generate_optimized_sentences_gemini(images: list[str]):
+    o_prompt = optimize_prompt
+    optimized_sentences_path = f"{setup.PATHS.OUT_TEXT_DIR}/optimized_sentences.txt"
+
+    sentences_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+
+    for image_name in images:
+        description_of_picture = sentences_dict[image_name]
+        _prompt = f"{image_name}; {description_of_picture}\n"
+        o_prompt += _prompt
+
+    o_prompt += optimize_prompt_end
+
+    tokens = model.count_tokens(o_prompt, generation_config={"temperature": 1})
+    print(f"Amount of tokens: {tokens}")
+    print(o_prompt)
+
+    responses = model.generate_content(o_prompt)
+    print(f"RAW RESPONSE=================")
+    print(responses.text)
+
+
+def optimize_sentences_gemini():
+    optimized_sentences_path = f"{setup.PATHS.OUT_TEXT_DIR}/optimized_sentences.txt"
+    images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, optimized_sentences_path)
+
+    for i in range(0, len(images), 100):
+        generate_optimized_sentences_gemini(images[i:i + 100])

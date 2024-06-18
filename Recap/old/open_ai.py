@@ -46,7 +46,7 @@ def get_openai_api_key():
 
 
 def get_prompt_from_image(image_name, description_of_picture) -> str:
-    return f"Image: {image_name} | Description of image: {description_of_picture} |\n"
+    return f"{image_name}; {description_of_picture} |\n"
 
 
 def openai_generate_text(images: list):
