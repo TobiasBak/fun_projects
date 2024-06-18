@@ -36,7 +36,7 @@ You must generate an in depth description for each jpg that include the followin
 2. Setting: The setting and area in the picture must be described. 
 3. Plot: The actions and what is generally happening must be described. 
 4. Feeling: A detailed description of the feeling the pictures conveys. 
-5. Text: English text should be extracted from the image with a starting capital letter and the rest in lowercase. The text should be followed by where it is positioned relative to the characters.
+5. Text: English text should be extracted from the image in lowercase. The text should be followed by where it is positioned relative to the characters.
 
 Notes: Background and speech bubbles should not be described.
 
@@ -317,9 +317,10 @@ You must uphold the following rules and guidelines
 6. Sentence lengths.: Each image should be described by two simple sentences focusing on setting and what is happening.
 7. Vary sentence structure: Avoid starting multiple sentences with the same word. Vary the sentence structure to maintain reader interest.
 8. Do not reference where the text is located or that you are referencing text, just use text as part of the story. 
-9. If the character has recently been described, you can refer to the character using "The man", "The woman", "The character" etc.
-10. Avoid Mentioning Speech Bubbles: They are merely there to describe the scene and not something the characters can see.
-
+9. If the character has recently been described, use pronouns and do not describe the character again.
+10. Use names of characters if they are mentioned in the description.
+11. Do not mention the position of text in the image. 
+12. If the context and location changes drastically, only mention the new location and context and not previous ones.
 
 Return "Understood" when the rules and guidelines are understood.
 """
