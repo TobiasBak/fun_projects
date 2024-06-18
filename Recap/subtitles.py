@@ -5,7 +5,7 @@ import json
 from pydub import AudioSegment
 
 import setup
-from tts_google import get_senteces_from_string
+from tts_google import get_senteces_from_string, split_sentence
 from utils import get_absolute_path, get_sentences_dict
 
 temp_audio_file = f"temp/temp_audio.wav"
@@ -77,10 +77,11 @@ def generate_subtitles():
         json_file_path = get_absolute_path("temp/timings/" + f"{audio_file_name}.json")
         ass_file_path = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{audio_file_name}.ass"
         sentence: str = sentences_dict[f"{audio_file_name}.jpg"]
-        sentences = get_senteces_from_string(sentence)
 
         if 'é' in sentence or 'è' in sentence:
             sentence = sentence.replace('è', 'e').replace('é', 'e')
+
+        sentence_array = get_senteces_from_string(sentence)
 
         # Load the transcriptions and timings
         with open(json_file_path, 'r') as f:
@@ -104,6 +105,13 @@ def generate_subtitles():
 
             start_timings = data[:-1]
 
+            s_sentences = []
+
+            for s in sentence_array:
+                split = split_sentence(s)
+                for x in split:
+                    s_sentences.append(x)
+
             for i, element in enumerate(start_timings):
                 start_time = element['sec']
                 finish_time = data[(i + 1)]['sec']
@@ -121,11 +129,10 @@ def generate_subtitles():
 
                 print(f"Element: {element}")
 
-                print(f"Sentence: {sentences[i]}")
+                print(f"Sentence: {s_sentences[i]}")
                 # Replace byte 0x92 with an apostrophe
                 print(f"ass_file: {ass_file_path}: {sentence}")
-                sentence_to_add = sentences[i].replace('’', "'")
+                sentence_to_add = s_sentences[i].replace('’', "'")
 
                 f.write(f"Dialogue: {start_time},{finish_time},Info,{sentence_to_add}\n")
 
-generate_subtitles()

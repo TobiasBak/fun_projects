@@ -66,7 +66,20 @@ def get_senteces_from_string(sentences: str) -> list:
     return sent_tokenize(sentences)
 
 
-def generate_ssml_from_text(sentences: str) -> str:
+def split_sentence(sentence, max_length=64):
+    print(f"Testing: {sentence}")
+    if len(sentence) > max_length:
+        split_points = [i for i in range(max_length, -1, -1) if sentence[i] in {',', '"', ' '}]
+        if split_points:
+            split_point = split_points[0]
+            return [sentence[:split_point], sentence[split_point+1:]]
+        else:
+            return [sentence[:max_length], sentence[max_length:]]
+    else:
+        return [sentence]
+
+
+def generate_ssml_from_text(sentences: str, audio_file_name: str) -> str:
     # Get sentences from string
     # The cases that are troublesome
 
@@ -76,7 +89,10 @@ def generate_ssml_from_text(sentences: str) -> str:
     sentences_with_marks = ""
 
     for i, sentence in enumerate(sentence_array):
-        sentences_with_marks += f'<mark name="start_{i}"/> {sentence}'
+        s_sentence = split_sentence(sentence)
+
+        for j, s in enumerate(s_sentence):
+            sentences_with_marks += f'<mark name="{audio_file_name}:{i}.{j}"/> {s}'
 
     out = f"""
     <speak>
@@ -86,6 +102,7 @@ def generate_ssml_from_text(sentences: str) -> str:
     <mark name="finish"/>
     </speak>
     """
+    print(out)
 
     return out
 
@@ -109,5 +126,5 @@ def google_tts_generate_audio_files():
     for audio_file_name in missing_audio_file_names:
         text = sentences_dict.get(f"{audio_file_name}.jpg")
         print(f"Generating audio for {audio_file_name}.jpg with text: {text}")
-        ssml = generate_ssml_from_text(text)
+        ssml = generate_ssml_from_text(text, audio_file_name)
         _generate_text_to_speach(audio_file_name, ssml)

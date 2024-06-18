@@ -1,4 +1,5 @@
 import json
+import re
 import threading
 
 import google.generativeai as genai
@@ -154,7 +155,7 @@ def optimize_descriptions():
         description = value
         description = description.replace('a speech bubble', 'text')
         description = description.replace('speech bubble', 'text')
-        description = description.replace('~', '').replace('(','').replace(')','')
+        description = description.replace('~', '').replace('(', '').replace(')', '')
         description_dict[key] = description
 
     with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
@@ -166,7 +167,6 @@ def should_remove_quote(quote: str):
     # If quote only contains dots or commas, remove it
     if quote.replace('.', '').replace(',', '').replace(' ', '') == '':
         return True
-
 
 
 def optimize_description_quotes():
@@ -298,7 +298,7 @@ Each sentence generated should contribute to the overall narrative and provide s
 Each image should be described by two sentences that contribute to the overall narrative.
 
 **Task Outline:**
-1. You will be given descriptions of 100 images. Each description includes specific details about the visual elements, emotions conveyed, and context of the image.
+1. You will be given descriptions of 100 images. Each description includes specific details about the visual elements and context of the image.
 2. Based on these descriptions, generate two sentences for each image that collectively form a continuous story. Do not mention the words "scene", "setting" or "image" in the sentences.
 3. Ensure the sentences flow logically from one to the next, maintaining a coherent and engaging narrative.
 
@@ -310,17 +310,20 @@ You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
 1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows." or "The speech bubble". 
+2. Conversation can be used in the story. When using conversations from descriptions do not add how the voice sounds such as "his voice laced with a bitterness he tried to hide.". or 
 2. Emotion and Context: Use descriptive language to convey the atmosphere, characters' feelings, and settings.
 3. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
-4. Text from descriptions: When using conversations from descriptions add: "[pronoun] [action].". 
+4. When using conversations from descriptions quotes around the text and add: "[pronoun] [action].". Do not add description of how voices sound or how the character looks after saying the text.
 5. Vary Sentence Structure: Use a variety of words to start sentences to keep the narrative engaging and dynamic.
-6. Sentence lengths.: Each image should be described by two simple sentences focusing on setting and what is happening.
+6. Sentence lengths: Each image should be described by two simple sentences focusing on setting and actions.
 7. Vary sentence structure: Avoid starting multiple sentences with the same word. Vary the sentence structure to maintain reader interest.
 8. Do not reference where the text is located or that you are referencing text, just use text as part of the story. 
 9. If the character has recently been described, use pronouns and do not describe the character again.
 10. Use names of characters if they are mentioned in the description.
-11. Do not mention the position of text in the image. 
-12. If the context and location changes drastically, only mention the new location and context and not previous ones.
+11. If the context and location changes drastically. It should be described as a new location or a flashback. 
+12. The characters cannot see the text so it should only be used as part of the story and not as something the characters are aware of.
+13. Never describe the position of text or use the position of text in the story.
+14. Reduce the amount of commas in the sentences by using more periods.
 
 Return "Understood" when the rules and guidelines are understood.
 """
@@ -330,7 +333,7 @@ You must follow the process when generating sentences based on the descriptions
 
 **Process:**
 1. Read the Description: Carefully read and understand each image description.
-2. Extract Key Elements: Identify key elements such as characters, emotions, settings, and actions.
+2. Extract Key Elements: Identify key elements such as characters, settings, and actions.
 3. Generate Sentence: Formulate a sentence in present tense that incorporates these elements and contributes to the overall narrative.
 4. Ensure Continuity: Ensure each generated sentence logically follows the previous one, maintaining narrative coherence.
 5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
@@ -343,10 +346,12 @@ p_4 = f"""
 Following is examples on input and output and the expected output format.
 
 **Example Input Description:**
-"1.0.B.jpg; There is text above him that says 'E-Rank Hunter.' There is more text below him that says 'The Hunter Guild's' and 'Haa.' The image conveys a feeling of despair and determination. A young man is lying on the ground, bleeding profusely from multiple wounds. He is wearing a blue hoodie with the hood up. His hair is short and dark. His face is contorted in pain, but he has a determined look in his eyes. The background is dark, and it appears he is in some sort of abandoned building."
+1.0.B.jpg; There is text above him that says 'E-Rank Hunter.' There is more text below him that says 'The Hunter Guild's' and 'Haa.' The image conveys a feeling of despair and determination. A young man is lying on the ground, bleeding profusely from multiple wounds. He is wearing a blue hoodie with the hood up. His hair is short and dark. His face is contorted in pain, but he has a determined look in his eyes. The background is dark, and it appears he is in some sort of abandoned building.
+
 
 **Example Output Sentence:**
-"1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold, dark floor. Despite the pain etched across his face, Sung Jin-Woo's eyes burned with determination."
+1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold floor. Despite the pain etched across his face, Sung Jin-Woo's eyes burned with determination.
+
 
 **Output:**
 For each of the inputted lines, generate a single return string in the following format:
@@ -412,6 +417,37 @@ def generate_sentences_for_images_gemini(images: list[str]):
         g_prompt = ""
 
 
+def optimize_quotes_ending_with_comma():
+    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+    print(f"Optimizing {len(sentence_dict)} sentences...")
+    for key, value in sentence_dict.items():
+        description = value
+        description = description.replace(',"', '."')
+        sentence_dict[key] = description
+
+    with open(setup.PATHS.SENTENCES, 'w') as file:
+        for key, value in sentence_dict.items():
+            file.write(f"{key}; {value}\n")
+
+
+def remove_descriptions_about_voices():
+    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+    print(f"Optimizing {len(sentence_dict)} sentences...")
+    for key, value in sentence_dict.items():
+        description = value
+        description = re.sub(r',\s*his voice[^,.]*[.,]', '.', description)
+        description = re.sub(r',\s*her voice[^,.]*[.,]', '.', description)
+        sentence_dict[key] = description
+
+    with open(setup.PATHS.SENTENCES, 'w') as file:
+        for key, value in sentence_dict.items():
+            file.write(f"{key}; {value}\n")
+
+
+remove_descriptions_about_voices()
+optimize_quotes_ending_with_comma()
+
+
 def generate_sentences_gemini():
     images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
     if len(images) == 0:
@@ -424,59 +460,3 @@ def generate_sentences_gemini():
     # generate_sentences_for_images_gemini(images)
     for i in range(0, len(images), 100):
         generate_sentences_for_images_gemini(images[i:i + 100])
-
-
-optimize_prompt = prompt = f"""
-Your task is to rewrite sentences based that are not good enough for my project.
-You will be rewriting the sentences in steps from most important to least important.
-After a sentence have been rewritten you must return it in the format: `<image_name>`;`<new sentences>`
-
-Step 1: Quotes.
-Some sentences include quotes while others start with quotes.
-However, quotes do not work with the mission I am trying to achieve.
-Therefore you must rewrite the sentences such that they do not include quotes. However the sentences must still include all the details as before the quotes are removed.
-This means that a conversation or if someone is saying something the sentences should still mention that the person says this, without including quotes.
-
-Return "Understood" when read.
-"""
-
-
-def generate_optimized_sentences_gemini(images: list[str]):
-    optimized_sentences_path = f"{setup.PATHS.OUT_TEXT_DIR}/optimized_sentences.txt"
-
-    sentences_dict = get_dict_from_file(setup.PATHS.SENTENCES)
-    prompts = []
-
-    for image_name in images:
-        description_of_picture = sentences_dict[image_name]
-        _prompt = f"{image_name}; {description_of_picture}\n"
-        prompts.append(_prompt)
-
-    chat = model.start_chat(history=[])
-    chat.send_message(optimize_prompt, generation_config={"temperature": 1})
-
-    for i in range(0, len(prompts), 10):
-        o_prompt = ""
-        for p in prompts[i:i + 10]:
-            o_prompt += p
-
-        tokens = model.count_tokens(o_prompt, generation_config={"temperature": 1})
-        print(f"Amount of tokens: {tokens}")
-        print(o_prompt)
-
-        response = chat.send_message(o_prompt, generation_config={"temperature": 1})
-        print(f"RAW RESPONSE=================")
-        print(response.text)
-
-        responses = response.text.split('\n')
-        for r in responses:
-            if r == '':
-                continue
-
-            append_to_file(optimized_sentences_path, r)
-
-
-def optimize_sentences_gemini():
-    optimized_sentences_path = f"{setup.PATHS.OUT_TEXT_DIR}/optimized_sentences.txt"
-    images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, optimized_sentences_path)
-    generate_optimized_sentences_gemini(images)
