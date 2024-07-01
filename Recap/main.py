@@ -82,8 +82,8 @@ if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {setup.NAME_AND_CHAPTERS}...")
     print(f"=========================================")
 
-    intro_text = f"""Welcome. If you like my content, please consider subscribing and liking the video. Today we are going to be recapping {setup.NAME_OF_BOOK.replace('_', ' ')}"""
-    audio_file_name = "intro"
-    google_interface = GoogleInterface()
-    google_interface.tts_client.generate_audio(audio_file_name, intro_text)
-    # main()
+    # intro_text = f"""Welcome. If you like my content, please consider subscribing and liking the video. Today we are going to be recapping {setup.NAME_OF_BOOK.replace('_', ' ')}"""
+    # audio_file_name = "intro"
+    # google_interface = GoogleInterface()
+    # google_interface.tts_client.generate_audio(audio_file_name, text=intro_text)
+    main()

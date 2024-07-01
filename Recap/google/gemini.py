@@ -166,7 +166,9 @@ class Gemini:
                 if description[:1] == '"' and description[-1:] == '"':
                     description = description[1:-1]
 
-                append_to_file(setup.PATHS.SENTENCES, f"{parts[0]}; {description}")
+                # TODO: Remove whitespaces before adding it to the file
+
+                append_to_file(setup.PATHS.SENTENCES, f"{parts[0]};{description}")
 
             g_prompt = ""
 
@@ -231,10 +233,6 @@ def optimize_description_quotes():
             file.write(f"{key}; {value}\n")
 
 
-
-
-
-
 def optimize_quotes_ending_with_comma():
     sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
     print(f"Optimizing {len(sentence_dict)} ending with commas...")
@@ -245,7 +243,7 @@ def optimize_quotes_ending_with_comma():
 
     with open(setup.PATHS.SENTENCES, 'w') as file:
         for key, value in sentence_dict.items():
-            file.write(f"{key}; {value}\n")
+            file.write(f"{key};{value}\n")
 
 
 def remove_descriptions_about_voices():
@@ -259,7 +257,4 @@ def remove_descriptions_about_voices():
 
     with open(setup.PATHS.SENTENCES, 'w') as file:
         for key, value in sentence_dict.items():
-            file.write(f"{key}; {value}\n")
-
-
-
+            file.write(f"{key};{value}\n")
