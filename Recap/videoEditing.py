@@ -166,6 +166,14 @@ def add_music():
     subprocess.run(command)
 
 
+def decrease_volume_of_audio(file_path: str, volume: float):
+    audio_path = file_path
+    out = f"{file_path.split('.mp3')[0]}_decreased.mp3"
+
+    decrease_volume = f"""ffmpeg -y -i {audio_path} -filter:a "volume={str(volume)}" {out}"""
+    subprocess.run(decrease_volume)
+
 generate_image_videos()
 generate_concated_video()
 add_music()
+# decrease_volume_of_audio("backgroundAudio/1.mp3", 0.05)

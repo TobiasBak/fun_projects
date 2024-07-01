@@ -7,11 +7,9 @@ from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
-from gemini import generate_descriptive_text, get_files_that_gemini_deem_unnecessary, generate_sentences_gemini
-from old.open_ai import generate_sentences
+from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma
+from google.googleInterface import GoogleInterface
 from subtitles import generate_subtitles
-from tts_google import google_tts_generate_audio_files
-from videoCreator import create_video
 
 """
 FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
@@ -54,18 +52,22 @@ def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
 
 
 def main():
+    google_interface = GoogleInterface()
+
     # download_and_modify_images()
-    generate_descriptive_text()
+    google_interface.gemini_client.generate_descriptive_text()
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
     clean_images()
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
     # get_files_that_gemini_deem_unnecessary()
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
-    generate_sentences_gemini()
+    google_interface.gemini_client.generate_sentences_gemini()
+    remove_descriptions_about_voices()
+    optimize_quotes_ending_with_comma()
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
-    google_tts_generate_audio_files()
+    google_interface.tts_client.generate_audio_files()
     generate_subtitles()
 
 
@@ -79,4 +81,9 @@ def download_and_modify_images():
 if __name__ == "__main__":
     print(f"RUNNING SCRIPT FOR {setup.NAME_AND_CHAPTERS}...")
     print(f"=========================================")
-    main()
+
+    intro_text = f"""Welcome. If you like my content, please consider subscribing and liking the video. Today we are going to be recapping {setup.NAME_OF_BOOK.replace('_', ' ')}"""
+    audio_file_name = "intro"
+    google_interface = GoogleInterface()
+    google_interface.tts_client.generate_audio(audio_file_name, intro_text)
+    # main()

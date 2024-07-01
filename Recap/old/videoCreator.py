@@ -82,7 +82,7 @@ def generate_videos_for_images():
 
     base_video = create_ambience_video("1.mp4", 13, 3)
 
-    os.makedirs("temp/videos", exist_ok=True)
+    os.makedirs("../temp/videos", exist_ok=True)
 
     background_video_duration = get_video_duration(base_video)
     total_duration = 0
@@ -145,14 +145,14 @@ def concat_video_files():
             video_files.remove(file)
 
     # Open the concat.txt file in write mode
-    with open('temp/concat.txt', 'w') as f:
+    with open('../temp/concat.txt', 'w') as f:
         # Write each video file to the concat.txt file
         for video_file in video_files:
             abs_path = get_absolute_path(f"{setup.PATHS.OUT_VIDEO_DIR}/{video_file}")
             f.write(f"file '{abs_path}'\n")
 
     video_path = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}.mp4"
-    audio_path = "backgroundAudio/1_decreased.mp3"
+    audio_path = "../backgroundAudio/1_decreased.mp3"
     video_no_audio = f"temp/no_audio.mkv"
     video_path_combined_audio = f"{setup.PATHS.OUT_VIDEO_DIR}/{setup.NAME_AND_CHAPTERS}_combined_audio.mkv"""
     #
@@ -204,12 +204,6 @@ def concat_video_files():
 # concat_video_files()
 
 
-def decrease_volume_of_audio(file_path: str, volume: float):
-    audio_path = file_path
-    out = f"{file_path.split('.mp3')[0]}_decreased.mp3"
-
-    decrease_volume = f"""ffmpeg -y -i {audio_path} -filter:a "volume={str(volume)}" -threads {num_threads} {out}"""
-    subprocess.run(decrease_volume)
 
 
 # decrease_volume_of_audio(f"backgroundAudio/1.mp3", 0.1)

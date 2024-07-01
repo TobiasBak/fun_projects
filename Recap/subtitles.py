@@ -5,7 +5,7 @@ import json
 from pydub import AudioSegment
 
 import setup
-from tts_google import get_senteces_from_string, split_sentence
+from google.tts_google import get_senteces_from_string, split_sentence
 from utils import get_absolute_path, get_sentences_dict
 
 temp_audio_file = f"temp/temp_audio.wav"

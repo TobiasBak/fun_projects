@@ -1,0 +1,265 @@
+import json
+import re
+import threading
+
+import google.generativeai as genai
+from google.ai.generativelanguage_v1 import HarmCategory
+from google.generativeai.types import HarmBlockThreshold
+
+import setup
+from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \
+    prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4
+from old.open_ai import generate_prompts_for_images
+from utils import get_lines_from_file, get_absolute_path, append_to_file_list, get_images_missing_from_files, \
+    append_to_file, get_dict_from_file
+from PIL import Image, ImageDraw, ImageFont
+
+THREADS = 5
+semaphore = threading.Semaphore(THREADS)  # Create a semaphore object
+
+
+def get_api_key():
+    with open(get_absolute_path('../Recap/hidden/gemini_key.txt'), 'r') as file:
+        lines = file.readlines()
+    return lines[0].strip()
+
+
+genai.configure(api_key=get_api_key())
+
+
+class Gemini:
+    def __init__(self):
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.generation_config = {"temperature": 1}
+        self.safety_settings = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE",
+            },
+        ]
+
+    def generate_description_for_images(self, images: list[str]):
+        prompts = [prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3]
+        chat = self.model.start_chat(history=[])
+
+        for p in prompts:
+            r = chat.send_message(p, generation_config=self.generation_config)
+            print(r.text)
+
+        for image in images:
+
+            content = []
+            img_data = Image.open(get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{image}"))
+            content.append(img_data)
+            content.append(f"You are describing {image} in detail. \n")
+
+            response = chat.send_message(
+                content,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings
+            )
+            print(response.text)
+
+            responses = response.text.split('\n')
+            for r in responses:
+                if r == '':
+                    continue
+
+                append_to_file(setup.PATHS.DESCRIPTIONS, r)
+
+    def _threaded_generate_description(self, thread_name, images):
+        # Acquire a semaphore
+        semaphore.acquire()
+        try:
+            print(f"Starting thread: {thread_name}")
+            self.generate_description_for_images(images)
+        finally:
+            # Release the semaphore
+            semaphore.release()
+
+    def generate_descriptive_text(self):
+        images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
+        print(f"Starting generation of descriptions for {len(images)} images: ...")
+
+        if len(images) == 0:
+            print("No images missing descriptions. Exiting...")
+            return
+
+        threads = []
+        for i in range(0, len(images), 10):
+            thread_name = f"{i}/{len(images)}"
+            thread = threading.Thread(target=self.threaded_generate_description, args=(thread_name, images[i:i + 10]))
+            thread.start()
+            threads.append(thread)
+
+        # Wait for all threads to finish
+        for thread in threads:
+            thread.join()
+
+        if len(get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
+            print("Some images are still missing descriptions. Will start generation again.")
+            self.generate_descriptive_text()
+
+        print("All threads finished. Will start optimize_descriptions")
+        optimize_descriptions()
+        optimize_description_quotes()
+
+    def generate_sentences_for_images_gemini(self, images: list[str]):
+        generated_prompts = generate_prompts_for_images(images)
+        prompts = [prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3,
+                   prompt_generate_sentence_4]
+
+        if len(generated_prompts) == 0:
+            print("No sentences missing. Exiting...")
+            return
+
+        chat = self.model.start_chat(history=[])
+
+        for p in prompts:
+            r = chat.send_message(p, generation_config=self.generation_config)
+            print(r.text)
+
+        g_prompt = ""
+        # Go through generated prompts 10 by 10
+        for i in range(0, len(generated_prompts), 10):
+            for generated_prompt in generated_prompts[i:i + 10]:
+                g_prompt += generated_prompt
+            tokens = self.model.count_tokens(g_prompt)
+            print(f"Amount of tokens: {tokens}")
+            print(g_prompt)
+
+            responses = chat.send_message(g_prompt, generation_config=self.generation_config)
+            print(f"RAW RESPONSE=================")
+            print(responses.text)
+
+            if not responses.text:
+                print("No sentences generated.")
+                return
+
+            replies = responses.text.split('\n')
+
+            # Remove first and last index if it is json
+            if replies[0] == '```json' or replies[0] == '```':
+                replies.pop(0)
+
+            if replies[-1] == '```':
+                replies.pop(-1)
+
+            for x in replies:
+                if x == '':
+                    continue
+
+                parts = x.split(';')
+                description = parts[1]
+                if description[:1] == '"' and description[-1:] == '"':
+                    description = description[1:-1]
+
+                append_to_file(setup.PATHS.SENTENCES, f"{parts[0]}; {description}")
+
+            g_prompt = ""
+
+    def generate_sentences_gemini(self):
+        images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
+        if len(images) == 0:
+            print("No images missing generated sentences.")
+            return []
+
+        print(f"Starting generation of sentences for {len(images)} images: ...")
+
+        # Run generate for images in batches of 100
+        # generate_sentences_for_images_gemini(images)
+        for i in range(0, len(images), 100):
+            self.generate_sentences_for_images_gemini(images[i:i + 100])
+
+
+def optimize_descriptions():
+    description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
+    for key, value in description_dict.items():
+        description = value
+        description = description.replace('a speech bubble', 'text')
+        description = description.replace('speech bubble', 'text')
+        description = description.replace('~', '').replace('(', '').replace(')', '')
+        description_dict[key] = description
+
+    with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
+        for key, value in description_dict.items():
+            file.write(f"{key}; {value}\n")
+
+
+def should_remove_quote(quote: str):
+    # If quote only contains dots or commas, remove it
+    if quote.replace('.', '').replace(',', '').replace(' ', '') == '':
+        return True
+
+
+def optimize_description_quotes():
+    description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
+    for key, value in description_dict.items():
+        description = value
+        parts = description.split('"')
+        quote_indexes_to_remove = []
+        # Every second part is a quote
+        for i in range(1, len(parts), 2):
+            if should_remove_quote(parts[i]):
+                quote_indexes_to_remove.append(i)
+
+        # Rebuild the description based on parts and removed quotes
+        new_description = ""
+        for i, part in enumerate(parts):
+            if i % 2 == 0:
+                new_description += part
+            else:
+                if i not in quote_indexes_to_remove:
+                    new_description += '"' + part + '"'
+
+        description_dict[key] = new_description
+
+    with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
+        for key, value in description_dict.items():
+            file.write(f"{key}; {value}\n")
+
+
+
+
+
+
+def optimize_quotes_ending_with_comma():
+    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+    print(f"Optimizing {len(sentence_dict)} ending with commas...")
+    for key, value in sentence_dict.items():
+        description = value
+        description = description.replace(',"', '."')
+        sentence_dict[key] = description
+
+    with open(setup.PATHS.SENTENCES, 'w') as file:
+        for key, value in sentence_dict.items():
+            file.write(f"{key}; {value}\n")
+
+
+def remove_descriptions_about_voices():
+    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+    print(f"Optimizing {len(sentence_dict)} descriptions about voices...")
+    for key, value in sentence_dict.items():
+        description = value
+        description = re.sub(r',\s*his voice[^,.]*[.,]', '.', description)
+        description = re.sub(r',\s*her voice[^,.]*[.,]', '.', description)
+        sentence_dict[key] = description
+
+    with open(setup.PATHS.SENTENCES, 'w') as file:
+        for key, value in sentence_dict.items():
+            file.write(f"{key}; {value}\n")
+
+
+
