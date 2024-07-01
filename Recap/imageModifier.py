@@ -58,9 +58,24 @@ def modify_images_to_fit_screen():
                 image_part.paste(original_image_part, (0, buffer.height))
                 buffer = None
 
-            # Todo: If image is too big (max size * 1.5). Then we need to split it at an optimal point and, scale and save
+            # Todo: Probably up this value a bit
+
+            if image_part.height > (1.5 * IMAGE_MAX_HEIGHT):
+                # Split the image at the middle and save both images
+                image_part_top = image_part.crop((0, 0, image_part.width, image_part.height // 2))
+                image_part_bottom = image_part.crop((0, image_part.height // 2, image_part.width, image_part.height))
+                resized_image_top = _scale_image(image_part_top)
+                resized_image_bottom = _scale_image(image_part_bottom)
+                resized_image_top.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
+                resized_image_bottom.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
+                count += 1
+                continue
 
             resized_image = _scale_image(image_part)
+
+            if resized_image is None:
+                continue
+
             resized_image.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.jpg')
 
             count += 1
@@ -231,7 +246,7 @@ def _scale_image(image) -> Image:
     resized_image = None
 
     # Downscale
-    if image.height > IMAGE_MAX_HEIGHT:
+    if image.height >= IMAGE_MAX_HEIGHT:
         resized_image = _resize_image(image, new_height=IMAGE_MAX_HEIGHT)
 
     # Upscale

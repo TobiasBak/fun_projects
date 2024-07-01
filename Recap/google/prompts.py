@@ -73,7 +73,7 @@ Each image should be described by two sentences that contribute to the overall n
 
 **Task Outline:**
 1. You will be given descriptions of 100 images. Each description includes specific details about the visual elements and context of the image.
-2. Based on these descriptions, generate two sentences for each image that collectively form a continuous story. Do not mention the words "scene", "setting" or "image" in the sentences.
+2. Based on these descriptions, generate two sentences for each image that collectively form a continuous story in present tense.
 3. Ensure the sentences flow logically from one to the next, maintaining a coherent and engaging narrative.
 
 Return "Understood" when read
@@ -83,21 +83,15 @@ prompt_generate_sentence_2 = f"""
 You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
-1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows." or "The speech bubble". 
-2. Conversation can be used in the story. When using conversations from descriptions do not add how the voice sounds such as "his voice laced with a bitterness he tried to hide.". or 
-2. Emotion and Context: Use descriptive language to convey the atmosphere, characters' feelings, and settings.
+1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
+2. Use conversation from the image as part of the story.
 3. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
-4. When using conversations from descriptions quotes around the text and add: "[pronoun] [action].". Do not add description of how voices sound or how the character looks after saying the text.
-5. Vary Sentence Structure: Use a variety of words to start sentences to keep the narrative engaging and dynamic.
-6. Sentence lengths: Each image should be described by two simple sentences focusing on setting and actions.
-7. Vary sentence structure: Avoid starting multiple sentences with the same word. Vary the sentence structure to maintain reader interest.
-8. Do not reference where the text is located or that you are referencing text, just use text as part of the story. 
-9. If the character has recently been described, use pronouns and do not describe the character again.
-10. Use names of characters if they are mentioned in the description.
-11. If the context and location changes drastically. It should be described as a new location or a flashback. 
-12. The characters cannot see the text so it should only be used as part of the story and not as something the characters are aware of.
-13. Never describe the position of text or use the position of text in the story.
-14. Reduce the amount of commas in the sentences by using more periods.
+4. Vary Sentence Structure: Use a variety of words to start sentences to keep the narrative engaging and dynamic.
+5. Sentence lengths: Each image should be described by two simple sentences focusing on setting and actions.
+6. If the context and location changes drastically. It should be described as a new location or a flashback. 
+7. Reduce the amount of commas in the sentences by using more periods.
+8. Use pronouns and character descriptions when referring to characters. Do not use character names.
+9. Never mention the viewer, reader or speaker in the sentences.
 
 Return "Understood" when the rules and guidelines are understood.
 """
@@ -111,7 +105,7 @@ You must follow the process when generating sentences based on the descriptions
 3. Generate Sentence: Formulate a sentence in present tense that incorporates these elements and contributes to the overall narrative.
 4. Ensure Continuity: Ensure each generated sentence logically follows the previous one, maintaining narrative coherence.
 5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
-By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the visual and emotional content of the images into a written narrative.
+By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the visual and emotional content to a fluent story.
 
 Return "Understood" when it is understood.
 """

@@ -47,7 +47,7 @@ class Gemini:
             {
                 "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
                 "threshold": "BLOCK_NONE",
-            },
+            }
         ]
 
     def generate_description_for_images(self, images: list[str]):
@@ -55,7 +55,7 @@ class Gemini:
         chat = self.model.start_chat(history=[])
 
         for p in prompts:
-            r = chat.send_message(p, generation_config=self.generation_config)
+            r = chat.send_message(p, generation_config=self.generation_config, safety_settings=self.safety_settings)
             print(r.text)
 
         for image in images:
@@ -64,6 +64,8 @@ class Gemini:
             img_data = Image.open(get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{image}"))
             content.append(img_data)
             content.append(f"You are describing {image} in detail. \n")
+
+            print(f"Generating description for {image}...")
 
             response = chat.send_message(
                 content,
@@ -75,6 +77,10 @@ class Gemini:
             responses = response.text.split('\n')
             for r in responses:
                 if r == '':
+                    continue
+                parts = r.split(';')
+                if len(parts) != 2:
+                    print(f"Invalid response: {r}")
                     continue
 
                 append_to_file(setup.PATHS.DESCRIPTIONS, r)
@@ -100,7 +106,7 @@ class Gemini:
         threads = []
         for i in range(0, len(images), 10):
             thread_name = f"{i}/{len(images)}"
-            thread = threading.Thread(target=self.threaded_generate_description, args=(thread_name, images[i:i + 10]))
+            thread = threading.Thread(target=self._threaded_generate_description, args=(thread_name, images[i:i + 10]))
             thread.start()
             threads.append(thread)
 
@@ -108,13 +114,14 @@ class Gemini:
         for thread in threads:
             thread.join()
 
-        if len(get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
-            print("Some images are still missing descriptions. Will start generation again.")
-            self.generate_descriptive_text()
-
         print("All threads finished. Will start optimize_descriptions")
         optimize_descriptions()
         optimize_description_quotes()
+        remove_long_descriptions()
+
+        if len(get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
+            print("Some images are still missing descriptions. Will start generation again.")
+            self.generate_descriptive_text()
 
     def generate_sentences_for_images_gemini(self, images: list[str]):
         generated_prompts = generate_prompts_for_images(images)
@@ -163,6 +170,7 @@ class Gemini:
 
                 parts = x.split(';')
                 description = parts[1]
+                description = description.encode('ascii', 'ignore').decode('ascii')
                 if description[:1] == '"' and description[-1:] == '"':
                     description = description[1:-1]
 
@@ -185,6 +193,23 @@ class Gemini:
         for i in range(0, len(images), 100):
             self.generate_sentences_for_images_gemini(images[i:i + 100])
 
+    def remove_duplicate_sentences(self):
+        lines = get_lines_from_file(setup.PATHS.SENTENCES)
+        sentences = {}
+        for line in lines:
+            parts = line.split(';')
+            if parts[1] in sentences:
+                print(f"Removing duplicate sentence: {parts[1]}")
+                continue
+            sentences[parts[1]] = parts[0]
+
+        with open(setup.PATHS.SENTENCES, 'w') as file:
+            for key, value in sentences.items():
+                file.write(f"{value};{key}\n")
+
+
+
+
 
 def optimize_descriptions():
     description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
@@ -193,11 +218,29 @@ def optimize_descriptions():
         description = description.replace('a speech bubble', 'text')
         description = description.replace('speech bubble', 'text')
         description = description.replace('~', '').replace('(', '').replace(')', '')
+
+        # Remove all non-ascii characters
+        description = description.encode('ascii', 'ignore').decode('ascii')
+
         description_dict[key] = description
 
     with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
         for key, value in description_dict.items():
-            file.write(f"{key}; {value}\n")
+            file.write(f"{key};{value}\n")
+
+
+def remove_long_descriptions():
+    description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
+    for key, value in description_dict.items():
+        description = value
+        if len(description) > 1500:
+            print(f"Removing long description: {description}")
+            description_dict[key] = ""
+
+    with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
+        for key, value in description_dict.items():
+            if value != "":
+                file.write(f"{key};{value}\n")
 
 
 def should_remove_quote(quote: str):
@@ -230,7 +273,7 @@ def optimize_description_quotes():
 
     with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
         for key, value in description_dict.items():
-            file.write(f"{key}; {value}\n")
+            file.write(f"{key};{value}\n")
 
 
 def optimize_quotes_ending_with_comma():

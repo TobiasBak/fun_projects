@@ -47,7 +47,7 @@ def get_overlay_string(animation_direction: AnimationDirection):
             return f"""{middle_of_screen_x}:'if(lt(t,{animation_duration}),{middle_of_screen_y}*-20 + t*{middle_of_screen_y}*{20 / animation_duration},{middle_of_screen_y})'"""
 
 
-def get_image_string(image: str, animation_direction: int, duration: tuple):
+def get_image_string(animation_direction: int, duration: tuple):
     animation_direction_string = get_overlay_string(AnimationDirection(animation_direction))
     print(animation_direction_string)
 
@@ -127,7 +127,7 @@ def generate_image_videos():
         if total_duration + duration > 60:
             total_duration = 0.0
 
-        ffmpeg_command = f"""ffmpeg -y -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(f"{image}.jpg", 1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v libx265 {out_path}"""
+        ffmpeg_command = f"""ffmpeg -y -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v libx265 {out_path}"""
 
         print(ffmpeg_command)
         subprocess.run(ffmpeg_command, shell=True)

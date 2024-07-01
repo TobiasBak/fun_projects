@@ -106,6 +106,10 @@ def get_sorted_list_of_images(directory: str = setup.PATHS.OUT_IMAGE_DIR):
 def get_dict_from_file(file_path: str):
     file_dict = {}
     lines = get_lines_from_file(file_path)
+
+    if len(lines) == 0:
+        return file_dict
+
     for line in lines:
         parts = line.split(';')
         file_dict[parts[0]] = parts[1].replace('\n', '')
