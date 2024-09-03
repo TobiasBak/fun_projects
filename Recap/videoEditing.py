@@ -127,7 +127,7 @@ def generate_image_videos():
         if total_duration + duration > 60:
             total_duration = 0.0
 
-        ffmpeg_command = f"""ffmpeg -y -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v libx265 {out_path}"""
+        ffmpeg_command = f"""ffmpeg -y -fps_mode 0 -hwaccel cuda -hwaccel_output_format cuda -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v h264_nvenc {out_path}"""
 
         print(ffmpeg_command)
         subprocess.run(ffmpeg_command, shell=True)
@@ -174,6 +174,6 @@ def decrease_volume_of_audio(file_path: str, volume: float):
     subprocess.run(decrease_volume)
 
 generate_image_videos()
-generate_concated_video()
-add_music()
+# generate_concated_video()
+# add_music()
 # decrease_volume_of_audio("backgroundAudio/1.mp3", 0.05)

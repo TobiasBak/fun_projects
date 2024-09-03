@@ -1,6 +1,6 @@
 import os
 
-from google.cloud import texttospeech_v1beta1 as tts
+# from google.cloud import texttospeech_v1beta1 as tts
 
 import setup
 from google.gemini import Gemini

@@ -3,8 +3,8 @@ import re
 import threading
 
 import google.generativeai as genai
-from google.ai.generativelanguage_v1 import HarmCategory
-from google.generativeai.types import HarmBlockThreshold
+# from google.ai.generativelanguage_v1 import HarmCategory
+# from google.generativeai.types import HarmBlockThreshold
 
 import setup
 from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \

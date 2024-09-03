@@ -1,4 +1,4 @@
-from openai import OpenAI
+# from openai import OpenAI
 
 import setup
 from utils import append_to_file, get_dict_from_file, get_images_missing_from_files

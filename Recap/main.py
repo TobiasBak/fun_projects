@@ -65,9 +65,9 @@ def main():
     remove_descriptions_about_voices()
     optimize_quotes_ending_with_comma()
     time.sleep(1)
-    # _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
-    # google_interface.tts_client.generate_audio_files()
-    # generate_subtitles()
+    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
+    google_interface.tts_client.generate_audio_files()
+    generate_subtitles()
 
 
 def download_and_modify_images():

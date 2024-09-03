@@ -11,6 +11,7 @@ from utils import get_all_images, get_sentences_dict
 
 # Make sure to download the necessary resources
 nltk.download('punkt')
+nltk.download('punkt_tab')
 
 
 class TTS_Client:

@@ -1,0 +1,3 @@
+pip install -U google-generativeai
+pip install google-cloud-texttospeech
+environment variable  = " C:\0-uni\fun_projects\Recap\ffmpeg\bin "
