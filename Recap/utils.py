@@ -120,13 +120,21 @@ def get_dict_from_file(file_path: str):
     return file_dict
 
 
-def get_sentences_dict():
+def get_sentences_dict(language: setup.LanguageCodes = setup.LanguageCodes.English):
     sentences_dict = {}
-    lines = get_lines_from_file(setup.PATHS.SENTENCES)
+    sentences_path = get_sentence_path(language)
+    lines = get_lines_from_file(sentences_path)
     for line in lines:
         parts = line.split(';')
         sentences_dict[parts[0]] = parts[1].replace('\n', '')
+
     return sentences_dict
+
+
+def get_sentence_path(language: setup.LanguageCodes):
+    parts = setup.PATHS.SENTENCES.split('.')
+    path = f"{parts[0].replace('en', f'{language.value}')}.{parts[1]}.{parts[2]}"
+    return path
 
 
 def get_elevenlabs_api_keys() -> list:

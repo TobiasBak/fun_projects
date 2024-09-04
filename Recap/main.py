@@ -9,7 +9,6 @@ from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
 from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma, optimize_sentences_errors
 from google.googleInterface import GoogleInterface
-from google.translate import LanguageCodes
 from subtitles import generate_subtitles
 
 """
@@ -45,7 +44,7 @@ def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
     print(f"Checking images in {image_directory} for missing text...")
 
     for image in images:
-        if image not in  generated_text_dict:
+        if image not in generated_text_dict:
             print(f"Image {image} is missing text")
             print(f"Generated text: {generated_text_dict.get(image)}")
             print("")
@@ -59,7 +58,7 @@ def main():
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
     clean_images()
-    clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
+    clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
     google_interface.gemini_client.generate_sentences_gemini()
     google_interface.gemini_client.remove_duplicate_sentences()
     remove_descriptions_about_voices()
@@ -67,13 +66,20 @@ def main():
     optimize_sentences_errors()
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
-    # google_interface.tts_client.generate_audio_files()
-    # generate_subtitles()
+
+    # FOR ENGLAND!
+    google_interface.en_tts_client.generate_audio_files()
+    generate_subtitles(setup.LanguageCodes.English)
+
+    # FOR HINDI!
+    google_interface.hi_tts_client.generate_audio_files()
+    generate_subtitles(setup.LanguageCodes.Hindi)
+
 
 def test():
     google_interface = GoogleInterface()
 
-    language = LanguageCodes.Hindi
+    language = setup.LanguageCodes.Hindi
     google_interface.translate_client.translate_sentences_from_file(language)
 
 
@@ -84,13 +90,10 @@ def download_and_modify_images():
     # _delete_temp_files()
 
 
-
-
 if __name__ == "__main__":
     # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
     # download_and_modify_images()
 
-    # main()
+    main()
 
-
-    test()
+    # test()

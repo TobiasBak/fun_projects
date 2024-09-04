@@ -26,7 +26,7 @@ def get_duration_sec(time: str) -> float:
 def get_audio_duration(image: str):
     duration = 0
     # ass file containing subtitles
-    subtitles_file = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{image.split('.jpg')[0]}.ass"
+    subtitles_file = f"{setup.PATHS.SUBTITLE_DIR}/{image.split('.jpg')[0]}.ass"
     lines = get_lines_from_file(subtitles_file)
     start_times = []
     end_times = []
@@ -47,7 +47,7 @@ def get_audio_duration(image: str):
 for image in images:
     image_name = image.split('.jpg')[0]
     img_path = get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{image}")
-    audio_path = get_absolute_path(f"{setup.PATHS.OUT_AUDIO_DIR}/{image_name}.mp3")
+    audio_path = get_absolute_path(f"{setup.PATHS.AUDIO_DIR}/{image_name}.mp3")
     duration = get_audio_duration(image) + 0.5
 
     # Load the image and resize it to fit within the white background
@@ -64,7 +64,7 @@ for image in images:
 
     final = CompositeVideoClip([base_video, movie_clip], size=(1920, 1080))
     final.write_videofile(f"{setup.PATHS.OUT_VIDEO_DIR}/{image.split('.jpg')[0]}.mp4", fps=10)
-    ffmpeg_cmd = f'ffmpeg -y -i {setup.PATHS.OUT_VIDEO_DIR}/{image_name}.mp4 -vf "subtitles={setup.PATHS.OUT_SUBTITLE_DIR}/{image_name}.ass" -c:a copy {setup.PATHS.OUT_VIDEO_DIR}/{image_name}l.mp4'
+    ffmpeg_cmd = f'ffmpeg -y -i {setup.PATHS.OUT_VIDEO_DIR}/{image_name}.mp4 -vf "subtitles={setup.PATHS.SUBTITLE_DIR}/{image_name}.ass" -c:a copy {setup.PATHS.OUT_VIDEO_DIR}/{image_name}l.mp4'
     subprocess.run(ffmpeg_cmd)
 
     # Append the video clip to the list

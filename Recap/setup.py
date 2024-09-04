@@ -1,13 +1,16 @@
 """ PLEASE FILL BELOW """
 import os
+from enum import Enum
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/solo-leveling-005/'
 CHAPTERS = [41, 41]
 NAME_OF_BOOK = 'solo_leveling'
-TTS_VOICE_LAN_CODE = "en-US"
-TTS_VOICE_NAME = "en-US-Neural2-J"
-TTS_SPEAKING_RATE = 1.00
-TTS_PITCH = -6.00
+
+
+class LanguageCodes(Enum):
+    English = 'en'
+    Hindi = 'hi'
+
 
 STORY = f"""
 The story is about a young man, who lives in a world where you raid dungeons to get stronger. 
@@ -23,26 +26,31 @@ NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
 
 
 class FILES:
-    DESCRIPTIONS = f'eng.{NAME_AND_CHAPTERS}_descriptions.csv'
-    SENTENCES = f'eng.{NAME_AND_CHAPTERS}_generated_sentences.csv'
+    DESCRIPTIONS = f'en.{NAME_AND_CHAPTERS}_descriptions.csv'
+    SENTENCES = f'en.{NAME_AND_CHAPTERS}_generated_sentences.csv'
 
 
 class PATHS:
     RAW_IMAGE_DIR = 'temp/images/raw'
     IMAGE_DIR = 'temp/images/altered'
     OUT_TEXT_DIR = 'out/text'
-    OUT_AUDIO_DIR = 'out/audio'
-    OUT_SUBTITLE_DIR = 'out/subtitles'
+    AUDIO_DIR = 'temp/audio'
+    SUBTITLE_DIR = 'temp/subtitles'
     OUT_VIDEO_DIR = 'out/videos'
     DESCRIPTIONS = f'{OUT_TEXT_DIR}/{FILES.DESCRIPTIONS}'
     SENTENCES = f'{OUT_TEXT_DIR}/{FILES.SENTENCES}'
 
 
 # Generate directories if they do not exist
-for path in [PATHS.RAW_IMAGE_DIR, PATHS.IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.OUT_AUDIO_DIR, PATHS.OUT_SUBTITLE_DIR, PATHS.OUT_VIDEO_DIR]:
+for path in [PATHS.RAW_IMAGE_DIR, PATHS.IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.AUDIO_DIR, PATHS.SUBTITLE_DIR, PATHS.OUT_VIDEO_DIR]:
     os.makedirs(path, exist_ok=True)
 
-os.makedirs('temp/videos', exist_ok=True)
-os.makedirs('temp/audio', exist_ok=True)
+for value in LanguageCodes:
+    os.makedirs(f'temp/timings/{value.value}', exist_ok=True)
+    os.makedirs(f'temp/audio/{value.value}', exist_ok=True)
+    os.makedirs(f'temp/videos/{value.value}', exist_ok=True)
+    os.makedirs(f'temp/subtitles/{value.value}', exist_ok=True)
+
+
 os.makedirs('temp/timings', exist_ok=True)
 os.makedirs('temp/videos', exist_ok=True)

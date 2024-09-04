@@ -96,19 +96,19 @@ def convert_float_to_hhmmss(time: float) -> str:
     return out
 
 
-def get_image_names_missing_videos():
+def get_image_names_missing_videos(language: setup.LanguageCodes):
     images = get_sorted_list_of_images()
     image_names = [image.split('.jpg')[0] for image in images]
 
-    video_files = os.listdir("temp/videos")
+    video_files = os.listdir(f"temp/videos/{language.value}")
     video_file_names = [file.split('.mp4')[0] for file in video_files]
 
     images_missing_video_files = [name for name in image_names if name not in video_file_names]
     return images_missing_video_files
 
 
-def generate_image_videos():
-    images = get_image_names_missing_videos()
+def generate_image_videos(language: setup.LanguageCodes):
+    images = get_image_names_missing_videos(language)
 
     base_video = create_ambience_video("1.mp4", 60, 0, 60)
     print("base_video", base_video)
@@ -116,27 +116,25 @@ def generate_image_videos():
     total_duration = 0.0
 
     for i, image in enumerate(images):
-        audio = f"out/audio/{image}.mp3"
+        audio = f"temp/audio/{language.value}/{image}.mp3"
         duration = get_audio_duration(audio)
         start_finish = (0, duration)
 
         print(image)
-        out_path = f"temp/videos/{image}.mp4"
-        print(out_path)
+        out_path = f"temp/videos/{language.value}/{image}.mp4"
 
         if total_duration + duration > 60:
             total_duration = 0.0
 
-        ffmpeg_command = f"""ffmpeg -y -hwaccel cuda -hwaccel_output_format cuda -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v h264_nvenc {out_path}"""
+        ffmpeg_command = f"""ffmpeg -y -hwaccel cuda -hwaccel_output_format cuda -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i {setup.PATHS.IMAGE_DIR}/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=temp/subtitles/{language.value}/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v h264_nvenc {out_path}"""
 
-        print(ffmpeg_command)
         subprocess.run(ffmpeg_command, shell=True)
 
         total_duration += duration
 
 
-def generate_concated_video():
-    video_files = os.listdir("temp/videos")
+def generate_concated_video(language: setup.LanguageCodes):
+    video_files = os.listdir(f"temp/videos/{language.value}")
 
     def sort_key(image_name: str):
         # Split the filename on '.', convert the parts to integers, and return as a tuple
@@ -149,18 +147,18 @@ def generate_concated_video():
     with open('temp/concat.txt', 'w') as f:
         for file in video_files:
             if file.endswith(".mp4") and file[0].isdigit():
-                f.write(f"file 'videos/{file}'\n")
+                f.write(f"file 'videos/{language.value}/{file}'\n")
 
-    out_path = "temp/videos/concat.mp4"
+    out_path = f"temp/videos/{language.value}/concat.mp4"
 
     command = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy {out_path}"""
     subprocess.run(command)
 
 
-def add_music():
-    video = "temp/videos/concat.mp4"
+def add_music(language: setup.LanguageCodes):
+    video = f"temp/videos/{language.value}/concat.mp4"
     music = "backgroundAudio/1_decreased.mp3"
-    out_path = f"out/videos/video_parts/{setup.NAME_AND_CHAPTERS}.mp4"
+    out_path = f"out/videos/video_parts/{language.value}/{setup.NAME_AND_CHAPTERS}.mp4"
 
     command = f"""ffmpeg -y -i {video} -stream_loop -1 -i {music} -shortest -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 {out_path}"""
     subprocess.run(command)
@@ -174,7 +172,7 @@ def decrease_volume_of_audio(file_path: str, volume: float):
     subprocess.run(decrease_volume)
 
 
-def concate_video_parts():
+def concate_video_parts(language: setup.LanguageCodes):
     video_files = os.listdir("out/videos/video_parts")
 
     def sort_key(image_name: str):
@@ -198,10 +196,15 @@ def concate_video_parts():
     subprocess.run(command)
 
 
+# generate_image_videos(setup.LanguageCodes.English)
+generate_concated_video(setup.LanguageCodes.English)
+add_music(setup.LanguageCodes.English)
 
-# generate_image_videos()
-# generate_concated_video()
-# add_music()
+# generate_image_videos(setup.LanguageCodes.Hindi)
+generate_concated_video(setup.LanguageCodes.Hindi)
+add_music(setup.LanguageCodes.Hindi)
+
+
 # decrease_volume_of_audio("backgroundAudio/1.mp3", 0.02)
 
-concate_video_parts()
+# concate_video_parts()

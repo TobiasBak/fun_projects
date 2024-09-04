@@ -27,7 +27,8 @@ class GoogleInterface:
         return self._instance
 
     def __init__(self):
-        self.tts_client = TTS_Client()
+        self.en_tts_client = TTS_Client(setup.LanguageCodes.English)
+        self.hi_tts_client = TTS_Client(setup.LanguageCodes.Hindi)
         self.gemini_client = Gemini()
         self.translate_client = TranslateClient()
 

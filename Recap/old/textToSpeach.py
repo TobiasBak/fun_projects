@@ -46,7 +46,7 @@ def _generate_text_to_speach(api_key: str, voice_id: str, audio_filename: str, t
     # Check if the request was successful
     if response.ok:
         # Open the output file in write-binary mode
-        with open(f"{setup.PATHS.OUT_AUDIO_DIR}/{audio_filename}.mp3", "wb") as f:
+        with open(f"{setup.PATHS.AUDIO_DIR}/{audio_filename}.mp3", "wb") as f:
             # Read the response in chunks and write to the file
             for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
                 f.write(chunk)
@@ -59,7 +59,7 @@ def _generate_text_to_speach(api_key: str, voice_id: str, audio_filename: str, t
 
 def get_missing_audio_files():
     images = get_all_images()
-    audio_files = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
+    audio_files = os.listdir(setup.PATHS.AUDIO_DIR)
     audio_file_names = [file.split('.mp3')[0].replace(' ', '') for file in audio_files]
     image_file_names = [file.split('.jpg')[0] for file in images]
 

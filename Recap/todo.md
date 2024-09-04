@@ -5,6 +5,7 @@
 1. Make sure out only contains concated videos with audio and images
 2. Translation does more at a time
 3. Update to new versions of gemini api
+4. Generate X for X we have, so if we have sentences for 4 languages generate the rest for all 4 languages
 
 
 

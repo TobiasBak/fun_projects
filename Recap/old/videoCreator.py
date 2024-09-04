@@ -12,7 +12,7 @@ num_threads = 4  # Set this to the number of cores in your CPU
 
 
 def get_duration_sec(image_name) -> float:
-    lines = get_lines_from_file(f"{setup.PATHS.OUT_SUBTITLE_DIR}/{image_name}.ass")
+    lines = get_lines_from_file(f"{setup.PATHS.SUBTITLE_DIR}/{image_name}.ass")
     duration: float = 0
     for line in lines:
         if line.startswith("Dialogue: "):
@@ -93,9 +93,9 @@ def generate_videos_for_images():
 
         image_path = f"{setup.PATHS.IMAGE_DIR}/{image_name}.jpg"
         audio_file = f"{image_name}.mp3"
-        audio_path = f"{setup.PATHS.OUT_AUDIO_DIR}/{audio_file}"
+        audio_path = f"{setup.PATHS.AUDIO_DIR}/{audio_file}"
         subtitle_file = f"{image_name}.ass"
-        subtitle_path = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{subtitle_file}"
+        subtitle_path = f"{setup.PATHS.SUBTITLE_DIR}/{subtitle_file}"
 
         duration_sec = get_duration_sec(image_name)
         buffer = 1  # ToDo: Use this buffer as whitespace before next video comes. Or something similar. This does not work with values lower than 1 sec

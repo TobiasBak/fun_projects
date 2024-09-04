@@ -49,9 +49,9 @@ def convert_to_seconds(time: str) -> float:
     return time
 
 
-def get_audio_files_missing_ass():
-    audio_files = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
-    ass_files = os.listdir(setup.PATHS.OUT_SUBTITLE_DIR)
+def get_audio_files_missing_ass(language: setup.LanguageCodes):
+    audio_files = os.listdir(f"{setup.PATHS.AUDIO_DIR}/{language.value}")
+    ass_files = os.listdir(f"{setup.PATHS.SUBTITLE_DIR}/{language.value}")
 
     audio_names = [name.split('.mp3')[0] for name in audio_files]
     ass_names = [name.split('.ass')[0] for name in ass_files]
@@ -64,18 +64,16 @@ def get_audio_files_missing_ass():
     return missing_audio_files
 
 
-
-def generate_subtitles():
-
-    audio_files = get_audio_files_missing_ass()
-    sentences_dict = get_sentences_dict()
+def generate_subtitles(language: setup.LanguageCodes):
+    audio_files = get_audio_files_missing_ass(language)
+    sentences_dict = get_sentences_dict(language)
 
     print(f"Generating subtitle files: {len(audio_files)}...")
 
     for audio_file in audio_files:
         audio_file_name = audio_file.split('.mp3')[0]
-        json_file_path = get_absolute_path("temp/timings/" + f"{audio_file_name}.json")
-        ass_file_path = f"{setup.PATHS.OUT_SUBTITLE_DIR}/{audio_file_name}.ass"
+        json_file_path = get_absolute_path("temp/timings/" + language.value + "/" + f"{audio_file_name}.json")
+        ass_file_path = f"{setup.PATHS.SUBTITLE_DIR}/{language.value}/{audio_file_name}.ass"
         sentence: str = sentences_dict[f"{audio_file_name}.jpg"]
 
         if 'é' in sentence or 'è' in sentence:
@@ -135,4 +133,3 @@ def generate_subtitles():
                 sentence_to_add = s_sentences[i].replace('’', "'")
 
                 f.write(f"Dialogue: {start_time},{finish_time},Info,{sentence_to_add}\n")
-

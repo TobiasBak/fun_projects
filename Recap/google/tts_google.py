@@ -14,17 +14,41 @@ nltk.download('punkt')
 nltk.download('punkt_tab')
 
 
-class TTS_Client:
+class TTS_VOICES:
     def __init__(self):
+        self.voices = {
+            setup.LanguageCodes.English: {
+                "TTS_VOICE_LAN_CODE": "en-US",
+                "TTS_VOICE_NAME": "en-US-Neural2-J",
+                "TTS_SPEAKING_RATE": 1.00,
+                "TTS_PITCH": -6.00
+            },
+            setup.LanguageCodes.Hindi: {
+                "TTS_VOICE_LAN_CODE": "hi-IN",
+                "TTS_VOICE_NAME": "hi-IN-Neural2-C",
+                "TTS_SPEAKING_RATE": 1.00,
+                "TTS_PITCH": -6.00
+            }
+            # Add more languages here...
+        }
+
+    def get_voice_settings(self, language: setup.LanguageCodes):
+        return self.voices.get(language)
+
+
+class TTS_Client:
+    def __init__(self, language: setup.LanguageCodes):
+        tts_voices = TTS_VOICES()
+        self.language = language
         self._tts_client = tts.TextToSpeechClient()
         self._tts_voice = tts.VoiceSelectionParams(
-            language_code=setup.TTS_VOICE_LAN_CODE,
-            name=setup.TTS_VOICE_NAME,
+            language_code=tts_voices.get_voice_settings(language).get("TTS_VOICE_LAN_CODE"),
+            name=tts_voices.get_voice_settings(language).get("TTS_VOICE_NAME")
         )
         self._tts_audio_config = tts.AudioConfig(
             audio_encoding=tts.AudioEncoding.MP3,
-            speaking_rate=setup.TTS_SPEAKING_RATE,
-            pitch=setup.TTS_PITCH,
+            speaking_rate=tts_voices.get_voice_settings(language).get("TTS_SPEAKING_RATE"),
+            pitch=tts_voices.get_voice_settings(language).get("TTS_PITCH")
         )
 
     def generate_audio(self, audio_filename: str, text: str = None, ssml: str = None):
@@ -48,14 +72,14 @@ class TTS_Client:
             print(f"Audio file {audio_filename} was not generated")
             return
 
-        with open(f"{setup.PATHS.OUT_AUDIO_DIR}/{audio_filename}.mp3", "wb") as out:
+        with open(f"{setup.PATHS.AUDIO_DIR}/{self.language.value}/{audio_filename}.mp3", "wb") as out:
             out.write(response.audio_content)
 
         if response.timepoints:
             marks = [dict(sec=t.time_seconds, name=t.mark_name)
                      for t in response.timepoints]
 
-            with open(f"temp/timings/{audio_filename}.json", 'w') as out:
+            with open(f"temp/timings/{self.language.value}/{audio_filename}.json", 'w') as out:
                 json.dump(marks, out)
 
     def _generate_audio_from_text(self, synthesis_input: tts.SynthesisInput):
@@ -83,9 +107,8 @@ class TTS_Client:
         return response
 
     def generate_audio_files(self):
-        sentences_dict = get_sentences_dict()
-
-        missing_audio_file_names = get_missing_audio_file_names()
+        sentences_dict = get_sentences_dict(self.language)
+        missing_audio_file_names = self._get_missing_audio_file_names()
         print(f"Missing audio files: {missing_audio_file_names}")
 
         for audio_file_name in missing_audio_file_names:
@@ -93,6 +116,15 @@ class TTS_Client:
             print(f"Generating audio for {audio_file_name}.jpg with text: {text}")
             ssml = generate_ssml_from_text(text, audio_file_name)
             self.generate_audio(audio_file_name, ssml=ssml)
+
+    def _get_missing_audio_file_names(self):
+        images = get_all_images()
+        audio_files = os.listdir(f"{setup.PATHS.AUDIO_DIR}/{self.language.value}")
+        audio_file_names = [file.split('.mp3')[0].replace(' ', '') for file in audio_files]
+        image_file_names = [file.split('.jpg')[0] for file in images]
+
+        missing_audio_files = [name for name in image_file_names if name not in audio_file_names]
+        return missing_audio_files
 
 
 def get_senteces_from_string(sentences: str) -> list:
@@ -138,13 +170,3 @@ def generate_ssml_from_text(sentences: str, audio_file_name: str) -> str:
     print(out)
 
     return out
-
-
-def get_missing_audio_file_names():
-    images = get_all_images()
-    audio_files = os.listdir(setup.PATHS.OUT_AUDIO_DIR)
-    audio_file_names = [file.split('.mp3')[0].replace(' ', '') for file in audio_files]
-    image_file_names = [file.split('.jpg')[0] for file in images]
-
-    missing_audio_files = [name for name in image_file_names if name not in audio_file_names]
-    return missing_audio_files
