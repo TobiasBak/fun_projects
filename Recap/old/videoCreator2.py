@@ -46,7 +46,7 @@ def get_audio_duration(image: str):
 
 for image in images:
     image_name = image.split('.jpg')[0]
-    img_path = get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{image}")
+    img_path = get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{image}")
     audio_path = get_absolute_path(f"{setup.PATHS.OUT_AUDIO_DIR}/{image_name}.mp3")
     duration = get_audio_duration(image) + 0.5
 

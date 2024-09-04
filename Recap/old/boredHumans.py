@@ -100,7 +100,7 @@ def threaded_automate_image_upload(thread_name, thread_count, image_path):
 
 def generate_text_from_images(directory: str):
     images_missing = get_images_missing_from_files(directory, setup.PATHS.DESCRIPTIONS)
-    image_paths = get_absolute_paths_from_files(setup.PATHS.OUT_IMAGE_DIR, images_missing)
+    image_paths = get_absolute_paths_from_files(setup.PATHS.IMAGE_DIR, images_missing)
 
     if not image_paths:
         print("No images missing descriptive text.")

@@ -2,6 +2,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+import setup
+
 
 def download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
     """
@@ -31,13 +33,10 @@ def download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
     # Extract the 'src' or 'data-src' attribute from each img tag
     img_urls = [img.get('data-src', img.get('src')).strip() for img in img_tags]
 
-    # Ensure a directory to save the images
-    os.makedirs('temp/images', exist_ok=True)
-
     # Download each image and save it locally
     for idx, img_url in enumerate(img_urls):
         img_response = session.get(img_url, headers=headers)
         img_response.raise_for_status()
-        img_path = os.path.join('temp', 'images', f'{chapter}.{idx}.jpg')
+        img_path = f"{setup.PATHS.RAW_IMAGE_DIR}/{chapter}.{idx}.jpg"
         with open(img_path, 'wb') as file:
             file.write(img_response.content)

@@ -127,7 +127,7 @@ def generate_image_videos():
         if total_duration + duration > 60:
             total_duration = 0.0
 
-        ffmpeg_command = f"""ffmpeg -y -fps_mode 0 -hwaccel cuda -hwaccel_output_format cuda -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v h264_nvenc {out_path}"""
+        ffmpeg_command = f"""ffmpeg -y -hwaccel cuda -hwaccel_output_format cuda -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i out/images/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=out/subtitles/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v h264_nvenc {out_path}"""
 
         print(ffmpeg_command)
         subprocess.run(ffmpeg_command, shell=True)
@@ -160,7 +160,7 @@ def generate_concated_video():
 def add_music():
     video = "temp/videos/concat.mp4"
     music = "backgroundAudio/1_decreased.mp3"
-    out_path = "temp/videos/concat_music.mp4"
+    out_path = f"out/videos/video_parts/{setup.NAME_AND_CHAPTERS}.mp4"
 
     command = f"""ffmpeg -y -i {video} -stream_loop -1 -i {music} -shortest -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 {out_path}"""
     subprocess.run(command)
@@ -173,7 +173,35 @@ def decrease_volume_of_audio(file_path: str, volume: float):
     decrease_volume = f"""ffmpeg -y -i {audio_path} -filter:a "volume={str(volume)}" {out}"""
     subprocess.run(decrease_volume)
 
-generate_image_videos()
+
+def concate_video_parts():
+    video_files = os.listdir("out/videos/video_parts")
+
+    def sort_key(image_name: str):
+        # Split the filename on '.', convert the parts to integers, and return as a tuple
+        parts = image_name.split('-')[1]
+        parts = parts.split('.')[0]
+        print(parts)
+        return tuple(int(part) for part in parts)
+
+    video_files.sort(key=sort_key)
+
+    print(video_files)
+    with open('out/concat.txt', 'w') as f:
+        for file in video_files:
+            if file.endswith(".mp4"):
+                f.write(f"file 'videos/video_parts/{file}'\n")
+
+    out_path = "out/videos/concat.mp4"
+
+    command = f"""ffmpeg -y -f concat -safe 0 -i out/concat.txt -c copy {out_path}"""
+    subprocess.run(command)
+
+
+
+# generate_image_videos()
 # generate_concated_video()
 # add_music()
-# decrease_volume_of_audio("backgroundAudio/1.mp3", 0.05)
+# decrease_volume_of_audio("backgroundAudio/1.mp3", 0.02)
+
+concate_video_parts()

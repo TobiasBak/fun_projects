@@ -2,7 +2,7 @@
 import os
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/solo-leveling-005/'
-CHAPTERS = [1, 20]
+CHAPTERS = [41, 41]
 NAME_OF_BOOK = 'solo_leveling'
 TTS_VOICE_LAN_CODE = "en-US"
 TTS_VOICE_NAME = "en-US-Neural2-J"
@@ -28,7 +28,8 @@ class FILES:
 
 
 class PATHS:
-    OUT_IMAGE_DIR = 'out/images'
+    RAW_IMAGE_DIR = 'temp/images/raw'
+    IMAGE_DIR = 'temp/images/altered'
     OUT_TEXT_DIR = 'out/text'
     OUT_AUDIO_DIR = 'out/audio'
     OUT_SUBTITLE_DIR = 'out/subtitles'
@@ -38,7 +39,7 @@ class PATHS:
 
 
 # Generate directories if they do not exist
-for path in [PATHS.OUT_IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.OUT_AUDIO_DIR, PATHS.OUT_SUBTITLE_DIR, PATHS.OUT_VIDEO_DIR]:
+for path in [PATHS.RAW_IMAGE_DIR, PATHS.IMAGE_DIR, PATHS.OUT_TEXT_DIR, PATHS.OUT_AUDIO_DIR, PATHS.OUT_SUBTITLE_DIR, PATHS.OUT_VIDEO_DIR]:
     os.makedirs(path, exist_ok=True)
 
 os.makedirs('temp/videos', exist_ok=True)

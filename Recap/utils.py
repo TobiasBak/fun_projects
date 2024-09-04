@@ -81,7 +81,7 @@ def get_images_missing_from_files(image_dir: str, text_file_path: str):
     return missing_images
 
 
-def get_all_images(directory: str = setup.PATHS.OUT_IMAGE_DIR):
+def get_all_images(directory: str = setup.PATHS.IMAGE_DIR):
     images = []
     for file in os.listdir(directory):
         if file.endswith(".jpg"):
@@ -89,7 +89,7 @@ def get_all_images(directory: str = setup.PATHS.OUT_IMAGE_DIR):
     return images
 
 
-def get_sorted_list_of_images(directory: str = setup.PATHS.OUT_IMAGE_DIR):
+def get_sorted_list_of_images(directory: str = setup.PATHS.IMAGE_DIR):
     images = get_all_images(directory)
 
     def sort_key(image_name: str):
@@ -112,6 +112,10 @@ def get_dict_from_file(file_path: str):
 
     for line in lines:
         parts = line.split(';')
+
+        if len(parts) == 1:
+            continue
+
         file_dict[parts[0]] = parts[1].replace('\n', '')
     return file_dict
 

@@ -91,7 +91,7 @@ def generate_videos_for_images():
     for image_name in image_file_names_missing_videos:
         print(f"Generating video for {image_name}")
 
-        image_path = f"{setup.PATHS.OUT_IMAGE_DIR}/{image_name}.jpg"
+        image_path = f"{setup.PATHS.IMAGE_DIR}/{image_name}.jpg"
         audio_file = f"{image_name}.mp3"
         audio_path = f"{setup.PATHS.OUT_AUDIO_DIR}/{audio_file}"
         subtitle_file = f"{image_name}.ass"

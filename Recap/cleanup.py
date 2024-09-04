@@ -14,7 +14,7 @@ def clean_images():
 
     for line in lines:
         parts = line.split(';')
-        image_path = get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{parts[0]}")
+        image_path = get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{parts[0]}")
         text = parts[1]
 
         # Force text to lowercase

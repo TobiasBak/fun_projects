@@ -8,7 +8,6 @@ from Recap.utils import get_sorted_list_of_images
 
 TEMP_DIR = 'temp'
 TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
-TEMP_IMAGE_DIR = f'{TEMP_DIR}/images'
 IMAGE_MAX_HEIGHT = 1000
 
 
@@ -17,12 +16,12 @@ def modify_all_images():
     if os.path.exists(TEMP_SPLIT_INDEXES_FILE):
         os.remove(TEMP_SPLIT_INDEXES_FILE)
 
-    images = os.listdir(TEMP_IMAGE_DIR)
+    images = os.listdir(setup.PATHS.RAW_IMAGE_DIR)
     print(f"Modifying {len(images)} images...")
 
     count = 0
     for image in images:
-        _modify_image(f'{TEMP_IMAGE_DIR}/{image}')
+        _modify_image(f'{setup.PATHS.RAW_IMAGE_DIR}/{image}')
 
         # Helpful print
         if count % 100 == 0:
@@ -36,7 +35,7 @@ def get_letter_from_count(count: int):
 
 
 def modify_images_to_fit_screen():
-    images = get_sorted_list_of_images("temp/images")
+    images = get_sorted_list_of_images(setup.PATHS.RAW_IMAGE_DIR)
 
     split_indexes = _read_split_indexes()
     buffer = None  # Buffer will be at most 1 image, that is left over
@@ -66,8 +65,8 @@ def modify_images_to_fit_screen():
                 image_part_bottom = image_part.crop((0, image_part.height // 2, image_part.width, image_part.height))
                 resized_image_top = _scale_image(image_part_top)
                 resized_image_bottom = _scale_image(image_part_bottom)
-                resized_image_top.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
-                resized_image_bottom.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
+                resized_image_top.save(f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
+                resized_image_bottom.save(f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
                 count += 1
                 continue
 
@@ -76,7 +75,7 @@ def modify_images_to_fit_screen():
             if resized_image is None:
                 continue
 
-            resized_image.save(f'{setup.PATHS.OUT_IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.jpg')
+            resized_image.save(f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.jpg')
 
             count += 1
 
@@ -211,7 +210,7 @@ def _read_split_indexes() -> dict:
 
 def _split_image(image, split_indexes) -> list[Image]:
     image_parts: list[Image] = []
-    img = Image.open(f'{TEMP_IMAGE_DIR}/{image}')
+    img = Image.open(f'{setup.PATHS.RAW_IMAGE_DIR}/{image}')
 
     for i in range(len(split_indexes) - 1):
         start = split_indexes[i]

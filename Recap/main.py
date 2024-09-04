@@ -7,8 +7,9 @@ from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.utils import get_dict_from_file, get_all_images
 from fetchManhwa import download_images
-from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma
+from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma, optimize_sentences_errors
 from google.googleInterface import GoogleInterface
+from google.translate import LanguageCodes
 from subtitles import generate_subtitles
 
 """
@@ -54,35 +55,42 @@ def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
 def main():
     google_interface = GoogleInterface()
 
-    # download_and_modify_images()
     google_interface.gemini_client.generate_descriptive_text()
     time.sleep(1)
-    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
+    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
     clean_images()
     clean_text_files_for_unnecessary_lines() #  Not necessary, but nice to have
     google_interface.gemini_client.generate_sentences_gemini()
     google_interface.gemini_client.remove_duplicate_sentences()
     remove_descriptions_about_voices()
     optimize_quotes_ending_with_comma()
+    optimize_sentences_errors()
     time.sleep(1)
-    _find_images_with_missing_texts(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
-    google_interface.tts_client.generate_audio_files()
-    generate_subtitles()
+    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
+    # google_interface.tts_client.generate_audio_files()
+    # generate_subtitles()
+
+def test():
+    google_interface = GoogleInterface()
+
+    language = LanguageCodes.Hindi
+    google_interface.translate_client.translate_sentences_from_file(language)
 
 
 def download_and_modify_images():
-    _download_chapters()
+    # _download_chapters()
     modify_all_images()
     modify_images_to_fit_screen()
     # _delete_temp_files()
 
 
-if __name__ == "__main__":
-    print(f"RUNNING SCRIPT FOR {setup.NAME_AND_CHAPTERS}...")
-    print(f"=========================================")
 
-    # intro_text = f"""Welcome. If you like my content, please consider subscribing and liking the video. Today we are going to be recapping {setup.NAME_OF_BOOK.replace('_', ' ')}"""
-    # audio_file_name = "intro"
-    # google_interface = GoogleInterface()
-    # google_interface.tts_client.generate_audio(audio_file_name, text=intro_text)
-    main()
+
+if __name__ == "__main__":
+    # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
+    # download_and_modify_images()
+
+    # main()
+
+
+    test()

@@ -69,11 +69,11 @@ prompt_generate_sentence_1 = f"""
 **Mission Objective:**
 You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
 Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
-Each image should be described by two sentences that contribute to the overall narrative.
+Each image should be described by one sentence and should include the conversations.
 
 **Task Outline:**
-1. You will be given descriptions of 100 images. Each description includes specific details about the visual elements and context of the image.
-2. Based on these descriptions, generate two sentences for each image that collectively form a continuous story in present tense.
+1. You will be given descriptions of 10 images. Each description includes specific details about the visual elements and context of the image.
+2. Based on these descriptions, generate a sentence for each image that collectively form a continuous story in present tense.
 3. Ensure the sentences flow logically from one to the next, maintaining a coherent and engaging narrative.
 
 Return "Understood" when read
@@ -84,10 +84,10 @@ You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
 1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Use conversation from the image as part of the story.
+2. Use conversations in the generated text.
 3. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
 4. Vary Sentence Structure: Use a variety of words to start sentences to keep the narrative engaging and dynamic.
-5. Sentence lengths: Each image should be described by two simple sentences focusing on setting and actions.
+5. Sentence lengths: Each image should be described by a simple sentences continuing the narrative.
 6. If the context and location changes drastically. It should be described as a new location or a flashback. 
 7. Reduce the amount of commas in the sentences by using more periods.
 8. Use pronouns and character descriptions when referring to characters. Do not use character names.
@@ -118,7 +118,7 @@ Following is examples on input and output and the expected output format.
 
 
 **Example Output Sentence:**
-1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold floor. Despite the pain etched across his face, Sung Jin-Woo's eyes burned with determination.
+1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold floor.
 
 
 **Output:**
@@ -131,33 +131,3 @@ Return "Understood" when read.
 """
 
 
-
-# def get_files_that_gemini_deem_unnecessary():
-#     _prompt = prompt_unnecessary_lines
-#     lines_from_file = get_lines_from_file(setup.PATHS.DESCRIPTIONS)
-#     for line in lines_from_file:
-#         _prompt += line + '\n'
-#
-#     print(f"Gemini is finding unnecessary lines in the descriptions...")
-#
-#     _prompt += prompt_unnecessary_lines_end
-#
-#     tokens = model.count_tokens(_prompt)
-#     print(f"Amount of tokens: {tokens}")
-#
-#     responses = model.generate_content(_prompt)
-#
-#     print(responses)
-#
-#     if not responses.candidates:
-#         print("No sentences generated.")
-#         return
-#
-#     # If there are candidates, get the first one (usually the best)
-#     first_candidate = responses.candidates[0]
-#     print(first_candidate.content)  # Print the generated text
-#     if first_candidate is None:
-#         print("No unnecessary lines found.")
-#         return
-#
-#     print(responses.text)

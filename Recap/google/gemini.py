@@ -61,7 +61,7 @@ class Gemini:
         for image in images:
 
             content = []
-            img_data = Image.open(get_absolute_path(f"{setup.PATHS.OUT_IMAGE_DIR}/{image}"))
+            img_data = Image.open(get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{image}"))
             content.append(img_data)
             content.append(f"You are describing {image} in detail. \n")
 
@@ -79,7 +79,7 @@ class Gemini:
                 if r == '':
                     continue
                 parts = r.split(';')
-                if len(parts) != 2:
+                if len(parts) > 3:
                     print(f"Invalid response: {r}")
                     continue
 
@@ -96,7 +96,7 @@ class Gemini:
             semaphore.release()
 
     def generate_descriptive_text(self):
-        images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
+        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
         print(f"Starting generation of descriptions for {len(images)} images: ...")
 
         if len(images) == 0:
@@ -119,7 +119,7 @@ class Gemini:
         optimize_description_quotes()
         remove_long_descriptions()
 
-        if len(get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
+        if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
             print("Some images are still missing descriptions. Will start generation again.")
             self.generate_descriptive_text()
 
@@ -181,7 +181,7 @@ class Gemini:
             g_prompt = ""
 
     def generate_sentences_gemini(self):
-        images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
+        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
         if len(images) == 0:
             print("No images missing generated sentences.")
             return []
@@ -206,9 +206,6 @@ class Gemini:
         with open(setup.PATHS.SENTENCES, 'w') as file:
             for key, value in sentences.items():
                 file.write(f"{value};{key}\n")
-
-
-
 
 
 def optimize_descriptions():
@@ -282,6 +279,20 @@ def optimize_quotes_ending_with_comma():
     for key, value in sentence_dict.items():
         description = value
         description = description.replace(',"', '."')
+        sentence_dict[key] = description
+
+    with open(setup.PATHS.SENTENCES, 'w') as file:
+        for key, value in sentence_dict.items():
+            file.write(f"{key};{value}\n")
+
+
+def optimize_sentences_errors():
+    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+    print(f"Optimizing errors in {len(sentence_dict)}...")
+    for key, value in sentence_dict.items():
+        description = value
+        description = description.replace('<', '')
+        description = description.replace('>', '')
         sentence_dict[key] = description
 
     with open(setup.PATHS.SENTENCES, 'w') as file:

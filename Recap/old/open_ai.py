@@ -110,7 +110,7 @@ def get_amount_of_tokens(prompt: str) -> float:
 
 
 def generate_sentences():
-    images = get_images_missing_from_files(setup.PATHS.OUT_IMAGE_DIR, setup.PATHS.SENTENCES)
+    images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
     if len(images) == 0:
         print("No images missing generated sentences.")
         return []
