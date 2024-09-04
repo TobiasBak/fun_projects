@@ -147,7 +147,7 @@ class Gemini:
             print(f"Amount of tokens: {tokens}")
             print(g_prompt)
 
-            responses = chat.send_message(g_prompt, generation_config=self.generation_config)
+            responses = chat.send_message(g_prompt, generation_config=self.generation_config, safety_settings=self.safety_settings)
             print(f"RAW RESPONSE=================")
             print(responses.text)
 
@@ -190,8 +190,8 @@ class Gemini:
 
         # Run generate for images in batches of 100
         # generate_sentences_for_images_gemini(images)
-        for i in range(0, len(images), 100):
-            self.generate_sentences_for_images_gemini(images[i:i + 100])
+        for i in range(0, len(images), 50):
+            self.generate_sentences_for_images_gemini(images[i:i + 50])
 
     def remove_duplicate_sentences(self):
         lines = get_lines_from_file(setup.PATHS.SENTENCES)

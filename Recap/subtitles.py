@@ -86,7 +86,7 @@ def generate_subtitles(language: setup.LanguageCodes):
             data = json.load(f)
 
         # Open the .ass file
-        with open(ass_file_path, 'w') as f:
+        with open(ass_file_path, 'w', encoding='utf-8') as f:
             # Write the .ass file header
             f.write("[Script Info]\n")
             # f.write("ScriptType: v4.00+\n")

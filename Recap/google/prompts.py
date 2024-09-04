@@ -69,12 +69,12 @@ prompt_generate_sentence_1 = f"""
 **Mission Objective:**
 You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
 Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
-Each image should be described by one sentence and should include the conversations.
+Each image should be described by one sentence and the conversation from the image.
 
 **Task Outline:**
-1. You will be given descriptions of 10 images. Each description includes specific details about the visual elements and context of the image.
+1. You will be given descriptions of 10 images. Each description includes specific details about context of the image and what is written in the image.
 2. Based on these descriptions, generate a sentence for each image that collectively form a continuous story in present tense.
-3. Ensure the sentences flow logically from one to the next, maintaining a coherent and engaging narrative.
+3. Ensure the sentences are in present tense flow logically from one to the next, maintaining a coherent and engaging narrative.
 
 Return "Understood" when read
 """
@@ -84,10 +84,10 @@ You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
 1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Use conversations in the generated text.
-3. Natural Transitions: Create smooth transitions between sentences and scenes. Ensure each sentence logically follows the previous one, building a continuous and engaging narrative.
+2. Use conversations and the english text from the images in the generated text.
+3. Natural Transitions: Create smooth transitions between sentences and scenes.
 4. Vary Sentence Structure: Use a variety of words to start sentences to keep the narrative engaging and dynamic.
-5. Sentence lengths: Each image should be described by a simple sentences continuing the narrative.
+5. Sentence lengths: Each image should be described by a single sentence continuing the narrative.
 6. If the context and location changes drastically. It should be described as a new location or a flashback. 
 7. Reduce the amount of commas in the sentences by using more periods.
 8. Use pronouns and character descriptions when referring to characters. Do not use character names.
@@ -101,11 +101,11 @@ You must follow the process when generating sentences based on the descriptions
 
 **Process:**
 1. Read the Description: Carefully read and understand each image description.
-2. Extract Key Elements: Identify key elements such as characters, settings, and actions.
-3. Generate Sentence: Formulate a sentence in present tense that incorporates these elements and contributes to the overall narrative.
+2. Extract Key Elements: Identify key elements such as characters, settings, actions and information.
+3. Generate Sentence: Formulate a sentence in present tense that contributes to the overall narrative.
 4. Ensure Continuity: Ensure each generated sentence logically follows the previous one, maintaining narrative coherence.
 5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
-By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the visual and emotional content to a fluent story.
+By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the content to a fluent story.
 
 Return "Understood" when it is understood.
 """

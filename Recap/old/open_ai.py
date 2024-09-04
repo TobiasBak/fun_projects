@@ -11,9 +11,8 @@ Each picture will have specific elements provided:
 
 Your task is to create a short narration that describes the image and continues the story.
 
-**Following is a short description of overall story to guide you in generating sentences:** {setup.STORY}
+**Following is a short description of overall story to guide you in generating sentences:** 
 **Allowed names in the sentences:** 
-[{setup.AllOWED_NAMES}]
 
 **Instructions:**
 1. Generate a descriptive narration for each picture.
@@ -35,7 +34,7 @@ Don't use names such as "Kai", "Alex", "Adam", "Hana" that are not in the allowe
 """
 
 propmt_ending = f"""
-Do not include names in the generated sentences unless they are one of [{setup.AllOWED_NAMES}]. 
+Do not include names in the generated sentences unless they are one of 
 You must iterate over each of the above pictures and generate a story for each.
 """
 

@@ -134,11 +134,19 @@ def generate_image_videos(language: setup.LanguageCodes):
 
 
 def generate_concated_video(language: setup.LanguageCodes):
+    out_path = f"temp/videos/{language.value}/concat.mp4"
+
+    #if out path exists return
+    if os.path.exists(out_path):
+        print(f"True")
+        return
+
     video_files = os.listdir(f"temp/videos/{language.value}")
 
     def sort_key(image_name: str):
         # Split the filename on '.', convert the parts to integers, and return as a tuple
         parts = image_name.split('.')[:2]
+        print(parts)
         return tuple(int(part) for part in parts)
 
     video_files.sort(key=sort_key)
@@ -149,7 +157,7 @@ def generate_concated_video(language: setup.LanguageCodes):
             if file.endswith(".mp4") and file[0].isdigit():
                 f.write(f"file 'videos/{language.value}/{file}'\n")
 
-    out_path = f"temp/videos/{language.value}/concat.mp4"
+
 
     command = f"""ffmpeg -y -f concat -safe 0 -i temp/concat.txt -c copy {out_path}"""
     subprocess.run(command)
@@ -159,6 +167,9 @@ def add_music(language: setup.LanguageCodes):
     video = f"temp/videos/{language.value}/concat.mp4"
     music = "backgroundAudio/1_decreased.mp3"
     out_path = f"out/videos/video_parts/{language.value}/{setup.NAME_AND_CHAPTERS}.mp4"
+
+    if os.path.exists(out_path):
+        return
 
     command = f"""ffmpeg -y -i {video} -stream_loop -1 -i {music} -shortest -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 {out_path}"""
     subprocess.run(command)
@@ -196,11 +207,11 @@ def concate_video_parts(language: setup.LanguageCodes):
     subprocess.run(command)
 
 
-# generate_image_videos(setup.LanguageCodes.English)
+generate_image_videos(setup.LanguageCodes.English)
 generate_concated_video(setup.LanguageCodes.English)
 add_music(setup.LanguageCodes.English)
 
-# generate_image_videos(setup.LanguageCodes.Hindi)
+generate_image_videos(setup.LanguageCodes.Hindi)
 generate_concated_video(setup.LanguageCodes.Hindi)
 add_music(setup.LanguageCodes.Hindi)
 
