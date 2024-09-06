@@ -16,8 +16,8 @@ class LanguageCodes(Enum):
 
 
 class FILES:
-    DESCRIPTIONS = f'en.{NAME_AND_CHAPTERS}_descriptions.csv'
-    SENTENCES = f'en.{NAME_AND_CHAPTERS}_generated_sentences.csv'
+    DESCRIPTIONS = f'{NAME_AND_CHAPTERS}_descriptions.csv'
+    SENTENCES = f'{NAME_AND_CHAPTERS}_generated_sentences.csv'
 
 
 class PATHS:
