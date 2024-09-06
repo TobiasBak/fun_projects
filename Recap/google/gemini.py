@@ -3,15 +3,13 @@ import re
 import threading
 
 import google.generativeai as genai
-# from google.ai.generativelanguage_v1 import HarmCategory
-# from google.generativeai.types import HarmBlockThreshold
 
 import setup
 from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \
     prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, append_to_file_list, get_images_missing_from_files, \
-    append_to_file, get_dict_from_file
+    append_to_file, get_dict_from_file, get_sentence_path
 from PIL import Image, ImageDraw, ImageFont
 
 THREADS = 5
@@ -29,6 +27,8 @@ genai.configure(api_key=get_api_key())
 
 class Gemini:
     def __init__(self):
+        self.out_sentences = get_sentence_path()
+        self.out_descriptions = setup.PATHS.DESCRIPTIONS
         self.model = genai.GenerativeModel('gemini-1.5-flash')
         self.generation_config = {"temperature": 1}
         self.safety_settings = [
@@ -83,7 +83,7 @@ class Gemini:
                     print(f"Invalid response: {r}")
                     continue
 
-                append_to_file(setup.PATHS.DESCRIPTIONS, r)
+                append_to_file(self.out_descriptions, r)
 
     def _threaded_generate_description(self, thread_name, images):
         # Acquire a semaphore
@@ -119,7 +119,7 @@ class Gemini:
         optimize_description_quotes()
         remove_long_descriptions()
 
-        if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
+        if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, self.out_descriptions)) > 0:
             print("Some images are still missing descriptions. Will start generation again.")
             self.generate_descriptive_text()
 
@@ -176,12 +176,12 @@ class Gemini:
 
                 # TODO: Remove whitespaces before adding it to the file
 
-                append_to_file(setup.PATHS.SENTENCES, f"{parts[0]};{description}")
+                append_to_file(self.out_sentences, f"{parts[0]};{description}")
 
             g_prompt = ""
 
     def generate_sentences_gemini(self):
-        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
+        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, self.out_sentences)
         if len(images) == 0:
             print("No images missing generated sentences.")
             return []
@@ -194,7 +194,7 @@ class Gemini:
             self.generate_sentences_for_images_gemini(images[i:i + 50])
 
     def remove_duplicate_sentences(self):
-        lines = get_lines_from_file(setup.PATHS.SENTENCES)
+        lines = get_lines_from_file(self.out_sentences)
         sentences = {}
         for line in lines:
             parts = line.split(';')
@@ -203,7 +203,7 @@ class Gemini:
                 continue
             sentences[parts[1]] = parts[0]
 
-        with open(setup.PATHS.SENTENCES, 'w') as file:
+        with open(self.out_sentences, 'w') as file:
             for key, value in sentences.items():
                 file.write(f"{value};{key}\n")
 
@@ -273,21 +273,23 @@ def optimize_description_quotes():
             file.write(f"{key};{value}\n")
 
 
-def optimize_quotes_ending_with_comma():
-    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+def optimize_quotes_ending_with_comma(language: setup.LanguageCodes):
+    path = get_sentence_path(language)
+    sentence_dict = get_dict_from_file(path)
     print(f"Optimizing {len(sentence_dict)} ending with commas...")
     for key, value in sentence_dict.items():
         description = value
         description = description.replace(',"', '."')
         sentence_dict[key] = description
 
-    with open(setup.PATHS.SENTENCES, 'w') as file:
+    with open(path, 'w') as file:
         for key, value in sentence_dict.items():
             file.write(f"{key};{value}\n")
 
 
-def optimize_sentences_errors():
-    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+def optimize_sentences_errors(language: setup.LanguageCodes):
+    path = get_sentence_path(language)
+    sentence_dict = get_dict_from_file(path)
     print(f"Optimizing errors in {len(sentence_dict)}...")
     for key, value in sentence_dict.items():
         description = value
@@ -295,13 +297,14 @@ def optimize_sentences_errors():
         description = description.replace('>', '')
         sentence_dict[key] = description
 
-    with open(setup.PATHS.SENTENCES, 'w') as file:
+    with open(path, 'w') as file:
         for key, value in sentence_dict.items():
             file.write(f"{key};{value}\n")
 
 
-def remove_descriptions_about_voices():
-    sentence_dict = get_dict_from_file(setup.PATHS.SENTENCES)
+def remove_descriptions_about_voices(language: setup.LanguageCodes):
+    path = get_sentence_path(language)
+    sentence_dict = get_dict_from_file(path)
     print(f"Optimizing {len(sentence_dict)} descriptions about voices...")
     for key, value in sentence_dict.items():
         description = value
@@ -309,6 +312,6 @@ def remove_descriptions_about_voices():
         description = re.sub(r',\s*her voice[^,.]*[.,]', '.', description)
         sentence_dict[key] = description
 
-    with open(setup.PATHS.SENTENCES, 'w') as file:
+    with open(path, 'w') as file:
         for key, value in sentence_dict.items():
             file.write(f"{key};{value}\n")

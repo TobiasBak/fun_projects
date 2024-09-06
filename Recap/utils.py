@@ -131,7 +131,7 @@ def get_sentences_dict(language: setup.LanguageCodes = setup.LanguageCodes.Engli
     return sentences_dict
 
 
-def get_sentence_path(language: setup.LanguageCodes):
+def get_sentence_path(language: setup.LanguageCodes = setup.LanguageCodes.English):
     parts = setup.PATHS.SENTENCES.split('/')
     path = f"{parts[0]}/{parts[1]}/{language.value}.{parts[2]}"
     return path

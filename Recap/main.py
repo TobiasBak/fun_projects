@@ -61,9 +61,9 @@ def main():
     clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
     google_interface.gemini_client.generate_sentences_gemini()
     google_interface.gemini_client.remove_duplicate_sentences()
-    remove_descriptions_about_voices()
-    optimize_quotes_ending_with_comma()
-    optimize_sentences_errors()
+    remove_descriptions_about_voices(setup.LanguageCodes.English)
+    optimize_quotes_ending_with_comma(setup.LanguageCodes.English)
+    optimize_sentences_errors(setup.LanguageCodes.English)
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
 
