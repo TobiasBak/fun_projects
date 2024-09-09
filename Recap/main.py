@@ -5,7 +5,7 @@ import time
 import setup
 from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
-from Recap.utils import get_dict_from_file, get_all_images
+from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import download_images
 from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma, optimize_sentences_errors
 from google.googleInterface import GoogleInterface
@@ -38,14 +38,13 @@ def _delete_temp_files():
 
 def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
     generated_text_dict = get_dict_from_file(text_file_path)
-
     images = get_all_images(image_directory)
 
     print(f"Checking images in {image_directory} for missing text...")
 
     for image in images:
-        if image not in generated_text_dict:
-            print(f"Image {image} is missing text")
+        if image not in generated_text_dict.keys():
+            print(f"Image {image} is missing text in {text_file_path}!")
             print(f"Generated text: {generated_text_dict.get(image)}")
             print("")
             raise Exception(f"Image {image} is missing text")
@@ -65,7 +64,7 @@ def main():
     optimize_quotes_ending_with_comma(setup.LanguageCodes.English)
     optimize_sentences_errors(setup.LanguageCodes.English)
     time.sleep(1)
-    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
+    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, get_sentence_path())
 
     # FOR ENGLAND!
     google_interface.en_tts_client.generate_audio_files()

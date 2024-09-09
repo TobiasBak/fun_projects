@@ -10,18 +10,18 @@ from utils import get_sorted_list_of_images, get_lines_from_file, append_to_file
 
 def create_ambience_video(name: str, fps: int, start: float, duration: float) -> str:
     ambient_video_path = f"ambientVideos/{name}"
-    ambient_video_1920_path = f"ambientVideos/{name.split('.mp3')[0]}_1920.mp4"
+    ambient_video_1920_path = f"ambientVideos/{name.split('.mp4')[0]}_1920.mp4"
 
     if os.path.exists(ambient_video_1920_path):
         return ambient_video_1920_path
 
     # Generate a video with the duration of time based on ambient_video_path
     subprocess.run(
-        f"""ffmpeg -y -t {duration} -ss {start}  -i {ambient_video_path} -vf "scale=1920:1080" -r {str(fps)} -an temp/ambient_video.mp4""")
+        f"""ffmpeg -y -t {duration} -ss {start}  -i {ambient_video_path} -vf "scale=1920:1080" -r {str(fps)} -an ambient_video.mp4""")
 
     # Generate a video with a 60 second duration, based on temp/ambient_video
     subprocess.run(f"""ffmpeg -y -stream_loop -1 -i temp/ambient_video.mp4 -t 60 -an {ambient_video_1920_path}""")
-
+    print(f"Returning: {ambient_video_1920_path}")
     return ambient_video_1920_path
 
 
@@ -110,7 +110,8 @@ def get_image_names_missing_videos(language: setup.LanguageCodes):
 def generate_image_videos(language: setup.LanguageCodes):
     images = get_image_names_missing_videos(language)
 
-    base_video = create_ambience_video("1.mp4", 60, 0, 60)
+    # base_video = create_ambience_video("2.mp4", 60, 0, 60)
+    base_video = "ambientVideos/2.mp4"
     print("base_video", base_video)
 
     total_duration = 0.0

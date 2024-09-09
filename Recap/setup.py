@@ -2,9 +2,9 @@
 import os
 from enum import Enum
 
-DOWNLOAD_URL = 'https://toonily.com/webtoon/second-ranker/'
-CHAPTERS = [1, 10]
-NAME_OF_BOOK = 'second_life_ranker'
+DOWNLOAD_URL = 'https://toonily.com/webtoon/the-rankers-guide-to-live-an-ordinary-life/'
+CHAPTERS = [1, 5]
+NAME_OF_BOOK = 'the_rankers_guide_to_live_an_ordinary_life'
 
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
