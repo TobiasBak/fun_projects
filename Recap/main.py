@@ -70,11 +70,11 @@ def main():
     google_interface.en_tts_client.generate_audio_files()
     generate_subtitles(setup.LanguageCodes.English)
 
-    google_interface.translate_client.translate_sentences_from_file(setup.LanguageCodes.Hindi)
 
     # FOR HINDI!
-    google_interface.hi_tts_client.generate_audio_files()
-    generate_subtitles(setup.LanguageCodes.Hindi)
+    # google_interface.translate_client.translate_sentences_from_file(setup.LanguageCodes.Hindi)
+    # google_interface.hi_tts_client.generate_audio_files()
+    # generate_subtitles(setup.LanguageCodes.Hindi)
 
 
 def test():

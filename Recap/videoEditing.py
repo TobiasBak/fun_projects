@@ -185,7 +185,7 @@ def decrease_volume_of_audio(file_path: str, volume: float):
 
 
 def concate_video_parts(language: setup.LanguageCodes):
-    video_files = os.listdir("out/videos/video_parts")
+    video_files = os.listdir(f"out/videos/video_parts/{language.value}")
 
     def sort_key(image_name: str):
         # Split the filename on '.', convert the parts to integers, and return as a tuple
@@ -200,7 +200,7 @@ def concate_video_parts(language: setup.LanguageCodes):
     with open('out/concat.txt', 'w') as f:
         for file in video_files:
             if file.endswith(".mp4"):
-                f.write(f"file 'videos/video_parts/{file}'\n")
+                f.write(f"file 'videos/video_parts/{language.value}/{file}'\n")
 
     out_path = "out/videos/concat.mp4"
 
@@ -208,15 +208,15 @@ def concate_video_parts(language: setup.LanguageCodes):
     subprocess.run(command)
 
 
-generate_image_videos(setup.LanguageCodes.English)
-generate_concated_video(setup.LanguageCodes.English)
-add_music(setup.LanguageCodes.English)
+# generate_image_videos(setup.LanguageCodes.English)
+# generate_concated_video(setup.LanguageCodes.English)
+# add_music(setup.LanguageCodes.English)
 
-generate_image_videos(setup.LanguageCodes.Hindi)
-generate_concated_video(setup.LanguageCodes.Hindi)
-add_music(setup.LanguageCodes.Hindi)
+# generate_image_videos(setup.LanguageCodes.Hindi)
+# generate_concated_video(setup.LanguageCodes.Hindi)
+# add_music(setup.LanguageCodes.Hindi)
 
 
 # decrease_volume_of_audio("backgroundAudio/1.mp3", 0.02)
 
-# concate_video_parts()
+concate_video_parts(setup.LanguageCodes.English)

@@ -3,7 +3,7 @@ import os
 from enum import Enum
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/the-rankers-guide-to-live-an-ordinary-life/'
-CHAPTERS = [1, 5]
+CHAPTERS = [6, 10]
 NAME_OF_BOOK = 'the_rankers_guide_to_live_an_ordinary_life'
 
 """ PLEASE DO NOT MODIFY BELOW """
