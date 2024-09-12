@@ -3,7 +3,7 @@ import shutil
 import time
 
 import setup
-from Recap.cleanup import clean_images, clean_text_files_for_unnecessary_lines
+from Recap.cleanup import clean_text_files_for_unnecessary_lines
 from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
 from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import download_images
@@ -58,20 +58,24 @@ def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
 def main():
     google_interface = GoogleInterface()
 
+    # Description generation
     google_interface.gemini_client.generate_descriptive_text()
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
-    clean_images()
+
     clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
+
+    # Sentence generation
     google_interface.gemini_client.generate_sentences_gemini()
     google_interface.gemini_client.remove_duplicate_sentences()
     remove_descriptions_about_voices(setup.LanguageCodes.English)
     optimize_quotes_ending_with_comma(setup.LanguageCodes.English)
     optimize_sentences_errors(setup.LanguageCodes.English)
-    time.sleep(1)
+
+    # Find images missing texts (Maybe make return a boolean, where of we do shit. But we need to be careful of loops, probably exit if we get harmful etc.
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, get_sentence_path())
 
-    # FOR ENGLAND!
+    # TTS GENERATION
     google_interface.en_tts_client.generate_audio_files()
     generate_subtitles(setup.LanguageCodes.English)
 
