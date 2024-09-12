@@ -17,6 +17,11 @@ FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
 
 
 def _download_chapters():
+    # Check if raw image directory is empty, if not, skip downloading
+    if os.listdir(setup.PATHS.RAW_IMAGE_DIR):
+        print("Raw image directory is not empty, skipping download...")
+        return
+
     for i in range(setup.CHAPTERS[0], setup.CHAPTERS[1] + 1):
         download_images(f'{setup.DOWNLOAD_URL}chapter-{i}/', f'{i}')
 
@@ -71,26 +76,22 @@ def main():
     generate_subtitles(setup.LanguageCodes.English)
 
 
-    # FOR HINDI!
-    # google_interface.translate_client.translate_sentences_from_file(setup.LanguageCodes.Hindi)
-    # google_interface.hi_tts_client.generate_audio_files()
-    # generate_subtitles(setup.LanguageCodes.Hindi)
-
-
-def test():
-    print("Testing...")
+def hindi():
+    google_interface = GoogleInterface()
+    google_interface.translate_client.translate_sentences_from_file(setup.LanguageCodes.Hindi)
+    google_interface.hi_tts_client.generate_audio_files()
+    generate_subtitles(setup.LanguageCodes.Hindi)
 
 
 def download_and_modify_images():
     _download_chapters()
     modify_all_images()
-    modify_images_to_fit_screen()
     # _delete_temp_files()
 
 
 if __name__ == "__main__":
     # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
-    # download_and_modify_images()
+    download_and_modify_images()
 
     main()
 

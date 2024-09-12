@@ -12,6 +12,11 @@ IMAGE_MAX_HEIGHT = 1000
 
 
 def modify_all_images():
+    # if image directory is not empty, skip modifying images
+    if os.listdir(setup.PATHS.IMAGE_DIR):
+        print("Image directory is not empty, skipping image modification...")
+        return
+
     # if file exists delete it
     if os.path.exists(TEMP_SPLIT_INDEXES_FILE):
         os.remove(TEMP_SPLIT_INDEXES_FILE)
@@ -27,6 +32,8 @@ def modify_all_images():
         if count % 100 == 0:
             print(f'{count}/{len(images)} images modified.')
         count += 1
+
+    modify_images_to_fit_screen()
 
 
 def get_letter_from_count(count: int):
