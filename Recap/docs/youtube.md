@@ -1,4 +1,10 @@
+# Notes
+Upload at a time where people are off work
+Set category while uploading video
+Modify description
+Use 3 thumbnails to perhaps trick the algorithm
 
+# A video I saw
 https://www.youtube.com/watch?v=5fEU3aJQzCU
 
 ## Template
