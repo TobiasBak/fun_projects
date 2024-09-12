@@ -4,7 +4,7 @@ import time
 
 import setup
 from Recap.cleanup import clean_text_files_for_unnecessary_lines
-from Recap.imageModifier import modify_all_images, modify_images_to_fit_screen
+from Recap.imageModifier import modify_all_images
 from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import download_images
 from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma, optimize_sentences_errors
