@@ -86,6 +86,8 @@ def modify_images_to_fit_screen():
 
             count += 1
 
+    raise Exception("Modifying images is complete, please clean images")
+
 
 def _remove_redundant_image_parts(img_path) -> list[int] | None:
     """
