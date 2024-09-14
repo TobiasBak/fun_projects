@@ -10,6 +10,7 @@ from fetchManhwa import download_images
 from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma, optimize_sentences_errors
 from google.googleInterface import GoogleInterface
 from subtitles import generate_subtitles
+from videoEditing import generate_image_videos, generate_concated_video, add_music, concate_video_parts
 
 """
 FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
@@ -99,4 +100,9 @@ if __name__ == "__main__":
 
     main()
 
-    # test()
+    # generate_image_videos(setup.LanguageCodes.English)
+    # generate_concated_video(setup.LanguageCodes.English)
+    # add_music(setup.LanguageCodes.English)
+
+    concate_video_parts(setup.LanguageCodes.English)
+

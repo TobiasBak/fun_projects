@@ -1,2 +1,3 @@
 file 'videos/video_parts/en/the_rankers_guide_to_live_an_ordinary_life_6-10.mp4'
+file 'videos/video_parts/en/the_rankers_guide_to_live_an_ordinary_life_11-20.mp4'
 file 'videos/video_parts/en/the_rankers_guide_to_live_an_ordinary_life_1-5.mp4'

@@ -207,16 +207,4 @@ def concate_video_parts(language: setup.LanguageCodes):
     command = f"""ffmpeg -y -f concat -safe 0 -i out/concat.txt -c copy {out_path}"""
     subprocess.run(command)
 
-
-# generate_image_videos(setup.LanguageCodes.English)
-# generate_concated_video(setup.LanguageCodes.English)
-# add_music(setup.LanguageCodes.English)
-
-# generate_image_videos(setup.LanguageCodes.Hindi)
-# generate_concated_video(setup.LanguageCodes.Hindi)
-# add_music(setup.LanguageCodes.Hindi)
-
-
 # decrease_volume_of_audio("backgroundAudio/1.mp3", 0.02)
-
-concate_video_parts(setup.LanguageCodes.English)
