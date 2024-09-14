@@ -29,7 +29,7 @@ class Gemini:
     def __init__(self):
         self.out_sentences = get_sentence_path()
         self.out_descriptions = setup.PATHS.DESCRIPTIONS
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel('gemini-1.5-pro')
         self.generation_config = {"temperature": 1}
         self.safety_settings = [
             {

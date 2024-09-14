@@ -3,7 +3,7 @@ import shutil
 import time
 
 import setup
-from Recap.cleanup import clean_text_files_for_unnecessary_lines
+from Recap.cleanup import clean_text_files_for_unnecessary_lines, clean_images
 from Recap.imageModifier import modify_all_images
 from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import download_images
@@ -64,6 +64,7 @@ def main():
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
 
+    clean_images()
     clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
 
     # Sentence generation
@@ -94,15 +95,22 @@ def download_and_modify_images():
     # _delete_temp_files()
 
 
+def create_intro():
+    interface = GoogleInterface()
+    interface.en_tts_client.generate_audio("test",
+                          text="Today we are doing another amazing recap. If you enjoy this, please like and subscribe. If you have any requests, please let me know in the comments. Let's begin!")
+
 if __name__ == "__main__":
-    # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
-    download_and_modify_images()
+    # # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
+    # download_and_modify_images()
+    #
+    # main()
+    #
+    # # generate_image_videos(setup.LanguageCodes.English)
+    # # generate_concated_video(setup.LanguageCodes.English)
+    # # add_music(setup.LanguageCodes.English)
+    #
+    # concate_video_parts(setup.LanguageCodes.English)
 
-    main()
-
-    # generate_image_videos(setup.LanguageCodes.English)
-    # generate_concated_video(setup.LanguageCodes.English)
-    # add_music(setup.LanguageCodes.English)
-
-    concate_video_parts(setup.LanguageCodes.English)
+    create_intro()
 

@@ -69,10 +69,11 @@ prompt_generate_sentence_1 = f"""
 **Mission Objective:**
 You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
 Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
-Each image should be described by one sentence and the conversation from the image.
+Each image should be described by one sentence narrating what is going on in the image.
+Generated narrations should also include the text/conversations from the descriptions.
 
 **Task Outline:**
-1. You will be given descriptions of 10 images. Each description includes specific details about context of the image and what is written in the image.
+1. You will be given descriptions of images. Each description includes specific details about context of the image and what is written in the image.
 2. Based on these descriptions, generate a sentence for each image that collectively form a continuous story in present tense.
 3. Ensure the sentences are in present tense flow logically from one to the next, maintaining a coherent and engaging narrative.
 
@@ -84,14 +85,11 @@ You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
 1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Use conversations and the english text from the images in the generated text.
-3. Natural Transitions: Create smooth transitions between sentences and scenes.
-4. Vary Sentence Structure: Use a variety of words to start sentences to keep the narrative engaging and dynamic.
-5. Sentence lengths: Each image should be described by a single sentence continuing the narrative.
-6. If the context and location changes drastically. It should be described as a new location or a flashback. 
-7. Reduce the amount of commas in the sentences by using more periods.
-8. Use pronouns and character descriptions when referring to characters. Do not use character names.
-9. Never mention the viewer, reader or speaker in the sentences.
+2. Sentence lengths: Each image should be described by a short and single sentence.
+3. If the context and location changes drastically. It should be described as a new location or a flashback. 
+4. Keep sentences simple by using at most 1 adverb and 1 adjective.
+5. Use pronouns and character descriptions when referring to characters. Do not use character names.
+6. Never mention the viewer, reader or speaker in the sentences.
 
 Return "Understood" when the rules and guidelines are understood.
 """
@@ -102,25 +100,13 @@ You must follow the process when generating sentences based on the descriptions
 **Process:**
 1. Read the Description: Carefully read and understand each image description.
 2. Extract Key Elements: Identify key elements such as characters, settings, actions and information.
-3. Generate Sentence: Formulate a sentence in present tense that contributes to the overall narrative.
-4. Ensure Continuity: Ensure each generated sentence logically follows the previous one, maintaining narrative coherence.
-5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
-By adhering to these guidelines, you will create a compelling and seamless story that effectively translates the content to a fluent story.
+3. Generate Sentence: Formulate a short sentence in present tense that contributes to the overall narrative.
+4. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
 
 Return "Understood" when it is understood.
 """
 
 prompt_generate_sentence_4 = f"""
-Following is examples on input and output and the expected output format.
-
-**Example Input Description:**
-1.0.B.jpg; There is text above him that says 'E-Rank Hunter.' There is more text below him that says 'The Hunter Guild's' and 'Haa.' The image conveys a feeling of despair and determination. A young man is lying on the ground, bleeding profusely from multiple wounds. He is wearing a blue hoodie with the hood up. His hair is short and dark. His face is contorted in pain, but he has a determined look in his eyes. The background is dark, and it appears he is in some sort of abandoned building.
-
-
-**Example Output Sentence:**
-1.0.B.jpg; Clutching his bleeding wounds, the young man struggled to rise from the cold floor.
-
-
 **Output:**
 For each of the inputted lines, generate a single return string in the following format:
 `<image_name>`; `<story>`
