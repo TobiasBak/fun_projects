@@ -23,8 +23,8 @@ def clean_images():
         for string in strings_to_remove:
             if string in text:
                 try:
-                    os.remove(image_path)
-                    print(f"Removed {image_path}")
+                    # os.remove(image_path)
+                    print(f"{image_path} should be removed")
                 except FileNotFoundError:
                     print(f"File {image_path} not found")
 

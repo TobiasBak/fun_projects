@@ -16,6 +16,11 @@ from videoEditing import generate_image_videos, generate_concated_video, add_mus
 FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
 """
 
+def create_intro():
+    interface = GoogleInterface()
+    interface.en_tts_client.generate_audio("test",
+                          text="Today we are doing another amazing recap. If you enjoy this, please like and subscribe. If you have any requests, please let me know in the comments. Let's begin!")
+
 
 def _download_chapters():
     # Check if raw image directory is empty, if not, skip downloading
@@ -95,22 +100,17 @@ def download_and_modify_images():
     # _delete_temp_files()
 
 
-def create_intro():
-    interface = GoogleInterface()
-    interface.en_tts_client.generate_audio("test",
-                          text="Today we are doing another amazing recap. If you enjoy this, please like and subscribe. If you have any requests, please let me know in the comments. Let's begin!")
-
 if __name__ == "__main__":
-    # # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
-    # download_and_modify_images()
-    #
-    # main()
-    #
-    # # generate_image_videos(setup.LanguageCodes.English)
-    # # generate_concated_video(setup.LanguageCodes.English)
-    # # add_music(setup.LanguageCodes.English)
-    #
-    # concate_video_parts(setup.LanguageCodes.English)
+    # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
+    download_and_modify_images()
 
-    create_intro()
+    main()
+
+    generate_image_videos(setup.LanguageCodes.English)
+    generate_concated_video(setup.LanguageCodes.English)
+    add_music(setup.LanguageCodes.English)
+
+    concate_video_parts(setup.LanguageCodes.English)
+
+    # create_intro()
 

@@ -208,4 +208,12 @@ def concate_video_parts(language: setup.LanguageCodes):
     command = f"""ffmpeg -y -f concat -safe 0 -i out/concat.txt -c copy {out_path}"""
     subprocess.run(command)
 
+
+
+def change_audio_sample_rate(video_path: str, output_path: str, sample_rate: int):
+    """Used to change intro video audio sample rate to 24kHz."""
+    command = f"""ffmpeg -y -i {video_path} -c:v copy -c:a aac -ar {sample_rate} {output_path}"""
+    subprocess.run(command, shell=True)
+
+# change_audio_sample_rate("out/intro.mp4", "out/intro_24kHz.mp4", 24000)
 # decrease_volume_of_audio("backgroundAudio/1.mp3", 0.02)

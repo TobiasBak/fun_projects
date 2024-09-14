@@ -2,9 +2,9 @@
 import os
 from enum import Enum
 
-DOWNLOAD_URL = 'https://toonily.com/webtoon/the-rankers-guide-to-live-an-ordinary-life/'
-CHAPTERS = [11, 20]
-NAME_OF_BOOK = 'the_rankers_guide_to_live_an_ordinary_life'
+DOWNLOAD_URL = 'https://toonily.com/webtoon/sss-class-suicide-hunter/'
+CHAPTERS = [1, 10]
+NAME_OF_BOOK = 'suicide_hunter'
 
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
@@ -41,6 +41,6 @@ for value in LanguageCodes:
     os.makedirs(f'temp/audio/{value.value}', exist_ok=True)
     os.makedirs(f'temp/videos/{value.value}', exist_ok=True)
     os.makedirs(f'temp/subtitles/{value.value}', exist_ok=True)
+    os.makedirs(f'out/videos/video_parts/{value.value}', exist_ok=True)
 
-os.makedirs('temp/timings', exist_ok=True)
-os.makedirs('temp/videos', exist_ok=True)
+

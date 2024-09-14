@@ -85,11 +85,12 @@ You must uphold the following rules and guidelines
 
 **Rules and Guidelines:**
 1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Sentence lengths: Each image should be described by a short and single sentence.
+2. Sentence lengths: Each image should be described by a short and single sentence and the conversations from the image.
 3. If the context and location changes drastically. It should be described as a new location or a flashback. 
 4. Keep sentences simple by using at most 1 adverb and 1 adjective.
 5. Use pronouns and character descriptions when referring to characters. Do not use character names.
 6. Never mention the viewer, reader or speaker in the sentences.
+7. Include all conversation from the text from the image
 
 Return "Understood" when the rules and guidelines are understood.
 """

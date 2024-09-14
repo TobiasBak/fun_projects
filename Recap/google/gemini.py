@@ -1,4 +1,3 @@
-import json
 import re
 import threading
 
@@ -8,9 +7,9 @@ import setup
 from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \
     prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4
 from old.open_ai import generate_prompts_for_images
-from utils import get_lines_from_file, get_absolute_path, append_to_file_list, get_images_missing_from_files, \
+from utils import get_lines_from_file, get_absolute_path, get_images_missing_from_files, \
     append_to_file, get_dict_from_file, get_sentence_path
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 THREADS = 5
 semaphore = threading.Semaphore(THREADS)  # Create a semaphore object
@@ -29,7 +28,8 @@ class Gemini:
     def __init__(self):
         self.out_sentences = get_sentence_path()
         self.out_descriptions = setup.PATHS.DESCRIPTIONS
-        self.model = genai.GenerativeModel('gemini-1.5-pro')
+        self.model_flash = genai.GenerativeModel('gemini-1.5-flash')
+        self.model_pro = genai.GenerativeModel('gemini-1.5-pro')
         self.generation_config = {"temperature": 1}
         self.safety_settings = [
             {
@@ -52,7 +52,7 @@ class Gemini:
 
     def generate_description_for_images(self, images: list[str]):
         prompts = [prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3]
-        chat = self.model.start_chat(history=[])
+        chat = self.model_flash.start_chat(history=[])
 
         for p in prompts:
             r = chat.send_message(p, generation_config=self.generation_config, safety_settings=self.safety_settings)
@@ -132,7 +132,7 @@ class Gemini:
             print("No sentences missing. Exiting...")
             return
 
-        chat = self.model.start_chat(history=[])
+        chat = self.model_pro.start_chat(history=[])
 
         for p in prompts:
             r = chat.send_message(p, generation_config=self.generation_config)
@@ -143,7 +143,7 @@ class Gemini:
         for i in range(0, len(generated_prompts), 10):
             for generated_prompt in generated_prompts[i:i + 10]:
                 g_prompt += generated_prompt
-            tokens = self.model.count_tokens(g_prompt)
+            tokens = self.model_pro.count_tokens(g_prompt)
             print(f"Amount of tokens: {tokens}")
             print(g_prompt)
 
@@ -192,6 +192,8 @@ class Gemini:
         # generate_sentences_for_images_gemini(images)
         for i in range(0, len(images), 50):
             self.generate_sentences_for_images_gemini(images[i:i + 50])
+
+        raise Exception("Please manually modify the first 50 sentences for a good experience")
 
     def remove_duplicate_sentences(self):
         lines = get_lines_from_file(self.out_sentences)
@@ -295,6 +297,7 @@ def optimize_sentences_errors(language: setup.LanguageCodes):
         description = value
         description = description.replace('<', '')
         description = description.replace('>', '')
+        description = description.replace('&', '')
         sentence_dict[key] = description
 
     with open(path, 'w') as file:
