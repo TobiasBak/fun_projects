@@ -139,9 +139,12 @@ class Gemini:
             print(r.text)
 
         g_prompt = ""
-        # Go through generated prompts 10 by 10
-        for i in range(0, len(generated_prompts), 10):
-            for generated_prompt in generated_prompts[i:i + 10]:
+
+        # Go through generated prompts in batches of 50
+        images_per_prompt = 50
+
+        for i in range(0, len(generated_prompts), images_per_prompt):
+            for generated_prompt in generated_prompts[i:i + images_per_prompt]:
                 g_prompt += generated_prompt
             tokens = self.model_pro.count_tokens(g_prompt)
             print(f"Amount of tokens: {tokens}")
