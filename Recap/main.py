@@ -16,10 +16,11 @@ from videoEditing import generate_image_videos, generate_concated_video, add_mus
 FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
 """
 
+
 def create_intro():
     interface = GoogleInterface()
     interface.en_tts_client.generate_audio("test",
-                          text="Today we are doing another amazing recap. If you enjoy this, please like and subscribe. If you have any requests, please let me know in the comments. Let's begin!")
+                                           text="Today we are doing another amazing recap. If you enjoy this, please like and subscribe. If you have any requests, please let me know in the comments. Let's begin!")
 
 
 def _download_chapters():
@@ -97,7 +98,6 @@ def hindi():
 def download_and_modify_images():
     _download_chapters()
     modify_all_images()
-    # _delete_temp_files()
 
 
 if __name__ == "__main__":
@@ -112,5 +112,4 @@ if __name__ == "__main__":
 
     concate_video_parts(setup.LanguageCodes.English)
 
-    # create_intro()
-
+    # _delete_temp_files()
