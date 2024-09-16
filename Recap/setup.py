@@ -3,7 +3,7 @@ import os
 from enum import Enum
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/sss-class-suicide-hunter/'
-CHAPTERS = [11, 20]
+CHAPTERS = [21, 40]
 NAME_OF_BOOK = 'suicide_hunter'
 
 """ PLEASE DO NOT MODIFY BELOW """

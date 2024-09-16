@@ -1,3 +1,4 @@
 file 'intro.mp4'
 file 'videos/video_parts/en/suicide_hunter_1-10.mp4'
 file 'videos/video_parts/en/suicide_hunter_11-20.mp4'
+file 'videos/video_parts/en/suicide_hunter_21-40.mp4'

@@ -30,6 +30,7 @@ class Gemini:
         self.out_descriptions = setup.PATHS.DESCRIPTIONS
         self.model_flash = genai.GenerativeModel('gemini-1.5-flash')
         self.model_pro = genai.GenerativeModel('gemini-1.5-pro')
+        self.model_1 = genai.GenerativeModel('gemini-1.0-pro')
         self.generation_config = {"temperature": 1}
         self.safety_settings = [
             {
@@ -140,9 +141,7 @@ class Gemini:
 
         g_prompt = ""
 
-        # Go through generated prompts in batches of 50
-        images_per_prompt = 50
-
+        images_per_prompt = 10
         for i in range(0, len(generated_prompts), images_per_prompt):
             for generated_prompt in generated_prompts[i:i + images_per_prompt]:
                 g_prompt += generated_prompt
@@ -191,10 +190,10 @@ class Gemini:
 
         print(f"Starting generation of sentences for {len(images)} images: ...")
 
-        # Run generate for images in batches of 100
-        # generate_sentences_for_images_gemini(images)
-        for i in range(0, len(images), 50):
-            self.generate_sentences_for_images_gemini(images[i:i + 50])
+        # Run generate for images in batches batch_size
+        batch_size = 100
+        for i in range(0, len(images), batch_size):
+            self.generate_sentences_for_images_gemini(images[i:i + batch_size])
 
         raise Exception("Please manually modify the first 50 sentences for a good experience")
 
@@ -301,6 +300,8 @@ def optimize_sentences_errors(language: setup.LanguageCodes):
         description = description.replace('<', '')
         description = description.replace('>', '')
         description = description.replace('&', '')
+        description = description.replace('reaperscans.com', '')
+        description = description.replace('reaperscans', '')
         sentence_dict[key] = description
 
     with open(path, 'w') as file:
