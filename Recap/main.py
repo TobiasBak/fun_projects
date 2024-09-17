@@ -6,9 +6,9 @@ import setup
 from Recap.cleanup import clean_text_files_for_unnecessary_lines, clean_images
 from Recap.imageModifier import modify_all_images
 from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
-from fetchManhwa import download_images
+from fetchManhwa import _download_images, download_chapters
 from google.googleInterface import GoogleInterface
-from string_optimizier import optimize_descriptions, optimize_sentences_errors
+from string_optimizier import optimize_descriptions, optimize_sentences_errors, optimize_description_quotes
 from subtitles import generate_subtitles
 from videoEditing import generate_image_videos, generate_concated_video, add_music, concate_video_parts
 
@@ -17,20 +17,40 @@ FILL OUT VALUES IN SETUP.PY BEFORE RUNNING SCRIPT
 """
 
 
-def create_intro():
-    interface = GoogleInterface()
-    interface.en_tts_client.generate_audio("test",
-                                           text="Today we are doing another amazing recap. If you enjoy this, please like and subscribe. If you have any requests, please let me know in the comments. Let's begin!")
+def main():
+    google_interface = GoogleInterface()
+
+    # Description generation
+    google_interface.gemini_client.generate_descriptive_text()
+    optimize_descriptions()
+    optimize_description_quotes()
+
+    time.sleep(1)
+    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
+
+    clean_images()
+    clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
+
+    # Sentence generation
+    google_interface.gemini_client.generate_sentences_gemini()
+    google_interface.gemini_client.remove_duplicate_sentences()
+
+    # Optimize sentences
+    optimize_sentences_errors(setup.LanguageCodes.English)
+
+    # Find images missing texts (Maybe make return a boolean, where of we do shit. But we need to be careful of loops, probably exit if we get harmful etc.
+    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, get_sentence_path())
+
+    # TTS GENERATION
+    google_interface.en_tts_client.generate_audio_files()
+    generate_subtitles(setup.LanguageCodes.English)
 
 
-def _download_chapters():
-    # Check if raw image directory is empty, if not, skip downloading
-    if os.listdir(setup.PATHS.RAW_IMAGE_DIR):
-        print("Raw image directory is not empty, skipping download...")
-        return
-
-    for i in range(setup.CHAPTERS[0], setup.CHAPTERS[1] + 1):
-        download_images(f'{setup.DOWNLOAD_URL}chapter-{i}/', f'{i}')
+def hindi():
+    google_interface = GoogleInterface()
+    google_interface.translate_client.translate_sentences_from_file(setup.LanguageCodes.Hindi)
+    google_interface.hi_tts_client.generate_audio_files()
+    generate_subtitles(setup.LanguageCodes.Hindi)
 
 
 def _delete_temp_files():
@@ -62,49 +82,10 @@ def _find_images_with_missing_texts(image_directory: str, text_file_path: str):
             raise Exception(f"Image {image} is missing text")
 
 
-def main():
-    google_interface = GoogleInterface()
-
-    # Description generation
-    google_interface.gemini_client.generate_descriptive_text()
-    optimize_descriptions()
-
-    time.sleep(1)
-    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
-
-    clean_images()
-    clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
-
-    # Sentence generation
-    google_interface.gemini_client.generate_sentences_gemini()
-    google_interface.gemini_client.remove_duplicate_sentences()
-
-    # Optimize sentences
-    optimize_sentences_errors(setup.LanguageCodes.English)
-
-    # Find images missing texts (Maybe make return a boolean, where of we do shit. But we need to be careful of loops, probably exit if we get harmful etc.
-    _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, get_sentence_path())
-
-    # TTS GENERATION
-    google_interface.en_tts_client.generate_audio_files()
-    generate_subtitles(setup.LanguageCodes.English)
-
-
-def hindi():
-    google_interface = GoogleInterface()
-    google_interface.translate_client.translate_sentences_from_file(setup.LanguageCodes.Hindi)
-    google_interface.hi_tts_client.generate_audio_files()
-    generate_subtitles(setup.LanguageCodes.Hindi)
-
-
-def download_and_modify_images():
-    _download_chapters()
-    modify_all_images()
-
-
 if __name__ == "__main__":
     # REMEMBER TO RUN THIS FIRST AND THEN DELETE IMAGES
-    download_and_modify_images()
+    download_chapters()
+    modify_all_images()
 
     main()
 
@@ -113,5 +94,3 @@ if __name__ == "__main__":
     add_music(setup.LanguageCodes.English)
 
     concate_video_parts(setup.LanguageCodes.English)
-
-    # _delete_temp_files()

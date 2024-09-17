@@ -5,7 +5,17 @@ from bs4 import BeautifulSoup
 import setup
 
 
-def download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
+def download_chapters():
+    # Check if raw image directory is empty, if not, skip downloading
+    if os.listdir(setup.PATHS.RAW_IMAGE_DIR):
+        print("Raw image directory is not empty, skipping download...")
+        return
+
+    for i in range(setup.CHAPTERS[0], setup.CHAPTERS[1] + 1):
+        _download_images(f'{setup.DOWNLOAD_URL}chapter-{i}/', f'{i}')
+
+
+def _download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
     """
     Download images from the specified URL and saves them locally in temp/images directory.
     """
