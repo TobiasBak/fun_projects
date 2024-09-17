@@ -4,7 +4,7 @@
 # All missing implementations
 1. Refactor everything
 2. FileInterface file, to handle all file operations. This is a good idea as they are all structured similarly.
-
+3. Gemini clean text method
 
 
 ## Major steps
