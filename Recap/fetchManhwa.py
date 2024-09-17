@@ -12,10 +12,10 @@ def download_chapters():
         return
 
     for i in range(setup.CHAPTERS[0], setup.CHAPTERS[1] + 1):
-        _download_images(f'{setup.DOWNLOAD_URL}chapter-{i}/', f'{i}')
+        switch_website(f'{setup.DOWNLOAD_URL}chapter-{i}/', str(i))
 
 
-def _download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
+def _download_images_toonily(url: str, chapter: str, img_tags='div.page-break.no-gaps img'):
     """
     Download images from the specified URL and saves them locally in temp/images directory.
     """
@@ -55,3 +55,21 @@ def _download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
 
         with open(img_path, 'wb') as file:
             file.write(img_response.content)
+
+
+# Dictionary to map website names to their respective URLs and functions
+websites = {
+    'toonily.com': {
+        'url': 'toonily.com',
+        'function': _download_images_toonily
+    }
+}
+
+
+def switch_website(url: str, chapter: str):
+    site_name = url.split('/')[2]
+    if site_name in websites:
+        site_info = websites[site_name]
+        site_info['function'](url, chapter)
+    else:
+        print(f'Website {site_name} not supported.')

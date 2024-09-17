@@ -3,7 +3,7 @@ import os
 from enum import Enum
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/not-a-lady-anymore/'
-CHAPTERS = [1, 5]
+CHAPTERS = [1, 1]
 NAME_OF_BOOK = 'not_a_lady_anymore' # Has to be lowercase
 
 """ PLEASE DO NOT MODIFY BELOW """

@@ -9,10 +9,8 @@ def test():
     # Use this method to test behaviour
     print("TESTING...")
     download_chapters()
-    modify_all_images()
 
     fi = FileInterface()
-
     print(fi.get_images_missing_from_file(setup.PATHS.DESCRIPTIONS))
 
 
