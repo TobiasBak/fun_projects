@@ -1,4 +1,2 @@
 file 'intro.mp4'
-file 'videos/video_parts/en/suicide_hunter_1-10.mp4'
-file 'videos/video_parts/en/suicide_hunter_11-20.mp4'
-file 'videos/video_parts/en/suicide_hunter_21-40.mp4'
+file 'videos/video_parts/en/not_a_lady_anymore_1-5.mp4'

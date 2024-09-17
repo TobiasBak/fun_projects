@@ -302,6 +302,8 @@ def optimize_sentences_errors(language: setup.LanguageCodes):
         description = description.replace('&', '')
         description = description.replace('reaperscans.com', '')
         description = description.replace('reaperscans', '')
+        description = description.replace('luascans', '')
+        description = description.replace('luascans.com', '')
         sentence_dict[key] = description
 
     with open(path, 'w') as file:
