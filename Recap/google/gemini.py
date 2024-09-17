@@ -9,7 +9,7 @@ from google.prompts import prompt_describe_image_1, prompt_describe_image_2, pro
     prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, get_images_missing_from_files, \
-    append_to_file, get_dict_from_file, get_sentence_path
+    append_to_file, get_sentence_path
 from PIL import Image
 
 THREADS = 5
@@ -22,7 +22,7 @@ def get_api_key():
     return lines[0].strip()
 
 
-# genai.configure(api_key=get_api_key())
+genai.configure(api_key=get_api_key())
 
 
 class Gemini:

@@ -9,9 +9,6 @@ from google.tts_google import TTS_Client
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'hidden/credentials.json'
 
-project_id = 'recap-329515'
-location='us-central1'
-
 class GoogleInterface:
     _instance = None
     gemini_client = None
