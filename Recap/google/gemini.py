@@ -21,7 +21,7 @@ def get_api_key():
     return lines[0].strip()
 
 
-genai.configure(api_key=get_api_key())
+# genai.configure(api_key=get_api_key())
 
 
 class Gemini:

@@ -38,5 +38,10 @@ def download_images(url, chapter: str, img_tags='div.page-break.no-gaps img'):
         img_response = session.get(img_url, headers=headers)
         img_response.raise_for_status()
         img_path = f"{setup.PATHS.RAW_IMAGE_DIR}/{chapter}.{idx}.jpg"
+
+        # The last image is a placeholder image, so we skip it
+        if idx == len(img_urls) - 1:
+            continue
+
         with open(img_path, 'wb') as file:
             file.write(img_response.content)
