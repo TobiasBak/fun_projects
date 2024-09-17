@@ -5,6 +5,7 @@
 1. Refactor everything
 2. FileInterface file, to handle all file operations. This is a good idea as they are all structured similarly.
 3. Gemini clean text method
+4. Sentence optimizers, figure out when things should start with uppercase and when not. 
 
 
 ## Major steps
@@ -18,7 +19,7 @@ Just needs some refactoring to videoEditing methods, such that an audio file can
 2. Refactor long functions into smaller functions. 
 3. Ensure out only contains actual output. (audio, images, subtitles should be moved to temp)
 
-## Conquer the world
+## Conquer the world4
 1. Translate to different languages. (Indian, Spanish, Russian, Arabic, etc.)
 
 

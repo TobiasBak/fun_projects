@@ -7,8 +7,8 @@ from Recap.cleanup import clean_text_files_for_unnecessary_lines, clean_images
 from Recap.imageModifier import modify_all_images
 from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import download_images
-from google.gemini import remove_descriptions_about_voices, optimize_quotes_ending_with_comma, optimize_sentences_errors
 from google.googleInterface import GoogleInterface
+from string_optimizier import optimize_descriptions, optimize_sentences_errors
 from subtitles import generate_subtitles
 from videoEditing import generate_image_videos, generate_concated_video, add_music, concate_video_parts
 
@@ -67,6 +67,8 @@ def main():
 
     # Description generation
     google_interface.gemini_client.generate_descriptive_text()
+    optimize_descriptions()
+
     time.sleep(1)
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
 
@@ -76,8 +78,8 @@ def main():
     # Sentence generation
     google_interface.gemini_client.generate_sentences_gemini()
     google_interface.gemini_client.remove_duplicate_sentences()
-    remove_descriptions_about_voices(setup.LanguageCodes.English)
-    optimize_quotes_ending_with_comma(setup.LanguageCodes.English)
+
+    # Optimize sentences
     optimize_sentences_errors(setup.LanguageCodes.English)
 
     # Find images missing texts (Maybe make return a boolean, where of we do shit. But we need to be careful of loops, probably exit if we get harmful etc.

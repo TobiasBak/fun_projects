@@ -4,6 +4,7 @@ import threading
 import google.generativeai as genai
 
 import setup
+from FileInterfacce import FileInterface
 from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \
     prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4
 from old.open_ai import generate_prompts_for_images
@@ -115,16 +116,13 @@ class Gemini:
         for thread in threads:
             thread.join()
 
-        print("All threads finished. Will start optimize_descriptions")
-        optimize_descriptions()
-        optimize_description_quotes()
-        remove_long_descriptions()
-
         if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, self.out_descriptions)) > 0:
             print("Some images are still missing descriptions. Will start generation again.")
             self.generate_descriptive_text()
 
     def generate_sentences_for_images_gemini(self, images: list[str]):
+        file_interface = FileInterface()
+
         generated_prompts = generate_prompts_for_images(images)
         prompts = [prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3,
                    prompt_generate_sentence_4]
@@ -149,7 +147,8 @@ class Gemini:
             print(f"Amount of tokens: {tokens}")
             print(g_prompt)
 
-            responses = chat.send_message(g_prompt, generation_config=self.generation_config, safety_settings=self.safety_settings)
+            responses = chat.send_message(g_prompt, generation_config=self.generation_config,
+                                          safety_settings=self.safety_settings)
             print(f"RAW RESPONSE=================")
             print(responses.text)
 
@@ -176,9 +175,7 @@ class Gemini:
                 if description[:1] == '"' and description[-1:] == '"':
                     description = description[1:-1]
 
-                # TODO: Remove whitespaces before adding it to the file
-
-                append_to_file(self.out_sentences, f"{parts[0]};{description}")
+                file_interface.append_line(self.out_sentences, f"{parts[0]};{description}")
 
             g_prompt = ""
 
@@ -212,115 +209,4 @@ class Gemini:
                 file.write(f"{value};{key}\n")
 
 
-def optimize_descriptions():
-    description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
-    for key, value in description_dict.items():
-        description = value
-        description = description.replace('a speech bubble', 'text')
-        description = description.replace('speech bubble', 'text')
-        description = description.replace('~', '').replace('(', '').replace(')', '')
 
-        # Remove all non-ascii characters
-        description = description.encode('ascii', 'ignore').decode('ascii')
-
-        description_dict[key] = description
-
-    with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
-        for key, value in description_dict.items():
-            file.write(f"{key};{value}\n")
-
-
-def remove_long_descriptions():
-    description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
-    for key, value in description_dict.items():
-        description = value
-        if len(description) > 1500:
-            print(f"Removing long description: {description}")
-            description_dict[key] = ""
-
-    with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
-        for key, value in description_dict.items():
-            if value != "":
-                file.write(f"{key};{value}\n")
-
-
-def should_remove_quote(quote: str):
-    # If quote only contains dots or commas, remove it
-    if quote.replace('.', '').replace(',', '').replace(' ', '') == '':
-        return True
-
-
-def optimize_description_quotes():
-    description_dict = get_dict_from_file(setup.PATHS.DESCRIPTIONS)
-    for key, value in description_dict.items():
-        description = value
-        parts = description.split('"')
-        quote_indexes_to_remove = []
-        # Every second part is a quote
-        for i in range(1, len(parts), 2):
-            if should_remove_quote(parts[i]):
-                quote_indexes_to_remove.append(i)
-
-        # Rebuild the description based on parts and removed quotes
-        new_description = ""
-        for i, part in enumerate(parts):
-            if i % 2 == 0:
-                new_description += part
-            else:
-                if i not in quote_indexes_to_remove:
-                    new_description += '"' + part + '"'
-
-        description_dict[key] = new_description
-
-    with open(setup.PATHS.DESCRIPTIONS, 'w') as file:
-        for key, value in description_dict.items():
-            file.write(f"{key};{value}\n")
-
-
-def optimize_quotes_ending_with_comma(language: setup.LanguageCodes):
-    path = get_sentence_path(language)
-    sentence_dict = get_dict_from_file(path)
-    print(f"Optimizing {len(sentence_dict)} ending with commas...")
-    for key, value in sentence_dict.items():
-        description = value
-        description = description.replace(',"', '."')
-        sentence_dict[key] = description
-
-    with open(path, 'w') as file:
-        for key, value in sentence_dict.items():
-            file.write(f"{key};{value}\n")
-
-
-def optimize_sentences_errors(language: setup.LanguageCodes):
-    path = get_sentence_path(language)
-    sentence_dict = get_dict_from_file(path)
-    print(f"Optimizing errors in {len(sentence_dict)}...")
-    for key, value in sentence_dict.items():
-        description = value
-        description = description.replace('<', '')
-        description = description.replace('>', '')
-        description = description.replace('&', '')
-        description = description.replace('reaperscans.com', '')
-        description = description.replace('reaperscans', '')
-        description = description.replace('luascans', '')
-        description = description.replace('luascans.com', '')
-        sentence_dict[key] = description
-
-    with open(path, 'w') as file:
-        for key, value in sentence_dict.items():
-            file.write(f"{key};{value}\n")
-
-
-def remove_descriptions_about_voices(language: setup.LanguageCodes):
-    path = get_sentence_path(language)
-    sentence_dict = get_dict_from_file(path)
-    print(f"Optimizing {len(sentence_dict)} descriptions about voices...")
-    for key, value in sentence_dict.items():
-        description = value
-        description = re.sub(r',\s*his voice[^,.]*[.,]', '.', description)
-        description = re.sub(r',\s*her voice[^,.]*[.,]', '.', description)
-        sentence_dict[key] = description
-
-    with open(path, 'w') as file:
-        for key, value in sentence_dict.items():
-            file.write(f"{key};{value}\n")
