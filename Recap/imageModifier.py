@@ -9,6 +9,7 @@ from Recap.utils import get_sorted_list_of_images
 TEMP_DIR = 'temp'
 TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
 IMAGE_MAX_HEIGHT = 1000
+# Todo make this image height be dependent on the height of the original image
 
 
 def modify_all_images():
@@ -64,16 +65,55 @@ def modify_images_to_fit_screen():
                 image_part.paste(original_image_part, (0, buffer.height))
                 buffer = None
 
-            # Todo: Probably up this value a bit
-
-            if image_part.height > (1.5 * IMAGE_MAX_HEIGHT):
+            if image_part.height > (4 * IMAGE_MAX_HEIGHT):
+                # Split the image into four parts and save each part
+                image_part_1 = image_part.crop((0, 0, image_part.width, image_part.height // 4))
+                image_part_2 = image_part.crop((0, image_part.height // 4, image_part.width, image_part.height // 2))
+                image_part_3 = image_part.crop(
+                    (0, image_part.height // 2, image_part.width, 3 * image_part.height // 4))
+                image_part_4 = image_part.crop((0, 3 * image_part.height // 4, image_part.width, image_part.height))
+                resized_image_1 = _scale_image(image_part_1)
+                resized_image_2 = _scale_image(image_part_2)
+                resized_image_3 = _scale_image(image_part_3)
+                resized_image_4 = _scale_image(image_part_4)
+                resized_image_1.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
+                resized_image_2.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
+                resized_image_3.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.2.jpg')
+                resized_image_4.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.3.jpg')
+                count += 1
+                continue
+            elif image_part.height > (3 * IMAGE_MAX_HEIGHT):
+                # Split the image into three parts and save each part
+                image_part_top = image_part.crop((0, 0, image_part.width, image_part.height // 3))
+                image_part_middle = image_part.crop(
+                    (0, image_part.height // 3, image_part.width, 2 * image_part.height // 3))
+                image_part_bottom = image_part.crop(
+                    (0, 2 * image_part.height // 3, image_part.width, image_part.height))
+                resized_image_top = _scale_image(image_part_top)
+                resized_image_middle = _scale_image(image_part_middle)
+                resized_image_bottom = _scale_image(image_part_bottom)
+                resized_image_top.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
+                resized_image_middle.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
+                resized_image_bottom.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.2.jpg')
+                count += 1
+                continue
+            elif image_part.height > (1.5 * IMAGE_MAX_HEIGHT):
                 # Split the image at the middle and save both images
                 image_part_top = image_part.crop((0, 0, image_part.width, image_part.height // 2))
                 image_part_bottom = image_part.crop((0, image_part.height // 2, image_part.width, image_part.height))
                 resized_image_top = _scale_image(image_part_top)
                 resized_image_bottom = _scale_image(image_part_bottom)
-                resized_image_top.save(f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
-                resized_image_bottom.save(f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
+                resized_image_top.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.0.jpg')
+                resized_image_bottom.save(
+                    f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.1.jpg')
                 count += 1
                 continue
 

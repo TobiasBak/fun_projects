@@ -2,8 +2,8 @@
 import os
 from enum import Enum
 
-DOWNLOAD_URL = 'https://toonily.com/webtoon/not-a-lady-anymore/'
-CHAPTERS = [1, 1]
+DOWNLOAD_URL = 'https://toonily.com/webtoon/please-throw-me-away/'
+CHAPTERS = [1, 10]
 NAME_OF_BOOK = 'not_a_lady_anymore' # Has to be lowercase
 
 """ PLEASE DO NOT MODIFY BELOW """

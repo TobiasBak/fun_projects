@@ -5,6 +5,10 @@ from utils import get_sentence_path
 
 """This file contains functions to optimize strings in the dataset."""
 
+strings_to_remove = [
+        "reaperscans.com", "reaperscans", "luascans", "luascans.com", "lightscans", "lightscans.com", "mangadex",
+        ">", "<", "&"
+    ]
 
 def optimize_descriptions():
     file_interface = FileInterface()
@@ -17,6 +21,7 @@ def optimize_descriptions():
             print(f"Removing long description: {description}")
             description = description[:1500]
 
+        description = _remove_specific_strings_from_text(description)
         description = description.replace('a speech bubble', 'text')
         description = description.replace('speech bubble', 'text')
         description = description.replace('~', '').replace('(', '').replace(')', '')
@@ -85,11 +90,7 @@ def _remove_descriptions_about_voices(description: str):
 
 
 def _remove_specific_strings_from_text(description: str):
-    strings_to_remove = [
-        "reaperscans.com", "reaperscans", "luascans", "luascans.com",
-        ">", "<", "&"
-    ]
-
+    global strings_to_remove
     for string in strings_to_remove:
         description = description.replace(string, "")
 

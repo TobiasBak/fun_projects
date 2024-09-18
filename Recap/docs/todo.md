@@ -6,6 +6,7 @@
 2. FileInterface file, to handle all file operations. This is a good idea as they are all structured similarly.
 3. Gemini clean text method
 4. Sentence optimizers, figure out when things should start with uppercase and when not. 
+5. Make a better imagespillet that takes the height and divides instead of the shit it is doing now. Maybe more splitting points or something?
 
 
 ## Major steps
@@ -29,3 +30,12 @@ Cinematic songs:
 https://www.storyblocks.com/audio/search/slow-motion-cinematic
 
 
+
+Done:
+1. https://toonily.com/webtoon/please-throw-me-away/
+
+Oh shit caps:
+1. 
+
+For the juicers:
+1. https://toonily.com/webtoon/springtime-blossom-003/
