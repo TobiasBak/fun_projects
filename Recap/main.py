@@ -3,7 +3,7 @@ import shutil
 import time
 
 import setup
-from Recap.cleanup import clean_text_files_for_unnecessary_lines, clean_images
+from Recap.cleanup import clean_descriptions_for_unnecessary_lines, clean_images
 from Recap.imageModifier import modify_all_images
 from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import _download_images_toonily, download_chapters
@@ -29,7 +29,7 @@ def main():
     _find_images_with_missing_texts(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)
 
     clean_images()
-    clean_text_files_for_unnecessary_lines()  # Not necessary, but nice to have
+    clean_descriptions_for_unnecessary_lines()  # Not necessary, but nice to have
 
     # Sentence generation
     google_interface.gemini_client.generate_sentences_gemini()

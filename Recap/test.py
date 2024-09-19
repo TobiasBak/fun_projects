@@ -1,5 +1,6 @@
 import setup
 from FileInterfacce import FileInterface
+from cleanup import clean_descriptions_for_unnecessary_lines
 from google.googleInterface import GoogleInterface
 from imageModifier import modify_all_images
 from main import download_chapters
@@ -8,10 +9,7 @@ from main import download_chapters
 def test():
     # Use this method to test behaviour
     print("TESTING...")
-    download_chapters()
-
-    fi = FileInterface()
-    print(fi.get_images_missing_from_file(setup.PATHS.DESCRIPTIONS))
+    clean_descriptions_for_unnecessary_lines()
 
 
 
