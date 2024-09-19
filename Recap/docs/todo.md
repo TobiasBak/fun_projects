@@ -34,8 +34,8 @@ https://www.storyblocks.com/audio/search/slow-motion-cinematic
 Done:
 1. https://toonily.com/webtoon/please-throw-me-away/
 
-Oh shit caps:
-1. 
+todoes caps:
+1. https://toonily.com/webtoon/becoming-a-wicked-witch-with-a-paladins-first-night/
 
-For the juicers:
+For the juicers not done:
 1. https://toonily.com/webtoon/springtime-blossom-003/

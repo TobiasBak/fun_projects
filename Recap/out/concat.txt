@@ -1,2 +1,2 @@
 file 'intro.mp4'
-file 'videos/video_parts/en/not_a_lady_anymore_1-5.mp4'
+file 'videos/video_parts/en/please_throw_me_away_1-10.mp4'

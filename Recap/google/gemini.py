@@ -147,7 +147,13 @@ class Gemini:
             print(f"Amount of tokens: {tokens}")
             print(g_prompt)
 
-            responses = chat.send_message(g_prompt, generation_config=self.generation_config,
+            responses = None
+
+            try :
+                responses = chat.send_message(g_prompt, generation_config=self.generation_config,
+                                              safety_settings=self.safety_settings)
+            except Exception as e:
+                responses = chat.send_message(g_prompt, generation_config=self.generation_config,
                                           safety_settings=self.safety_settings)
             print(f"RAW RESPONSE=================")
             print(responses.text)
@@ -168,6 +174,8 @@ class Gemini:
             for x in replies:
                 if x == '':
                     continue
+
+                #Todo: If it does not start with a number it probably needs to be appended to the previous image
 
                 parts = x.split(';')
                 description = parts[1]

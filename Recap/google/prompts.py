@@ -69,7 +69,7 @@ prompt_generate_sentence_1 = f"""
 **Mission Objective:**
 You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
 Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
-Each image should be described by one sentence narrating what is going on in the image.
+Each image should be described by one sentence narrating what is going on in the image without describing the image itself.
 Generated narrations should also include the text/conversations from the descriptions.
 
 **Task Outline:**
@@ -91,6 +91,7 @@ You must uphold the following rules and guidelines
 5. Use pronouns and character descriptions when referring to characters. Do not use character names.
 6. Never mention the viewer, reader or speaker in the sentences.
 7. Include all conversation from the text from the image
+8. Do not describe the items and people in detail. 
 
 Return "Understood" when the rules and guidelines are understood.
 """

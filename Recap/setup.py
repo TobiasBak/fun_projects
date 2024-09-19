@@ -4,7 +4,7 @@ from enum import Enum
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/please-throw-me-away/'
 CHAPTERS = [1, 10]
-NAME_OF_BOOK = 'not_a_lady_anymore' # Has to be lowercase
+NAME_OF_BOOK = 'please_throw_me_away' # Has to be lowercase
 
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
