@@ -41,6 +41,42 @@ You must only return 1 string containing all the details from the descriptions.
 Return "Understood" when understood.
 """
 
+combined_prompt_descriptions = f"""
+You are tasked with describing a picture in detail.
+The picture is taken from a manhwa. 
+You must never mention the viewer or reader in the descriptions.
+
+**Instructions:**
+1. Generate a detailed description for each of the sub-pictures in the jpg.
+2. If the image have multiple areas, describe each area in detail. However, combine all descriptions into a single string.
+3. Do not describe Speech Bubbles.
+4. Combine all the descriptions into a single description for the jpg.
+
+**How to describe jpgs in detail:**
+You must generate an in depth description for each jpg that include the following elements combined in a single string:
+1. Characters: Visible characters should be described in detail. Do not describe where they are looking. 
+2. Setting: The setting and area in the picture must be described. 
+3. Plot: The actions and what is generally happening must be described. 
+4. Feeling: A detailed description of the feeling the pictures conveys. 
+5. Text: English text should be extracted from the image in lowercase. The text should be followed by where it is positioned relative to the characters.
+6. Text: Quote all extracted text.
+7. Exclude text that is ads such as "Read at:" or "Visit us at:". or .com sites in general.
+
+Note: Background and speech bubbles should not be described.
+
+
+An example detailed description and the expected output will be explained.
+**Example detailed description:**
+A man with ginger hair is visible in the image. Only the face of the man is visible. He has an open mouth and it looks like he is speaking. Above the man it says "If The Other Hunters Get To It First, Our Profits Would Dwindle." The man looks very worried and concerned.
+
+
+**Return Format:**
+The combined description must be returned in the following format. This means remove all newlines and replace them with a space.:
+`<file_name>`; `<combined descriptions>`
+You must only return 1 string containing all the details from the descriptions.
+
+"""
+
 prompt_unnecessary_lines = """
 I have gathered a collection of image descriptions that combined should tell a story.
 However, some of the image descriptions describe promotional text or only describe a symbol.
@@ -118,4 +154,43 @@ The return should be plaintext, not in JSON format.
 Return "Understood" when read. 
 """
 
+combined_prompt_sentences = f"""
+**AI Mission Brief:** Turning Image Descriptions into a Narrative
+**Mission Objective:**
+You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
+Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
+Each image should be described by one sentence narrating what is going on in the image without describing the image itself.
+Generated narrations should also include the text/conversations from the descriptions.
+
+
+**Task Outline:**
+1. You will be given descriptions of images. Each description includes specific details about context of the image and what is written in the image.
+2. Based on these descriptions, generate a sentence for each image that collectively form a continuous story in present tense.
+3. Ensure the sentences are in present tense flow logically from one to the next, maintaining a coherent and engaging narrative.
+
+
+**Rules and Guidelines:**
+1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
+2. Sentence lengths: Each image should be described by a short and single sentence and the conversations from the image.
+3. If the context and location changes drastically. It should be described as a new location or a flashback. 
+4. Keep sentences simple by using at most 1 adverb and 1 adjective.
+5. Use pronouns and character descriptions when referring to characters. Do not use character names.
+6. Never mention the viewer, reader or speaker in the sentences.
+7. Include all conversation from the text from the image
+8. Do not describe the items and people in detail. 
+
+
+**Process:**
+1. Read the Description: Carefully read and understand each image description.
+2. Extract Key Elements: Identify key elements such as characters, settings, actions and information.
+3. Generate Sentence: Formulate a short sentence in present tense that contributes to the overall narrative.
+4. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
+
+
+**Output:**
+For each of the inputted lines, generate a single return string in the following format:
+`<image_name>`; `<story>`
+`<story>` should include all the generated sentences about the image.
+The return should be plaintext, not in JSON format.
+"""
 

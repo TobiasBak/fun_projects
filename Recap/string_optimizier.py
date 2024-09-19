@@ -6,14 +6,20 @@ from utils import get_sentence_path
 """This file contains functions to optimize strings in the dataset."""
 
 strings_to_remove = [
-        "reaperscans.com", "reaperscans", "luascans", "luascans.com", "lightscans", "lightscans.com", "mangadex",
-        ">", "<", "&"
-    ]
+    "reaperscans.com", "reaperscans", "luascans", "luascans.com", "lightscans", "lightscans.com", "mangadex",
+    ">", "<", "&", ".fun", ".com", "Read at:", "read:", "read at:", "read at", "translation",
+    "to read this series and chapters", "for the fastest releases",
+    "To support us", "to support us", "To support the author", "to support the author",
+    "To support the scanlation group",
+    "to continue !", "Visit to read this series up to chapter 10"
+]
+
 
 def optimize_descriptions():
     file_interface = FileInterface()
     description_dict = file_interface.get_dict_from_file(setup.PATHS.DESCRIPTIONS)
 
+    print(f"Removing specifict strings from descriptions")
     for key, value in description_dict.items():
         description = value
 
@@ -77,6 +83,8 @@ def optimize_sentences_errors(language: setup.LanguageCodes):
         description = value
         description = _remove_specific_strings_from_text(description)
         description = _remove_descriptions_about_voices(description)
+        description = description.replace('"', '').replace('""', '')
+        description = _capitalize_letters(description)
         sentence_dict[key] = description
 
     file_interface.write_dict_to_file(path, sentence_dict)
@@ -88,7 +96,6 @@ def _remove_descriptions_about_voices(description: str):
     return out
 
 
-
 def _remove_specific_strings_from_text(description: str):
     global strings_to_remove
     for string in strings_to_remove:
@@ -97,3 +104,14 @@ def _remove_specific_strings_from_text(description: str):
     return description
 
 
+def _capitalize_letters(description: str):
+    # Capitalize first letter of each sentence
+    sentences = description.split('.')
+    for i, sentence in enumerate(sentences):
+        if sentence == '':
+            continue
+        if sentence == ' ':
+            sentences[i] = ''
+            continue
+        sentences[i] = ' ' + sentence.strip().capitalize()
+    return '.'.join(sentences)

@@ -1,3 +1,4 @@
+import math
 import os
 
 import numpy as np
@@ -9,6 +10,9 @@ from Recap.utils import get_sorted_list_of_images
 TEMP_DIR = 'temp'
 TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
 IMAGE_MAX_HEIGHT = 1000
+ALLOWED_SCALING_FACTOR = 1.5
+
+
 # Todo make this image height be dependent on the height of the original image
 
 
@@ -34,7 +38,7 @@ def modify_all_images():
             print(f'{count}/{len(images)} images modified.')
         count += 1
 
-    modify_images_to_fit_screen()
+    modify_images_to_fit_screen2()
 
 
 def get_letter_from_count(count: int):
@@ -124,6 +128,44 @@ def modify_images_to_fit_screen():
 
             resized_image.save(f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.jpg')
 
+            count += 1
+
+    raise Exception("Modifying images is complete, please clean images")
+
+
+def modify_images_to_fit_screen2():
+    images = get_sorted_list_of_images(setup.PATHS.RAW_IMAGE_DIR)
+
+    split_indexes = _read_split_indexes()
+    buffer = None  # Buffer will be at most 1 image, that is left over
+    for image in images:
+        image_split_indexes = split_indexes[image.replace('.jpg', '')]
+        image_parts = _split_image(image, image_split_indexes)
+
+        count = 0
+        for image_part in image_parts:
+            image_part_height = image_part.size[1]
+            if image_part_height < IMAGE_MAX_HEIGHT / 2:
+                buffer = image_part
+                continue
+
+            if buffer is not None:
+                original_image_part = image_part.copy()
+                image_part = Image.new('RGB', (image_part.width, image_part.height + buffer.height))
+                image_part.paste(buffer, (0, 0))
+                image_part.paste(original_image_part, (0, buffer.height))
+                buffer = None
+
+
+            num_images = math.floor(image_part.height / (IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR))
+            for i in range(num_images):
+                start = i * IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR
+                end = min((i + 1) * IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR, image_part.height)
+                sub_image_part = image_part.crop((0, start, image_part.width, end))
+                resized_image = _scale_image(sub_image_part)
+                if resized_image is not None:
+                    resized_image.save(
+                        f'{setup.PATHS.IMAGE_DIR}/{_get_image_name(image)}.{get_letter_from_count(count)}.{i}.jpg')
             count += 1
 
     raise Exception("Modifying images is complete, please clean images")

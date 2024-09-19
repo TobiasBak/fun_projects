@@ -6,11 +6,13 @@ import google.generativeai as genai
 import setup
 from FileInterfacce import FileInterface
 from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \
-    prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4
+    prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4, \
+    combined_prompt_sentences, combined_prompt_descriptions
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, get_images_missing_from_files, \
     append_to_file, get_sentence_path
 from PIL import Image
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 THREADS = 5
 semaphore = threading.Semaphore(THREADS)  # Create a semaphore object
@@ -32,36 +34,27 @@ class Gemini:
         self.model_flash = genai.GenerativeModel('gemini-1.5-flash')
         self.model_pro = genai.GenerativeModel('gemini-1.5-pro')
         self.model_1 = genai.GenerativeModel('gemini-1.0-pro')
-        self.generation_config = {"temperature": 1}
-        self.safety_settings = [
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_NONE",
-            }
-        ]
+        self.model_descriptions = genai.GenerativeModel('gemini-1.5-flash',
+                                                        system_instruction=combined_prompt_descriptions)
+        self.model_sentences = genai.GenerativeModel(model_name='gemini-1.5-flash-exp-0827',
+                                                     system_instruction=combined_prompt_sentences)
+        self.generation_config = {"temperature": 1, "response_mime_type": "text/plain"}
+        self.safety_settings = {
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
 
     def generate_description_for_images(self, images: list[str]):
         prompts = [prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3]
-        chat = self.model_flash.start_chat(history=[])
+        chat = self.model_descriptions.start_chat(history=[])
 
-        for p in prompts:
-            r = chat.send_message(p, generation_config=self.generation_config, safety_settings=self.safety_settings)
-            print(r.text)
+        # for p in prompts:
+        #     r = chat.send_message(p, generation_config=self.generation_config, safety_settings=self.safety_settings)
+        #     print(r.text)
 
         for image in images:
-
             content = []
             img_data = Image.open(get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{image}"))
             content.append(img_data)
@@ -84,6 +77,8 @@ class Gemini:
                 if len(parts) > 3:
                     print(f"Invalid response: {r}")
                     continue
+                if len(parts) == 3:
+                    r = f"{parts[0]};{parts[1]} {parts[2]}"
 
                 append_to_file(self.out_descriptions, r)
 
@@ -116,6 +111,7 @@ class Gemini:
         for thread in threads:
             thread.join()
 
+        # Todo make it actually check the images instead of len(images)
         if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, self.out_descriptions)) > 0:
             print("Some images are still missing descriptions. Will start generation again.")
             self.generate_descriptive_text()
@@ -124,18 +120,12 @@ class Gemini:
         file_interface = FileInterface()
 
         generated_prompts = generate_prompts_for_images(images)
-        prompts = [prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3,
-                   prompt_generate_sentence_4]
 
         if len(generated_prompts) == 0:
             print("No sentences missing. Exiting...")
             return
 
-        chat = self.model_pro.start_chat(history=[])
-
-        for p in prompts:
-            r = chat.send_message(p, generation_config=self.generation_config)
-            print(r.text)
+        chat = self.model_sentences.start_chat(history=[])
 
         g_prompt = ""
 
@@ -143,18 +133,18 @@ class Gemini:
         for i in range(0, len(generated_prompts), images_per_prompt):
             for generated_prompt in generated_prompts[i:i + images_per_prompt]:
                 g_prompt += generated_prompt
-            tokens = self.model_pro.count_tokens(g_prompt)
+            tokens = self.model_sentences.count_tokens(g_prompt)
             print(f"Amount of tokens: {tokens}")
             print(g_prompt)
 
             responses = None
 
-            try :
+            try:
                 responses = chat.send_message(g_prompt, generation_config=self.generation_config,
                                               safety_settings=self.safety_settings)
             except Exception as e:
                 responses = chat.send_message(g_prompt, generation_config=self.generation_config,
-                                          safety_settings=self.safety_settings)
+                                              safety_settings=self.safety_settings)
             print(f"RAW RESPONSE=================")
             print(responses.text)
 
@@ -164,26 +154,19 @@ class Gemini:
 
             replies = responses.text.split('\n')
 
-            # Remove first and last index if it is json
-            if replies[0] == '```json' or replies[0] == '```':
-                replies.pop(0)
+            refactored_data = {}
+            last_key = None
+            for i in range(len(replies)):
+                if self._check_if_text_is_key(replies[i]):
+                    last_key = replies[i]
+                    if last_key not in refactored_data:
+                        refactored_data[last_key] = ""
+                elif last_key is not None:
+                    refactored_data[last_key] += ' ' + replies[i].replace('\n', ' ')
 
-            if replies[-1] == '```':
-                replies.pop(-1)
 
-            for x in replies:
-                if x == '':
-                    continue
-
-                #Todo: If it does not start with a number it probably needs to be appended to the previous image
-
-                parts = x.split(';')
-                description = parts[1]
-                description = description.encode('ascii', 'ignore').decode('ascii')
-                if description[:1] == '"' and description[-1:] == '"':
-                    description = description[1:-1]
-
-                file_interface.append_line(self.out_sentences, f"{parts[0]};{description}")
+            for key, value in refactored_data.items():
+                file_interface.append_line(self.out_sentences, f"{key};{value}")
 
             g_prompt = ""
 
@@ -216,5 +199,6 @@ class Gemini:
             for key, value in sentences.items():
                 file.write(f"{value};{key}\n")
 
-
-
+    def _check_if_text_is_key(self, text: str) -> bool:
+        #If text is key it will start with a number followed by a dot followed by a number
+        return bool(re.match(r'^\d+\.\d+', text))

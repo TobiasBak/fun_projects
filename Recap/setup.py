@@ -2,9 +2,9 @@
 import os
 from enum import Enum
 
-DOWNLOAD_URL = 'https://toonily.com/webtoon/please-throw-me-away/'
-CHAPTERS = [1, 10]
-NAME_OF_BOOK = 'please_throw_me_away' # Has to be lowercase
+DOWNLOAD_URL = 'https://toonily.com/webtoon/becoming-a-wicked-witch-with-a-paladins-first-night/'
+CHAPTERS = [1, 11]
+NAME_OF_BOOK = 'becoming_a_wicked_witch' # Has to be lowercase
 
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'
