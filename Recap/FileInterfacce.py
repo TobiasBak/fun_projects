@@ -21,6 +21,14 @@ class FileInterface:
             writer = csv.writer(file, delimiter=';')
             writer.writerow([clean_key, clean_value])
 
+    def append_dict_to_file(self, file_path: str, data_dict: dict):
+        with open(file_path, 'a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter=';')
+            for key, value in data_dict.items():
+                clean_key = self._clean_text(key)
+                clean_value = self._clean_text(value)
+                writer.writerow([clean_key, clean_value])
+
     def write_dict_to_file(self, file_path: str, data_dict: dict):
         with open(file_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file, delimiter=';')

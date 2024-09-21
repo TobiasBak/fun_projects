@@ -89,6 +89,18 @@ def get_all_images(directory: str = setup.PATHS.IMAGE_DIR):
     return images
 
 
+def sort_images_by_order(images: list[str]):
+    def sort_key(image_name: str):
+        # Split the filename on '.', convert the parts to integers, and return as a tuple
+        parts = image_name.split('.')[:2]
+        return tuple(int(part) for part in parts)
+
+    # Sort the images using the custom sort key
+    images.sort(key=sort_key)
+
+    return images
+
+
 def get_sorted_list_of_images(directory: str = setup.PATHS.IMAGE_DIR):
     images = get_all_images(directory)
 

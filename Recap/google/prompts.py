@@ -164,9 +164,9 @@ Generated narrations should also include the text/conversations from the descrip
 
 
 **Task Outline:**
-1. You will be given descriptions of images. Each description includes specific details about context of the image and what is written in the image.
-2. Based on these descriptions, generate a sentence for each image that collectively form a continuous story in present tense.
-3. Ensure the sentences are in present tense flow logically from one to the next, maintaining a coherent and engaging narrative.
+1. You will be given a description of a image. Each description includes specific details about context of the image and what is written in the image.
+2. You will also be given prior sentences that have been generated from previous images.
+3. Based on the prior sentences and the new description, generate a sentence that collectively form a continuous story in present tense.
 
 
 **Rules and Guidelines:**
@@ -177,20 +177,21 @@ Generated narrations should also include the text/conversations from the descrip
 5. Use pronouns and character descriptions when referring to characters. Do not use character names.
 6. Never mention the viewer, reader or speaker in the sentences.
 7. Include all conversation from the text from the image
-8. Do not describe the items and people in detail. 
+8. Do not describe the items and people in detail. Instead focus on the story the image is telling.
 
 
 **Process:**
 1. Read the Description: Carefully read and understand each image description.
 2. Extract Key Elements: Identify key elements such as characters, settings, actions and information.
-3. Generate Sentence: Formulate a short sentence in present tense that contributes to the overall narrative.
-4. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
+3. Look at the prior sentences: Understand the story that has been generated so far.
+4. Generate Sentence: Formulate a short sentence in present tense that contributes to the overall narrative.
+5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
 
 
 **Output:**
-For each of the inputted lines, generate a single return string in the following format:
+For the output, generate a single return string in the following format:
 `<image_name>`; `<story>`
-`<story>` should include all the generated sentences about the image.
+`<story>` should include the generated sentence continuing the story.
 The return should be plaintext, not in JSON format.
 """
 

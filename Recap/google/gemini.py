@@ -10,7 +10,7 @@ from google.prompts import prompt_describe_image_1, prompt_describe_image_2, pro
     combined_prompt_sentences, combined_prompt_descriptions
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, get_images_missing_from_files, \
-    append_to_file, get_sentence_path
+    append_to_file, get_sentence_path, sort_images_by_order
 from PIL import Image
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
@@ -164,6 +164,58 @@ class Gemini:
 
             g_prompt = ""
 
+    def generate_sentences_for_images_gemini_using_prior_sentences(self, images: list[str]):
+        file_interface = FileInterface()
+        description_dict = file_interface.get_dict_from_file(setup.PATHS.DESCRIPTIONS)
+
+        sentence_dict = {}
+
+        chat = self.model_sentences.start_chat(history=[])
+
+        g_prompt = ""
+
+        sorted_images = sort_images_by_order(images)
+
+        for image in sorted_images:
+            if image not in description_dict.keys():
+                print(f"Image {image} is missing description. Skipping...")
+                continue
+
+            g_prompt += f"{description_dict[image]}\n"
+
+            last_10_sentences = list(sentence_dict.values())[-10:]
+
+            g_prompt += "*Prior sentences:*\n"
+            g_prompt += "\n".join(last_10_sentences)
+
+            print(f"Sending Prompt: {g_prompt}")
+
+            response = chat.send_message(g_prompt, generation_config=self.generation_config,
+                                         safety_settings=self.safety_settings)
+
+            print(f"RAW RESPONSE=================\n{response.text}")
+
+            if not response.text:
+                print("No sentences generated.")
+                return
+
+            replies = response.text.split('\n')
+
+            refactored_data = {}
+            last_key = None
+            for i in range(len(replies)):
+                if self._check_if_text_is_key(replies[i]):
+                    last_key = replies[i]
+                    if last_key not in refactored_data:
+                        refactored_data[last_key] = ""
+                elif last_key is not None:
+                    refactored_data[last_key] += ' ' + replies[i].replace('\n', ' ')
+
+            for key, value in refactored_data.items():
+                sentence_dict[key] = value
+
+            g_prompt = ""
+
     def generate_sentences_gemini(self):
         images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
         if len(images) == 0:
@@ -173,9 +225,10 @@ class Gemini:
         print(f"Starting generation of sentences for {len(images)} images: ...")
 
         # Run generate for images in batches batch_size
-        batch_size = 100
-        for i in range(0, len(images), batch_size):
-            self.generate_sentences_for_images_gemini(images[i:i + batch_size])
+        # batch_size = 100
+        # for i in range(0, len(images), batch_size):
+        #     self.generate_sentences_for_images_gemini(images[i:i + batch_size])
+        self.generate_sentences_for_images_gemini_using_prior_sentences(images)
 
         raise Exception("Please manually modify the first 50 sentences for a good experience")
 

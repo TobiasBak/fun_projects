@@ -7,6 +7,7 @@
 3. Gemini clean text method
 4. Sentence optimizers, figure out when things should start with uppercase and when not. 
 5. Make a better imagespillet that takes the height and divides instead of the shit it is doing now. Maybe more splitting points or something?
+6. Using only one connection to flash model to reduce caching, Give it the picture and the last 10 images sentences. 
 
 
 ## Major steps
