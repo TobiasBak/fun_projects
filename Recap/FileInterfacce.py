@@ -42,6 +42,16 @@ class FileInterface:
                     data_dict[row[0]] = row[1]
         return data_dict
 
+    def get_lines_from_file(self, file_path: str) -> list:
+        lines = []
+
+        if not os.path.exists(file_path):
+            return lines
+
+        with open(file_path, 'r', newline='', encoding='utf-8') as file:
+            for line in file:
+                lines.append(line)
+
     def get_images_missing_from_file(self, file_path: str) -> list:
         keys = []
 

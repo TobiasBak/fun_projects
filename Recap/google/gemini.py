@@ -29,11 +29,6 @@ genai.configure(api_key=get_api_key())
 
 class Gemini:
     def __init__(self):
-        self.out_sentences = get_sentence_path()
-        self.out_descriptions = setup.PATHS.DESCRIPTIONS
-        self.model_flash = genai.GenerativeModel('gemini-1.5-flash')
-        self.model_pro = genai.GenerativeModel('gemini-1.5-pro')
-        self.model_1 = genai.GenerativeModel('gemini-1.0-pro')
         self.model_descriptions = genai.GenerativeModel('gemini-1.5-flash',
                                                         system_instruction=combined_prompt_descriptions)
         self.model_sentences = genai.GenerativeModel(model_name='gemini-1.5-flash-exp-0827',
@@ -80,7 +75,7 @@ class Gemini:
                 if len(parts) == 3:
                     r = f"{parts[0]};{parts[1]} {parts[2]}"
 
-                append_to_file(self.out_descriptions, r)
+                append_to_file(setup.PATHS.DESCRIPTIONS, r)
 
     def _threaded_generate_description(self, thread_name, images):
         # Acquire a semaphore
@@ -112,7 +107,7 @@ class Gemini:
             thread.join()
 
         # Todo make it actually check the images instead of len(images)
-        if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, self.out_descriptions)) > 0:
+        if len(get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.DESCRIPTIONS)) > 0:
             print("Some images are still missing descriptions. Will start generation again.")
             self.generate_descriptive_text()
 
@@ -164,14 +159,13 @@ class Gemini:
                 elif last_key is not None:
                     refactored_data[last_key] += ' ' + replies[i].replace('\n', ' ')
 
-
             for key, value in refactored_data.items():
-                file_interface.append_line(self.out_sentences, f"{key};{value}")
+                file_interface.append_line(setup.PATHS.SENTENCES, f"{key};{value}")
 
             g_prompt = ""
 
     def generate_sentences_gemini(self):
-        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, self.out_sentences)
+        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
         if len(images) == 0:
             print("No images missing generated sentences.")
             return []
@@ -186,19 +180,19 @@ class Gemini:
         raise Exception("Please manually modify the first 50 sentences for a good experience")
 
     def remove_duplicate_sentences(self):
-        lines = get_lines_from_file(self.out_sentences)
-        sentences = {}
+        file_interface = FileInterface()
+        lines = file_interface.get_lines_from_file(setup.PATHS.SENTENCES)
+        line_dict = {}
         for line in lines:
             parts = line.split(';')
-            if parts[1] in sentences:
-                print(f"Removing duplicate sentence: {parts[1]}")
+            if len(parts) != 2:
+                print(f"Invalid line: {line}")
                 continue
-            sentences[parts[1]] = parts[0]
+            if parts[0] not in line_dict.keys():
+                line_dict[parts[0]] = parts[1]
 
-        with open(self.out_sentences, 'w') as file:
-            for key, value in sentences.items():
-                file.write(f"{value};{key}\n")
+        file_interface.write_dict_to_file(setup.PATHS.SENTENCES, line_dict)
 
     def _check_if_text_is_key(self, text: str) -> bool:
-        #If text is key it will start with a number followed by a dot followed by a number
+        # If text is key it will start with a number followed by a dot followed by a number
         return bool(re.match(r'^\d+\.\d+', text))
