@@ -100,92 +100,36 @@ prompt_unnecessary_lines_end = """
 Please go ahead and return only the image ids of the images are deemed unnecessary.
 """
 
-prompt_generate_sentence_1 = f"""
-**AI Mission Brief:** Turning Image Descriptions into a Narrative
-**Mission Objective:**
-You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
-Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
-Each image should be described by one sentence narrating what is going on in the image without describing the image itself.
-Generated narrations should also include the text/conversations from the descriptions.
-
-**Task Outline:**
-1. You will be given descriptions of images. Each description includes specific details about context of the image and what is written in the image.
-2. Based on these descriptions, generate a sentence for each image that collectively form a continuous story in present tense.
-3. Ensure the sentences are in present tense flow logically from one to the next, maintaining a coherent and engaging narrative.
-
-Return "Understood" when read
-"""
-
-prompt_generate_sentence_2 = f"""
-You must uphold the following rules and guidelines
-
-**Rules and Guidelines:**
-1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Sentence lengths: Each image should be described by a short and single sentence and the conversations from the image.
-3. If the context and location changes drastically. It should be described as a new location or a flashback. 
-4. Keep sentences simple by using at most 1 adverb and 1 adjective.
-5. Use pronouns and character descriptions when referring to characters. Do not use character names.
-6. Never mention the viewer, reader or speaker in the sentences.
-7. Include all conversation from the text from the image
-8. Do not describe the items and people in detail. 
-
-Return "Understood" when the rules and guidelines are understood.
-"""
-
-prompt_generate_sentence_3 = f"""
-You must follow the process when generating sentences based on the descriptions
-
-**Process:**
-1. Read the Description: Carefully read and understand each image description.
-2. Extract Key Elements: Identify key elements such as characters, settings, actions and information.
-3. Generate Sentence: Formulate a short sentence in present tense that contributes to the overall narrative.
-4. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
-
-Return "Understood" when it is understood.
-"""
-
-prompt_generate_sentence_4 = f"""
-**Output:**
-For each of the inputted lines, generate a single return string in the following format:
-`<image_name>`; `<story>`
-`<story>` should include all the generated sentences about the image.
-The return should be plaintext, not in JSON format.
-
-Return "Understood" when read. 
-"""
-
 combined_prompt_sentences = f"""
 **AI Mission Brief:** Turning Image Descriptions into a Narrative
 **Mission Objective:**
 You are tasked with transforming a series of detailed image descriptions into a coherent, flowing story in english. 
-Each sentence generated should contribute to the overall narrative and provide seamless transitions. 
-Each image should be described by one sentence narrating what is going on in the image without describing the image itself.
-Generated narrations should also include the text/conversations from the descriptions.
+Each sentence generated should contribute to the overall narrative and provide seamless transitions between images. 
 
 
 **Task Outline:**
-1. You will be given a description of a image. Each description includes specific details about context of the image and what is written in the image.
+1. You will be given a description of images. Each description includes specific details about context of the image and what is written in the image.
 2. You will also be given prior sentences that have been generated from previous images.
-3. Based on the prior sentences and the new description, generate a sentence that collectively form a continuous story in present tense.
+3. Based on the prior sentences and the image descriptions, generate simple sentences for each image description that continues the story.
 
 
 **Rules and Guidelines:**
 1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Sentence lengths: Each image should be described by a short and single sentence and the conversations from the image.
-3. If the context and location changes drastically. It should be described as a new location or a flashback. 
-4. Keep sentences simple by using at most 1 adverb and 1 adjective.
-5. Use pronouns and character descriptions when referring to characters. Do not use character names.
-6. Never mention the viewer, reader or speaker in the sentences.
-7. Include all conversation from the text from the image
-8. Do not describe the items and people in detail. Instead focus on the story the image is telling.
+2. Use pronouns when mentioning returning characters. 
+3. Do not use character names.
+4. Never mention the viewer, reader or speaker in the sentences.
+5. Do not describe the items and people in detail. Instead focus on the story the image is telling.
+6. Conversation from the description should be in present tense.
+7. Limit yourself to one adjective and adverb.
 
 
 **Process:**
-1. Read the Description: Carefully read and understand each image description.
-2. Extract Key Elements: Identify key elements such as characters, settings, actions and information.
-3. Look at the prior sentences: Understand the story that has been generated so far.
-4. Generate Sentence: Formulate a short sentence in present tense that contributes to the overall narrative.
-5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
+1. Read the Description: Carefully read and understand the description.
+2. Extract Key Elements: Identify key elements such as returning characters, settings, actions and information.
+3. Look at the prior sentences: Carefully read the prior sentences to understand the context.
+4. Ensure Continuity: Ensure the generated sentence continues the story from the prior sentences and fits the context of the image description.
+5. Generate Sentences: Formulate sentences in present tense that continues the story. If no prior sentences are available, start the story.
+6. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
 
 
 **Output:**

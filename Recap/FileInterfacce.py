@@ -60,6 +60,8 @@ class FileInterface:
             for line in file:
                 lines.append(line)
 
+        return lines
+
     def get_images_missing_from_file(self, file_path: str) -> list:
         keys = []
 

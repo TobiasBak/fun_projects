@@ -1,13 +1,12 @@
 import re
 import threading
+import time
 
 import google.generativeai as genai
 
 import setup
 from FileInterfacce import FileInterface
-from google.prompts import prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3, \
-    prompt_generate_sentence_1, prompt_generate_sentence_2, prompt_generate_sentence_3, prompt_generate_sentence_4, \
-    combined_prompt_sentences, combined_prompt_descriptions
+from google.prompts import combined_prompt_sentences, combined_prompt_descriptions
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, get_images_missing_from_files, \
     append_to_file, get_sentence_path, sort_images_by_order
@@ -42,13 +41,7 @@ class Gemini:
         }
 
     def generate_description_for_images(self, images: list[str]):
-        prompts = [prompt_describe_image_1, prompt_describe_image_2, prompt_describe_image_3]
         chat = self.model_descriptions.start_chat(history=[])
-
-        # for p in prompts:
-        #     r = chat.send_message(p, generation_config=self.generation_config, safety_settings=self.safety_settings)
-        #     print(r.text)
-
         for image in images:
             content = []
             img_data = Image.open(get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{image}"))
@@ -95,10 +88,11 @@ class Gemini:
             print("No images missing descriptions. Exiting...")
             return
 
+        batch_size = 50
         threads = []
-        for i in range(0, len(images), 10):
+        for i in range(0, len(images), batch_size):
             thread_name = f"{i}/{len(images)}"
-            thread = threading.Thread(target=self._threaded_generate_description, args=(thread_name, images[i:i + 10]))
+            thread = threading.Thread(target=self._threaded_generate_description, args=(thread_name, images[i:i + batch_size]))
             thread.start()
             threads.append(thread)
 
@@ -167,8 +161,9 @@ class Gemini:
     def generate_sentences_for_images_gemini_using_prior_sentences(self, images: list[str]):
         file_interface = FileInterface()
         description_dict = file_interface.get_dict_from_file(setup.PATHS.DESCRIPTIONS)
+        sentence_path = get_sentence_path(setup.LanguageCodes.English)
 
-        sentence_dict = {}
+        sentence_dict = file_interface.get_dict_from_file(sentence_path)
 
         chat = self.model_sentences.start_chat(history=[])
 
@@ -176,16 +171,15 @@ class Gemini:
 
         sorted_images = sort_images_by_order(images)
 
-        for image in sorted_images:
-            if image not in description_dict.keys():
-                print(f"Image {image} is missing description. Skipping...")
-                continue
+        images_per_prompt = 3
+        prior_sentences = 10
+        for i in range(0, len(sorted_images), images_per_prompt):
+            for im in sorted_images[i:i + images_per_prompt]:
+                g_prompt += f"{im};{description_dict[im]}\n"
 
-            g_prompt += f"{description_dict[image]}\n"
+            last_10_sentences = list(sentence_dict.values())[-prior_sentences:]
 
-            last_10_sentences = list(sentence_dict.values())[-10:]
-
-            g_prompt += "*Prior sentences:*\n"
+            g_prompt += "**Prior sentences:**\n"
             g_prompt += "\n".join(last_10_sentences)
 
             print(f"Sending Prompt: {g_prompt}")
@@ -201,23 +195,22 @@ class Gemini:
 
             replies = response.text.split('\n')
 
-            refactored_data = {}
-            last_key = None
-            for i in range(len(replies)):
-                if self._check_if_text_is_key(replies[i]):
-                    last_key = replies[i]
-                    if last_key not in refactored_data:
-                        refactored_data[last_key] = ""
-                elif last_key is not None:
-                    refactored_data[last_key] += ' ' + replies[i].replace('\n', ' ')
-
-            for key, value in refactored_data.items():
-                sentence_dict[key] = value
+            for reply in replies:
+                if not reply:
+                    continue
+                parts = reply.split(';')
+                if len(parts) != 2:
+                    print(f"Invalid response: {reply}")
+                    continue
+                sentence_dict[parts[0]] = parts[1]
+                file_interface.append_line(sentence_path, reply)
 
             g_prompt = ""
+            time.sleep(10)
 
     def generate_sentences_gemini(self):
-        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, setup.PATHS.SENTENCES)
+        sentence_path = get_sentence_path(setup.LanguageCodes.English)
+        images = get_images_missing_from_files(setup.PATHS.IMAGE_DIR, sentence_path)
         if len(images) == 0:
             print("No images missing generated sentences.")
             return []
@@ -234,7 +227,10 @@ class Gemini:
 
     def remove_duplicate_sentences(self):
         file_interface = FileInterface()
-        lines = file_interface.get_lines_from_file(setup.PATHS.SENTENCES)
+        sentences_path = get_sentence_path(setup.LanguageCodes.English)
+        print(sentences_path)
+        lines = file_interface.get_lines_from_file(sentences_path)
+        print(lines)
         line_dict = {}
         for line in lines:
             parts = line.split(';')

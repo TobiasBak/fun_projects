@@ -143,21 +143,28 @@ def modify_images_to_fit_screen2():
         image_parts = _split_image(image, image_split_indexes)
 
         count = 0
+        print(f"Modifying image {image}...")
+        print(f"Image parts: {len(image_parts)}")
         for image_part in image_parts:
             image_part_height = image_part.size[1]
-            if image_part_height < IMAGE_MAX_HEIGHT / 2:
+            if image_part_height < IMAGE_MAX_HEIGHT / 2 and buffer is None:
                 buffer = image_part
                 continue
 
             if buffer is not None:
+                print(f"Created new image part")
                 original_image_part = image_part.copy()
                 image_part = Image.new('RGB', (image_part.width, image_part.height + buffer.height))
                 image_part.paste(buffer, (0, 0))
                 image_part.paste(original_image_part, (0, buffer.height))
                 buffer = None
 
+            num_images = image_part.height / (IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR)
+            if num_images > 1:
+                num_images = math.floor(num_images)
+            else:
+                num_images = 1
 
-            num_images = math.floor(image_part.height / (IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR))
             for i in range(num_images):
                 start = i * IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR
                 end = min((i + 1) * IMAGE_MAX_HEIGHT * ALLOWED_SCALING_FACTOR, image_part.height)
