@@ -81,6 +81,13 @@ def get_images_missing_from_files(image_dir: str, text_file_path: str):
     return missing_images
 
 
+def remove_image(image_name: str):
+    dir_path = setup.PATHS.IMAGE_DIR
+    image_path = f"{dir_path}/{image_name}"
+    if os.path.exists(image_path):
+        os.remove(image_path)
+
+
 def get_all_images(directory: str = setup.PATHS.IMAGE_DIR):
     images = []
     for file in os.listdir(directory):

@@ -43,8 +43,9 @@ Return "Understood" when understood.
 
 combined_prompt_descriptions = f"""
 You are tasked with describing a picture in detail.
-The picture is taken from a manhwa. 
+The picture is taken from a Manhwa. 
 You must never mention the viewer or reader in the descriptions.
+
 
 **Instructions:**
 1. Generate a detailed description for each of the sub-pictures in the jpg.
@@ -52,28 +53,26 @@ You must never mention the viewer or reader in the descriptions.
 3. Do not describe Speech Bubbles.
 4. Combine all the descriptions into a single description for the jpg.
 
+
 **How to describe jpgs in detail:**
 You must generate an in depth description for each jpg that include the following elements combined in a single string:
-1. Characters: Visible characters should be described in detail. Do not describe where they are looking. 
+1. Characters: Visible characters must be described in detail. Never describe where they are looking. 
 2. Setting: The setting and area in the picture must be described. 
-3. Plot: The actions and what is generally happening must be described. 
-4. Feeling: A detailed description of the feeling the pictures conveys. 
-5. Text: English text should be extracted from the image in lowercase. The text should be followed by where it is positioned relative to the characters.
-6. Text: Quote all extracted text.
-7. Exclude text that is ads such as "Read at:" or "Visit us at:". or .com sites in general.
-
-Note: Background and speech bubbles should not be described.
-
-
-An example detailed description and the expected output will be explained.
-**Example detailed description:**
-A man with ginger hair is visible in the image. Only the face of the man is visible. He has an open mouth and it looks like he is speaking. Above the man it says "If The Other Hunters Get To It First, Our Profits Would Dwindle." The man looks very worried and concerned.
+3. Actions: The actions happening in the picture must be described.
+4. Text: You must extract all English text from speech bubbles should be extracted from the image in lowercase.
+5. Exclude text that is ads such as "Read at:" or "Visit us at:". or .com sites in general.
+6. Exclude all text describing actions such as "vroom" or "bang" and non-english characters.
 
 
 **Return Format:**
 The combined description must be returned in the following format. This means remove all newlines and replace them with a space.:
 `<file_name>`; `<combined descriptions>`
 You must only return 1 string containing all the details from the descriptions.
+
+**Format of combined descriptions:**
+The combined descriptions should be in the following format:
+`<file_name>`; *Text*: "<text>", *Characters*: "<characters>", *Setting*: "<setting>", *Actions*: "<actions>"
+
 
 """
 
@@ -114,13 +113,14 @@ Each sentence generated should contribute to the overall narrative and provide s
 
 
 **Rules and Guidelines:**
-1. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-2. Use pronouns when mentioning returning characters. 
-3. Do not use character names.
-4. Never mention the viewer, reader or speaker in the sentences.
-5. Do not describe the items and people in detail. Instead focus on the story the image is telling.
-6. Conversation from the description should be in present tense.
-7. Limit yourself to one adjective and adverb.
+1. If the description includes text, prioritize incorporating the text into the sentence.
+2. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
+3. Use pronouns when mentioning returning characters. 
+4. Do not use character names.
+5. Never mention the viewer, reader or speaker in the sentences.
+6. Do not describe the items and people in detail. Instead focus on the story the image is telling.
+7. Conversation from the description should be in present tense.
+8. Limit yourself to one adjective and adverb.
 
 
 **Process:**

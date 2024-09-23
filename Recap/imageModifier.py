@@ -10,7 +10,7 @@ from Recap.utils import get_sorted_list_of_images
 TEMP_DIR = 'temp'
 TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
 IMAGE_MAX_HEIGHT = 1000
-ALLOWED_SCALING_FACTOR = 1
+ALLOWED_SCALING_FACTOR = 1.5
 
 
 # Todo make this image height be dependent on the height of the original image

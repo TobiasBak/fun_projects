@@ -9,7 +9,7 @@ from FileInterfacce import FileInterface
 from google.prompts import combined_prompt_sentences, combined_prompt_descriptions
 from old.open_ai import generate_prompts_for_images
 from utils import get_lines_from_file, get_absolute_path, get_images_missing_from_files, \
-    append_to_file, get_sentence_path, sort_images_by_order
+    append_to_file, get_sentence_path, sort_images_by_order, remove_image
 from PIL import Image
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
@@ -40,8 +40,8 @@ class Gemini:
             HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
         }
 
-    def generate_description_for_images(self, images: list[str]):
-        chat = self.model_descriptions.start_chat(history=[])
+    def generate_description_for_images(self, images: list[str], thread_name: str):
+        # chat = self.model_descriptions.start_chat(history=[])
         for image in images:
             content = []
             img_data = Image.open(get_absolute_path(f"{setup.PATHS.IMAGE_DIR}/{image}"))
@@ -50,12 +50,18 @@ class Gemini:
 
             print(f"Generating description for {image}...")
 
-            response = chat.send_message(
+
+            response = self.model_descriptions.generate_content(
                 content,
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings
             )
-            print(response.text)
+
+            if response._error:
+                # remove image from folder
+                print(f"Error for image {image}: {response._error}")
+                remove_image(image)
+                continue
 
             responses = response.text.split('\n')
             for r in responses:
@@ -75,7 +81,7 @@ class Gemini:
         semaphore.acquire()
         try:
             print(f"Starting thread: {thread_name}")
-            self.generate_description_for_images(images)
+            self.generate_description_for_images(images, thread_name)
         finally:
             # Release the semaphore
             semaphore.release()
@@ -88,7 +94,7 @@ class Gemini:
             print("No images missing descriptions. Exiting...")
             return
 
-        batch_size = 50
+        batch_size = 10
         threads = []
         for i in range(0, len(images), batch_size):
             thread_name = f"{i}/{len(images)}"
@@ -171,8 +177,9 @@ class Gemini:
 
         sorted_images = sort_images_by_order(images)
 
-        images_per_prompt = 3
+        images_per_prompt = 5
         prior_sentences = 10
+        sleep_between_requests = 10
         for i in range(0, len(sorted_images), images_per_prompt):
             for im in sorted_images[i:i + images_per_prompt]:
                 g_prompt += f"{im};{description_dict[im]}\n"
@@ -206,7 +213,7 @@ class Gemini:
                 file_interface.append_line(sentence_path, reply)
 
             g_prompt = ""
-            time.sleep(10)
+            time.sleep(sleep_between_requests)
 
     def generate_sentences_gemini(self):
         sentence_path = get_sentence_path(setup.LanguageCodes.English)

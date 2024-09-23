@@ -198,7 +198,7 @@ def concate_video_parts(language: setup.LanguageCodes):
 
     print(video_files)
     with open('out/concat.txt', 'w') as f:
-        f.write(f"file 'intro.mp4'\n")
+        # f.write(f"file 'intro.mp4'\n")
         for file in video_files:
             if file.endswith(".mp4"):
                 f.write(f"file 'videos/video_parts/{language.value}/{file}'\n")
