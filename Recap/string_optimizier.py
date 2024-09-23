@@ -83,8 +83,8 @@ def optimize_sentences_errors(language: setup.LanguageCodes):
         description = value
         description = _remove_specific_strings_from_text(description)
         description = _remove_descriptions_about_voices(description)
-        description = description.replace('"', '').replace('""', '')
         description = _capitalize_letters(description)
+        description = description.replace('"', '').replace('""', '')
         sentence_dict[key] = description
 
     file_interface.write_dict_to_file(path, sentence_dict)

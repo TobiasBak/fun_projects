@@ -61,7 +61,7 @@ You must generate an in depth description for each jpg that include the followin
 3. Actions: The actions happening in the picture must be described.
 4. Text: You must extract all English text from speech bubbles should be extracted from the image in lowercase.
 5. Exclude text that is ads such as "Read at:" or "Visit us at:". or .com sites in general.
-6. Exclude all text describing actions such as "vroom" or "bang" and non-english characters.
+6. Exclude all text describing actions such as "vroom", "bang" "Gurgle" and non-english characters.
 
 
 **Return Format:**
@@ -109,18 +109,20 @@ Each sentence generated should contribute to the overall narrative and provide s
 **Task Outline:**
 1. You will be given a description of images. Each description includes specific details about context of the image and what is written in the image.
 2. You will also be given prior sentences that have been generated from previous images.
-3. Based on the prior sentences and the image descriptions, generate simple sentences for each image description that continues the story.
+3. Based on the prior sentences and the image descriptions, generate simple short sentence for each image description that continues the story.
+4. If the description includes text, multiple sentences can be generated to incorporate the text into the story.
 
 
 **Rules and Guidelines:**
 1. If the description includes text, prioritize incorporating the text into the sentence.
 2. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-3. Use pronouns when mentioning returning characters. 
+3. Use pronouns when mentioning characters. 
 4. Do not use character names.
 5. Never mention the viewer, reader or speaker in the sentences.
 6. Do not describe the items and people in detail. Instead focus on the story the image is telling.
 7. Conversation from the description should be in present tense.
 8. Limit yourself to one adjective and adverb.
+9. Use pronouns instead of describing characters
 
 
 **Process:**
