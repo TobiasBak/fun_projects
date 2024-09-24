@@ -107,7 +107,10 @@ def get_image_names_missing_videos(language: setup.LanguageCodes):
     return images_missing_video_files
 
 
-def generate_image_videos(language: setup.LanguageCodes):
+def generate_image_videos(language: setup.LanguageCodes, useNvidia: bool = True):
+    hwaccel_string = "-hwaccel cuda -hwaccel_output_format cuda" if useNvidia else ""
+    out_format = "h264_nvenc" if useNvidia else "libx265"
+
     images = get_image_names_missing_videos(language)
 
     # base_video = create_ambience_video("2.mp4", 60, 0, 60)
@@ -117,9 +120,12 @@ def generate_image_videos(language: setup.LanguageCodes):
     total_duration = 0.0
 
     for i, image in enumerate(images):
-        audio = f"temp/audio/{language.value}/{image}.mp3"
-        duration = get_audio_duration(audio)
-        start_finish = (0, duration)
+        audio_path = f"{setup.PATHS.AUDIO_DIR}/{language.value}/{image}.mp3"
+        image_path = f"{setup.PATHS.IMAGE_DIR}/{image}.jpg"
+        subtitles_path = f"{setup.PATHS.SUBTITLE_DIR}/{language.value}/{image}.ass"
+
+        duration = get_audio_duration(audio_path)
+        start_and_finish = (0, duration)
 
         print(image)
         out_path = f"temp/videos/{language.value}/{image}.mp4"
@@ -127,7 +133,10 @@ def generate_image_videos(language: setup.LanguageCodes):
         if total_duration + duration > 60:
             total_duration = 0.0
 
-        ffmpeg_command = f"""ffmpeg -y -hwaccel cuda -hwaccel_output_format cuda -i {audio} -ss {convert_to_hmmssmm(total_duration)} -i {base_video} -loop 1 -i {setup.PATHS.IMAGE_DIR}/{image}.jpg -t {convert_float_to_hhmmss(duration)} -filter_complex "[1:v][2:v]{get_image_string(1, start_finish)},ass=temp/subtitles/{language.value}/{image}.ass[out]" -map 0:a -c:a copy -map "[out]" -c:v h264_nvenc {out_path}"""
+        start_time_hhmmss = convert_to_hmmssmm(total_duration)
+        duration_in_hhmmss = convert_float_to_hhmmss(duration)
+
+        ffmpeg_command = f"""ffmpeg -y {hwaccel_string} -i {audio_path} -ss {start_time_hhmmss} -i {base_video} -loop 1 -i {image_path} -t {duration_in_hhmmss} -filter_complex "[1:v][2:v]{get_image_string(1, start_and_finish)},ass={subtitles_path}[out]" -map 0:a -c:a copy -map "[out]" -c:v {out_format} {out_path}"""
 
         subprocess.run(ffmpeg_command, shell=True)
 
@@ -167,11 +176,13 @@ def generate_concated_video(language: setup.LanguageCodes):
 def add_music(language: setup.LanguageCodes):
     video = f"temp/videos/{language.value}/concat.mp4"
     music = "backgroundAudio/1_decreased.mp3"
-    out_path = f"out/videos/video_parts/{language.value}/{setup.NAME_AND_CHAPTERS}.mp4"
+    out_path = f"{setup.PATHS.OUT_VIDEO_PARTS_DIR}/{language.value}/{setup.NAME_AND_CHAPTERS}.mp4"
+    print(out_path)
 
     if os.path.exists(out_path):
         return
 
+    print(f"Adding music to {video}...")
     command = f"""ffmpeg -y -i {video} -stream_loop -1 -i {music} -shortest -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 {out_path}"""
     subprocess.run(command)
 
@@ -203,7 +214,7 @@ def concate_video_parts(language: setup.LanguageCodes):
             if file.endswith(".mp4"):
                 f.write(f"file 'videos/video_parts/{language.value}/{file}'\n")
 
-    out_path = "out/videos/concat.mp4"
+    out_path = f"{setup.PATHS.OUT_VIDEO_DIR}/{language.value}/{setup.NAME_AND_CHAPTERS}_concat.mp4"
 
     command = f"""ffmpeg -y -f concat -safe 0 -i out/concat.txt -c copy {out_path}"""
     subprocess.run(command)

@@ -111,58 +111,58 @@ class Gemini:
             print("Some images are still missing descriptions. Will start generation again.")
             self.generate_descriptive_text()
 
-    def generate_sentences_for_images_gemini(self, images: list[str]):
-        file_interface = FileInterface()
-
-        generated_prompts = generate_prompts_for_images(images)
-
-        if len(generated_prompts) == 0:
-            print("No sentences missing. Exiting...")
-            return
-
-        chat = self.model_sentences.start_chat(history=[])
-
-        g_prompt = ""
-
-        images_per_prompt = 10
-        for i in range(0, len(generated_prompts), images_per_prompt):
-            for generated_prompt in generated_prompts[i:i + images_per_prompt]:
-                g_prompt += generated_prompt
-            tokens = self.model_sentences.count_tokens(g_prompt)
-            print(f"Amount of tokens: {tokens}")
-            print(g_prompt)
-
-            responses = None
-
-            try:
-                responses = chat.send_message(g_prompt, generation_config=self.generation_config,
-                                              safety_settings=self.safety_settings)
-            except Exception as e:
-                responses = chat.send_message(g_prompt, generation_config=self.generation_config,
-                                              safety_settings=self.safety_settings)
-            print(f"RAW RESPONSE=================")
-            print(responses.text)
-
-            if not responses.text:
-                print("No sentences generated.")
-                return
-
-            replies = responses.text.split('\n')
-
-            refactored_data = {}
-            last_key = None
-            for i in range(len(replies)):
-                if self._check_if_text_is_key(replies[i]):
-                    last_key = replies[i]
-                    if last_key not in refactored_data:
-                        refactored_data[last_key] = ""
-                elif last_key is not None:
-                    refactored_data[last_key] += ' ' + replies[i].replace('\n', ' ')
-
-            for key, value in refactored_data.items():
-                file_interface.append_line(setup.PATHS.SENTENCES, f"{key};{value}")
-
-            g_prompt = ""
+    # def generate_sentences_for_images_gemini(self, images: list[str]):
+    #     file_interface = FileInterface()
+    #
+    #     generated_prompts = generate_prompts_for_images(images)
+    #
+    #     if len(generated_prompts) == 0:
+    #         print("No sentences missing. Exiting...")
+    #         return
+    #
+    #     chat = self.model_sentences.start_chat(history=[])
+    #
+    #     g_prompt = ""
+    #
+    #     images_per_prompt = 10
+    #     for i in range(0, len(generated_prompts), images_per_prompt):
+    #         for generated_prompt in generated_prompts[i:i + images_per_prompt]:
+    #             g_prompt += generated_prompt
+    #         tokens = self.model_sentences.count_tokens(g_prompt)
+    #         print(f"Amount of tokens: {tokens}")
+    #         print(g_prompt)
+    #
+    #         responses = None
+    #
+    #         try:
+    #             responses = chat.send_message(g_prompt, generation_config=self.generation_config,
+    #                                           safety_settings=self.safety_settings)
+    #         except Exception as e:
+    #             responses = chat.send_message(g_prompt, generation_config=self.generation_config,
+    #                                           safety_settings=self.safety_settings)
+    #         print(f"RAW RESPONSE=================")
+    #         print(responses.text)
+    #
+    #         if not responses.text:
+    #             print("No sentences generated.")
+    #             return
+    #
+    #         replies = responses.text.split('\n')
+    #
+    #         refactored_data = {}
+    #         last_key = None
+    #         for i in range(len(replies)):
+    #             if self._check_if_text_is_key(replies[i]):
+    #                 last_key = replies[i]
+    #                 if last_key not in refactored_data:
+    #                     refactored_data[last_key] = ""
+    #             elif last_key is not None:
+    #                 refactored_data[last_key] += ' ' + replies[i].replace('\n', ' ')
+    #
+    #         for key, value in refactored_data.items():
+    #             file_interface.append_line(setup.PATHS.SENTENCES, f"{key};{value}")
+    #
+    #         g_prompt = ""
 
     def generate_sentences_for_images_gemini_using_prior_sentences(self, images: list[str]):
         file_interface = FileInterface()
@@ -232,9 +232,9 @@ class Gemini:
 
         raise Exception("Please manually modify the first 50 sentences for a good experience")
 
-    def remove_duplicate_sentences(self):
+    def remove_duplicate_sentences(self, language: setup.LanguageCodes):
         file_interface = FileInterface()
-        sentences_path = get_sentence_path(setup.LanguageCodes.English)
+        sentences_path = get_sentence_path(language)
         print(sentences_path)
         lines = file_interface.get_lines_from_file(sentences_path)
         print(lines)
@@ -247,7 +247,7 @@ class Gemini:
             if parts[0] not in line_dict.keys():
                 line_dict[parts[0]] = parts[1]
 
-        file_interface.write_dict_to_file(setup.PATHS.SENTENCES, line_dict)
+        file_interface.write_dict_to_file(sentences_path, line_dict)
 
     def _check_if_text_is_key(self, text: str) -> bool:
         # If text is key it will start with a number followed by a dot followed by a number

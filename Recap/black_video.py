@@ -16,6 +16,3 @@ black_image = np.zeros((height, width, 3), dtype=np.uint8)
 # Write the black image to the video for the desired number of frames
 for _ in range(int(fps * video_length)):
     video.write(black_image)
-
-# Create a VideoWriter object
-video = cv2.VideoWriter('output.mp4', fourcc, fps, (width, height))

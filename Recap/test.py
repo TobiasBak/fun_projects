@@ -5,12 +5,15 @@ from google.googleInterface import GoogleInterface
 from imageModifier import modify_all_images
 from main import download_chapters
 from string_optimizier import optimize_sentences_errors
+from videoEditing import generate_image_videos, generate_concated_video, add_music
 
 
 def test():
     # Use this method to test behaviour
     print("TESTING...")
-    optimize_sentences_errors(setup.LanguageCodes.English)
+    # generate_image_videos(setup.LanguageCodes.English, useNvidia=False)
+    # generate_concated_video(setup.LanguageCodes.English)
+    add_music(setup.LanguageCodes.English)
 
 
 

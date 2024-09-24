@@ -151,7 +151,8 @@ def get_sentences_dict(language: setup.LanguageCodes = setup.LanguageCodes.Engli
 
 
 def get_sentence_path(language: setup.LanguageCodes = setup.LanguageCodes.English):
-    parts = setup.PATHS.SENTENCES.split('/')
+    sentences_path_without_language = f'{setup.PATHS.OUT_TEXT_DIR}/{setup.FILES.SENTENCES}'
+    parts = sentences_path_without_language.split('/')
     path = f"{parts[0]}/{parts[1]}/{language.value}.{parts[2]}"
     return path
 
