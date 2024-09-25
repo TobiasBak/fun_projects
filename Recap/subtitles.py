@@ -97,7 +97,7 @@ def generate_subtitles(language: setup.LanguageCodes):
             f.write("[V4+ Styles]\n")
             f.write(
                 "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n")
-            f.write("Style: Info,Futura,20,&H00F5F5F5,&H00F5F5F5,&H000A0A0A,&H000A0A0A,-1,0,1,2,1,2,250,250,40,0\n")
+            f.write("Style: Info,Futura,40,&H00F5F5F5,&H00F5F5F5,&H000A0A0A,&H000A0A0A,-1,0,1,2,1,2,250,250,40,0\n")
             f.write("[Events]\n")
             f.write("Format: Start, End, Style, Text\n")
 

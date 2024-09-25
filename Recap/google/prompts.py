@@ -107,35 +107,37 @@ Each sentence generated should contribute to the overall narrative and provide s
 
 
 **Task Outline:**
-1. You will be given a description of images. Each description includes specific details about context of the image and what is written in the image.
+1. You will be given a description of images. Each description includes specific details about the text in the image, the characters, the setting and the actions.
 2. You will also be given prior sentences that have been generated from previous images.
-3. Based on the prior sentences and the image descriptions, generate simple short sentence for each image description that continues the story.
-4. If the description includes text, multiple sentences can be generated to incorporate the text into the story.
+3. Based on the context of the prior sentences and the image descriptions, generate simple short sentence continuing the story. 
+4. If the description contains text, prioritize the text in the sentence.
 
 
 **Rules and Guidelines:**
-1. If the description includes text, prioritize incorporating the text into the sentence.
+1. If the description includes text, prioritize incorporating entirety of the text into the sentences.
 2. Avoid Direct References to the Image: Do not use phrases like "In the picture" or "The image shows."
-3. Use pronouns when mentioning characters. 
-4. Do not use character names.
-5. Never mention the viewer, reader or speaker in the sentences.
-6. Do not describe the items and people in detail. Instead focus on the story the image is telling.
-7. Conversation from the description should be in present tense.
-8. Limit yourself to one adjective and adverb.
-9. Use pronouns instead of describing characters
+3. Use pronouns when mentioning characters and never mention character names. 
+4. Never mention the viewer, reader or speaker in the sentences.
+5. Do not describe the character and their actions in detail. Instead focus on the story the image is telling.
+6. Limit yourself to one adjective and adverb.
+7. Never include dialog attributions in the sentences such as "he said" or "she asked", "they replied", "he shouts" etc.
+8. Never include sound effects in the sentences.
+9. Never include who is saying the text in the generated sentence.
+10. Never include what direction the character is looking in the generated sentence.
+
 
 
 **Process:**
 1. Read the Description: Carefully read and understand the description.
 2. Extract Key Elements: Identify key elements such as returning characters, settings, actions and information.
 3. Look at the prior sentences: Carefully read the prior sentences to understand the context.
-4. Ensure Continuity: Ensure the generated sentence continues the story from the prior sentences and fits the context of the image description.
-5. Generate Sentences: Formulate sentences in present tense that continues the story. If no prior sentences are available, start the story.
-6. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
+4. Generate Sentences: Formulate sentences in present tense that continues the story. If no prior sentences are available, start the story.
+5. Following Rules and Guidelines: Ensure generated sentence follow rules and guidelines.
 
+Run the process for each image description and generate a short narrative that flows smoothly from one image to the next.
 
 **Output:**
-For the output, generate a single return string in the following format:
+For the output, generate strings in the following format, for each of the given descriptions:
 `<image_name>`; `<story>`
 `<story>` should include the generated sentence continuing the story.
 The return should be plaintext, not in JSON format.

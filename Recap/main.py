@@ -33,7 +33,7 @@ def main():
 
     # Sentence generation
     google_interface.gemini_client.generate_sentences_gemini()
-    google_interface.gemini_client.remove_duplicate_sentences()
+    google_interface.gemini_client.remove_duplicate_sentences(setup.LanguageCodes.English) #todo: move this to string modifier or sometehing
 
     # Optimize sentences
     optimize_sentences_errors(setup.LanguageCodes.English)

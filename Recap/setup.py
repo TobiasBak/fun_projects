@@ -3,8 +3,8 @@ import os
 from enum import Enum
 
 DOWNLOAD_URL = 'https://toonily.com/webtoon/wife-demon-queen/chapter-1/'
-CHAPTERS = [1, 1]
-NAME_OF_BOOK = 'test'  # Has to be lowercase
+CHAPTERS = [61, 70]
+NAME_OF_BOOK = 'wife_demon'  # Has to be lowercase
 
 """ PLEASE DO NOT MODIFY BELOW """
 NAME_AND_CHAPTERS = f'{NAME_OF_BOOK}_{CHAPTERS[0]}-{CHAPTERS[1]}'

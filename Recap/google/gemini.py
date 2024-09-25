@@ -225,10 +225,10 @@ class Gemini:
         print(f"Starting generation of sentences for {len(images)} images: ...")
 
         # Run generate for images in batches batch_size
-        # batch_size = 100
-        # for i in range(0, len(images), batch_size):
-        #     self.generate_sentences_for_images_gemini(images[i:i + batch_size])
-        self.generate_sentences_for_images_gemini_using_prior_sentences(images)
+        batch_size = 100
+        for i in range(0, len(images), batch_size):
+            self.generate_sentences_for_images_gemini_using_prior_sentences(images[i:i + batch_size])
+        # self.generate_sentences_for_images_gemini_using_prior_sentences(images)
 
         raise Exception("Please manually modify the first 50 sentences for a good experience")
 
