@@ -2,7 +2,7 @@ import os
 
 import setup
 from FileInterfacce import FileInterface
-from Recap.utils import get_lines_from_file, get_absolute_path, get_all_images, get_dict_from_file, append_to_file
+from utils import get_lines_from_file, get_absolute_path, get_all_images
 
 strings_to_remove = ["toonily", "discord"]
 

@@ -3,9 +3,9 @@ import shutil
 import time
 
 import setup
-from Recap.cleanup import clean_descriptions_for_unnecessary_lines, clean_images
-from Recap.imageModifier import modify_all_images
-from Recap.utils import get_dict_from_file, get_all_images, get_sentence_path
+from cleanup import clean_descriptions_for_unnecessary_lines, clean_images
+from imageModifier import modify_all_images
+from utils import get_dict_from_file, get_all_images, get_sentence_path
 from fetchManhwa import _download_images_toonily, download_chapters
 from google.googleInterface import GoogleInterface
 from string_optimizier import optimize_descriptions, optimize_sentences_errors, optimize_description_quotes

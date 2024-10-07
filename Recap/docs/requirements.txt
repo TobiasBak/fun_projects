@@ -2,4 +2,6 @@ pip install -U google-generativeai
 pip install google-cloud-texttospeech
 pip install google-cloud-translate
 
+selenium==4.25.0
+
 environment variable  = " C:\0-uni\fun_projects\Recap\ffmpeg\bin "

@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 
 import setup
-from Recap.utils import get_sorted_list_of_images
+from utils import get_sorted_list_of_images
 
 TEMP_DIR = 'temp'
 TEMP_SPLIT_INDEXES_FILE = f'{TEMP_DIR}/split_indexes.csv'
